@@ -1,0 +1,57 @@
+.leftmenu{
+    display: flex;
+    flex-direction: column;
+    flex: 0.5;
+    height: 50vh;
+    justify-content: center;
+    position: sticky;
+    margin-left: 10rem;
+}
+.leftmenu .title{
+    font-size:35px;
+    line-height:45.5px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:0px;
+padding:15px 0px;
+font-weight:700;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(0, 0, 0);
+text-align:start;
+text-indent:0px;
+}
+.leftmenu p{
+    font-size:16px;
+    line-height:18px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:16px 0;
+padding:0px;
+font-weight:400;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(0, 0, 0);
+text-align:start;
+text-indent:0px;
+}
+.leftmenu span{
+    font-size:15px;
+    line-height:18px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin: 0;
+padding:0px;
+font-weight:500;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(71, 82, 93);
+text-align:start;
+text-indent:0px;
+}

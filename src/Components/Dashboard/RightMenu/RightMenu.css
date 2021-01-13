@@ -1,0 +1,25 @@
+.rightmenu{
+    display: flex;
+    flex: 0.5;
+    border: 3px solid lightgrey;
+    height: 64vh;
+    margin-top: 45px;
+    border-radius: 20px;
+    margin-right: 10rem;
+    width: 100%;
+}
+.rightmenu input[type="file"] {
+    display: none;
+    outline: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: 100%;
+    text-align-last: center;
+    display: flex;
+    flex-direction: column;
+    border: none;
+}
