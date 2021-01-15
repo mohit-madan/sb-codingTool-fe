@@ -1,7 +1,7 @@
 .leftmenu{
     display: flex;
     flex-direction: column;
-    flex: 0.5;
+    flex: 0.35;
     height: 50vh;
     justify-content: center;
     position: sticky;

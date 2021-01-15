@@ -1,0 +1,85 @@
+.survey_details{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.survey_details_top,.survey_details_title{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+.survey_details_title{
+    border: 1px solid rgb(196, 196, 196);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.survey_details_top p{
+    color:#a4a2ab;
+color:rgb(164, 162, 171);
+background-color:#000000;
+background-color:rgba(0, 0, 0, 0);
+font-size:12px;
+line-height:14.4px;
+vertical-align:baseline;
+letter-spacing:0.6px;
+word-spacing:0px;
+margin:0px;
+padding:0px;
+font-weight:600;
+font-style:normal;
+text-transform:none;
+text-decoration:none solid rgb(164, 162, 171);
+text-align:start;
+text-indent:0px;
+}
+.survey_details_title label,.survey_details_title a{
+    color:#252036;
+color:rgb(37, 32, 54);
+background-color:#000000;
+background-color:rgba(0, 0, 0, 0);
+font-size:16px;
+line-height:18px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:0px;
+padding:0px;
+font-weight:700;
+text-transform:none;
+text-decoration:none solid rgb(37, 32, 54);
+text-align:start;
+text-indent:0px;
+}
+.survey_details_title span{
+    padding-right: 5px;
+}
+.survey_details_title a{
+    color: #5bc4bc;
+    cursor: pointer;
+}
+.survey_details_main{
+    display: flex;
+    height: 70%;
+    justify-content: space-around ;
+    border:2px solid rgb(228, 228, 228)
+}
+.survey_details_main_left,.survey_details_main_right{
+    display: flex;
+    flex-direction: column;
+}
+.MuiFormControl-root, .MuiTextField-root{
+    margin: 10px!important;
+    width: 100%!important;
+}
+/*empty checkbox*/
+.input:before{
+    background: rgb(233, 0, 0);
+}
+
+/*checked checkbox*/
+.input + .input:before {
+    background: black;
+    color: rgb(39, 39, 39);
+}

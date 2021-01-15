@@ -4,7 +4,8 @@
     border: 2px solid lightgrey;
     align-items: center;
     justify-content: space-between;
-
+    /* position: relative; */
+    width: 100%;
 }
 .progressbar .left img{
     object-fit: cover;
@@ -43,9 +44,8 @@ align-self: center;
 }
 .progressbar .right .item .number{
     border-radius: 100%;
-    color: white;
     object-fit: contain;
-    background-color: #00bda7;
+    border: 2px solid lightgrey;
     width: 25px;
     height: 20px;
     align-items: center;
