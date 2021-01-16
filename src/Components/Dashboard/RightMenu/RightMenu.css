@@ -7,7 +7,7 @@
     /* border-radius: 20px; */
     margin-right: 10rem;
     width: 100%;
-    border: 1px solid grey;
+    /* border: 1px solid grey; */
     justify-content: center;
     align-items: center;
     overflow-y: scroll;
@@ -18,7 +18,7 @@
   
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: none; 
   }
    
   /* Handle */
@@ -52,3 +52,13 @@
     overflow-x: auto; 
 }
 /*     overflow-x: auto; */
+.MuiPaper-root ,.MuiPaper-elevation2 ,.MuiPaper-rounded{
+  position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display: inline-grid;
+    margin: auto;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////////// */
+

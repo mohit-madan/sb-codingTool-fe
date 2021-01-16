@@ -104,7 +104,7 @@ function RightMenu({progressNumber}) {
         }
       ]
     return (
-        <div className="rightmenu">
+        <div style={progressNumber===1 ?  {border:"1px solid grey"} : null} className="rightmenu">
             
             {progressNumber==1 && <ExcelReader />}
 

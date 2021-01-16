@@ -83,3 +83,13 @@ text-indent:0px;
     background: black;
     color: rgb(39, 39, 39);
 }
+input{
+    height: 20px;
+    width: 140%;
+    outline: none;
+    border: 1px solid grey;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 5px;
+    align-self: flex-start;
+}

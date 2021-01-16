@@ -56,11 +56,20 @@ const SurveyDetails=({updateSurveyDetails})=>{
             </div>
             <div className='survey_details_main'>
                 <div className="survey_details_main_left">
-                    <TextField
+                    {/* <TextField
                     onChange={handleChange}
                     name="name"
                     value={surveyDetails.name}
-                    id="outlined-basic" label="NAME" variant="outlined" />
+                    size='small'
+                    id="outlined-basic" label="NAME" variant="outlined" /> */}
+                    <label>Name</label>
+                    <input
+                    onChange={handleChange}
+                    name="name"
+                    value={surveyDetails.name}
+                    size='small'
+                    id="outlined-basic" label="NAME" variant="outlined"
+                    />
                     <TextField
                         value={surveyDetails.description}
                         onChange={handleChange}
@@ -71,6 +80,7 @@ const SurveyDetails=({updateSurveyDetails})=>{
                         rows={4}
                         defaultValue="Default Value"
                         variant="outlined"
+                        size='small'
                     />
                 </div>
                 <div className="survey_details_main_right">
@@ -83,6 +93,7 @@ const SurveyDetails=({updateSurveyDetails})=>{
                     value={surveyDetails.industry}
                     helperText="Please select your currency"
                     variant="outlined"
+                    size='small'
                 >
                     {currencies.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -99,6 +110,7 @@ const SurveyDetails=({updateSurveyDetails})=>{
                     onChange={handleChange}
                     helperText="Please select your currency"
                     variant="outlined"
+                    size='small'
                 >
                     {currencies.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -113,6 +125,7 @@ const SurveyDetails=({updateSurveyDetails})=>{
                     value={surveyDetails.tags}
                     onChange={handleChange}
                     name="tags"
+                    size='small'
                 />
                 </div>
             </div>
