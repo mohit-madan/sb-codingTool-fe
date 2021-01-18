@@ -1,0 +1,130 @@
+*{
+    margin: 0;
+}
+
+.invalid-feedback{
+    color: rgb(248, 0, 0);
+    margin-top: 0;
+}
+.login{
+    display: flex;
+    flex-direction: column;
+    align-items: center!important;
+    place-items: center!important;
+    place-content: space-evenly;
+    height: 100vh;
+}
+.login_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    place-items: center;
+}
+.register_box{
+    margin-top: 60px;
+}
+.MuiInputBase-root, .MuiOutlinedInput-root ,.MuiInputBase-formControl{
+    background-color: white;
+}
+.login h2{
+    color:#252525;
+color:rgb(37, 37, 37);
+background-color:#000000;
+background-color:rgba(0, 0, 0, 0);
+font-family:"Work Sans", sans-serif;
+font-size:36px;
+line-height:42px;
+vertical-align:baseline;
+letter-spacing:-1.5px;
+word-spacing:0px;
+margin:0px 0px 20px;
+padding:0px;
+font-weight:600;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(37, 37, 37);
+text-align:left;
+text-indent:0px;
+margin: 0!important;
+margin-bottom: 20px!important;
+}
+.login h3{
+    color:#637381;
+color:rgb(99, 115, 129);
+background-color:#000000;
+background-color:rgba(0, 0, 0, 0);
+font-family:"Work Sans", sans-serif;
+font-size:20px;
+line-height:19px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:0px 0px 8px;
+padding:0px;
+font-weight:400;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(99, 115, 129);
+text-align:left;
+text-indent:0px;
+margin: 0!important;
+margin-bottom: 20px!important;
+}
+.login h4{
+    color:#637381;
+color:rgb(99, 115, 129);
+background-color:#000000;
+background-color:rgba(0, 0, 0, 0);
+font-family:"Work Sans", sans-serif;
+font-size:16px;
+line-height:19px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:0px 0px 8px;
+padding:0px;
+font-weight:400;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(99, 115, 129);
+text-align:left;
+text-indent:0px;
+margin-bottom: 10!important;
+}
+.login-form{
+    display: flex;
+    flex-direction: column;
+    margin:30px 20px!important;
+    box-sizing: border-box!important;
+}
+.login-form .MuiFormControl-root ,.MuiTextField-root{
+    margin: 10px ;
+    box-sizing: border-box;
+    background-color: white !important;
+}
+@media only screen and (max-width: 600px) {
+    .login-form .MuiFormControl-root ,.MuiTextField-root{
+        width: 320px!important;
+    }
+    .form_box{
+        margin: auto;
+        width: 370px;
+    }
+}
+.form_box{
+    background-color: white !important;
+    -webkit-box-shadow: 10px 10px 21px 0px rgba(0,0,0,0.37);
+-moz-box-shadow: 10px 10px 21px 0px rgba(0,0,0,0.37);
+box-shadow: 10px 10px 21px 0px rgba(0,0,0,0.37);
+}
+.add_details{
+    margin-top: 20px;
+    display: flex;
+}
+.input_row{
+    display: flex;
+    align-items: center;
+}

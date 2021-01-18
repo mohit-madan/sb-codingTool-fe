@@ -1,0 +1,24 @@
+.width{
+	margin: 0!important;
+	padding: 0!important;
+	width:100%;
+}
+body {
+	font-family: 'Open Sans Condensed';
+	/* padding: 20px 40px; */
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+* {
+	box-sizing: border-box;
+}
+.alert{
+    display: flex;
+    align-items: center;
+	justify-content: center;
+	color: rgb(255, 0, 0);
+}

@@ -1,0 +1,66 @@
+.progressbar{
+    display: flex;
+    height: 72px;
+    border: 2px solid lightgrey;
+    align-items: center;
+    justify-content: space-between;
+    /* position: relative; */
+    width: 100%;
+}
+.progressbar .left img{
+    object-fit: cover;
+    margin: 17px;
+    margin-left: 10rem;
+}
+.progressbar .left  h2{
+    color:#252036;
+background-color:rgba(0, 0, 0, 0);
+font-size:20px;
+line-height:24px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:0px 72.0375px 0px 0px;
+padding:0px;
+font-weight:700;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(37, 32, 54);
+text-align:left;
+text-indent:0px;
+align-self: center;
+}
+.progressbar .right .item .number,.progressbar .right,.progressbar .right .item,.progressbar .left{
+    display: flex;
+}
+.progressbar .right{
+    margin-right: 5rem;
+}
+.progressbar .right .item{
+    width: 100%;
+    align-items: center;
+    margin-right: 10px;
+}
+.progressbar .right .item .number{
+    border-radius: 100%;
+    object-fit: contain;
+    border: 2px solid lightgrey;
+    width: 25px;
+    height: 20px;
+    align-items: center;
+    justify-content: space-around;
+}
+.progressbar .right .item h5{
+    width: max-content;
+    margin: 5px;
+    text-transform:none;
+}
+.progressbar .right .item hr{
+    color: black;
+    width: 5rem;
+    background: rgb(182, 182, 182);
+    height: 3px;
+    border: none;
+    /* margin-left: -2.3rem; */
+}
