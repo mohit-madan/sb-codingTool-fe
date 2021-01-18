@@ -5,10 +5,9 @@ import SurveyDetails from './Survey-Details/SurveyDetails'
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import XLSX from "xlsx";
-import excelToJson  from "convert-excel-to-json"
 import ExcelReader from './ExcelReader';
 import {tempData} from "./Data"
-import ReactTable from "react-table";
+// import ReactTable from "react-table";
 import Tab from "./Table.js"
 
 const useStyles = makeStyles((theme) => ({

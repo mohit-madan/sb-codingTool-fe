@@ -54,6 +54,7 @@ align-self: center;
 .progressbar .right .item h5{
     width: max-content;
     margin: 5px;
+    text-transform:none;
 }
 .progressbar .right .item hr{
     color: black;

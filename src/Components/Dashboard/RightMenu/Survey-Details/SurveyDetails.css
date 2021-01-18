@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-top: -4rem;
 }
 .survey_details_top,.survey_details_title{
     display: flex;
@@ -9,7 +10,7 @@
     padding: 10px;
 }
 .survey_details_title{
-    border: 1px solid rgb(196, 196, 196);
+    border: 1px solid lightgrey;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     padding-top: 15px;
@@ -63,7 +64,9 @@ text-indent:0px;
     display: flex;
     height: 70%;
     justify-content: space-around ;
-    border:2px solid rgb(228, 228, 228)
+    border:1px solid lightgrey;
+    padding-bottom: 3.4rem;
+    padding-top: 2rem;
 }
 .survey_details_main_left,.survey_details_main_right{
     display: flex;
@@ -83,13 +86,111 @@ text-indent:0px;
     background: black;
     color: rgb(39, 39, 39);
 }
-input{
-    height: 20px;
-    width: 140%;
+.survey_details_main p{
+    color:
+    #777777;
+    color:
+    rgb(119, 119, 119);
+    font-size:
+12px;
+line-height:
+15px;
+vertical-align:
+baseline;
+letter-spacing:
+1px;
+word-spacing:
+0px;
+margin:
+0px;
+padding:
+0px;
+font-weight:
+400;
+font-style:
+normal;
+font-variant:
+normal;
+text-transform:
+none;
+text-decoration:
+none solid rgb(119, 119, 119);
+text-align:
+start;
+text-indent:
+0px;
+margin-top: 10px;
+}
+.survey_details_main h6{
+    color:#5f5f5f;
+font-size:
+15px;
+line-height:
+18px;
+vertical-align:
+baseline;
+letter-spacing:
+normal;
+word-spacing:
+0px;
+margin:
+0px;
+padding:
+0px;
+font-weight:
+400;
+font-style:
+normal;
+font-variant:
+normal;
+text-transform:
+none;
+text-decoration:
+none solid rgb(75, 75, 75);
+text-align:
+start;
+text-indent:
+0px;
+}
+.survey_details_main_left {
+    margin-left: -3.5rem;
+}
+.survey_details_main_left  input{
+    height: 35px;
+    width: 120%;
     outline: none;
-    border: 1px solid grey;
+    border: 1px solid lightgrey;
     padding: 12px;
     border-radius: 10px;
     margin: 5px;
     align-self: flex-start;
+    margin-left: -5px;
 }
+.survey_details_main_left .MuiFormControl-root{
+    margin-left: -5px;
+}
+.survey_details_main_left .MuiInputBase-root{
+    width: 130%;
+    margin-left: -0.7rem;
+}
+.survey_details_main_left .PrivateNotchedOutline-root-1 {
+    border: 1px solid lightgrey;
+}
+.survey_details_main_left .MuiOutlinedInput-root.Mui-focused,.MuiOutlinedInput-notchedOutline{
+    border-color: #30bcae!important;
+}
+.survey_details_main_right .MuiSelect-root{
+    width: 140px!important;
+    font-size: 1.4rem!important;
+}
+.survey_details_main_right .MuiMenuItem-root,.MuiMenuItem-gutters ,.MuiListItem-gutters ,.MuiListItem-button{
+    font-size: 1.4rem!important;
+}
+.MuiButtonBase-root{
+    font-size: 1.4rem!important;
+}
+/* MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button */
+/* MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense */
+/* MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl MuiInputBase-multiline MuiOutlinedInput-multiline MuiInputBase-marginDense MuiOutlinedInput-marginDense */
+/* PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline */
+/* class="MuiButtonBase-root MuiTableSortLabel-root" */

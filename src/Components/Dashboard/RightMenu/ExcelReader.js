@@ -12,7 +12,9 @@ class ExcelReader extends Component {
     this.state = {
       file: {},
       data: [],
-      cols: []
+      cols: [],
+      loading:false,
+      uploaded:false,
     }
     
     this.handleFile = this.handleFile.bind(this);
@@ -20,11 +22,16 @@ class ExcelReader extends Component {
   }
  
   handleChange(e) {
+    this.setState({loading:true})
     const files = e.target.files;
-    if (files && files[0]) this.setState({ file: files[0] });
+    if (files && files[0]){ 
+      this.setState({ file: files[0],uploaded:true,loading:true });
+    }
+    this.setState({loading:false})
   };
  
   handleFile() {
+    this.setState({loading:true})
     /* Boilerplate to set up FileReader */
     const reader = new FileReader();
     const rABS = !!reader.readAsBinaryString;
@@ -41,7 +48,7 @@ class ExcelReader extends Component {
       /* Update state */
       const {updateExcelData,setProgressNumber }=this.props
       this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
-        console.log(JSON.stringify(this.state.data, null, 2));
+        // console.log(JSON.stringify(this.state.data, null, 2));
         updateExcelData(JSON.stringify(this.state.data, null, 2))
         setProgressNumber(2)
       });
@@ -58,14 +65,18 @@ class ExcelReader extends Component {
   render() {
     return (
       <div>
+        {this.state.loading && <h1>Loading ...</h1>}
         <label htmlFor="file">Upload </label>
         <br />
         <input type="file" className="form-control" id="file" accept={SheetJSFT} onChange={this.handleChange} />
         <br />
-        <input type='submit' 
-          value="Process"
-          onClick={this.handleFile} />
-          </div>
+        {
+          this.state.uploaded && <input type='submit' 
+            value="Process"
+            onClick={this.handleFile} />
+        }
+        
+        </div>
       
     )
   }

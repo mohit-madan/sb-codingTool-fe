@@ -1,7 +1,8 @@
 import { excelDataActionTypes } from './excel-data.types';
 
 const INITIAL_STATE = {
-    excelData:null
+    excelData:null,
+    excelDataColumns:null,
 };
 
 const excelDataReducer = (state = INITIAL_STATE, action) => {
@@ -10,6 +11,11 @@ const excelDataReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         excelData: action.payload
+      };
+    case excelDataActionTypes.SET_EXCEL_DATA_COLUMNS:
+      return {
+        ...state,
+        excelDataColumns: action.payload
       };
     default:
       return state;

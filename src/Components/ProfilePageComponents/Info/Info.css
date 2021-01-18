@@ -1,0 +1,109 @@
+#info{
+  flex: 0;
+}
+.info{
+    padding: 0;
+    width: 100%;
+    overflow-y: overlay;
+    flex: 0.8;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    /* place-content: center; */
+    align-items: center;
+  }
+.info_profile_pic{
+  display: flex;
+  flex-direction: row;
+  margin-top: 50px;
+  place-items: center;
+}
+.info_profile_pic ._name{
+  margin-left: 20px;
+}
+.info_profile_pic a{
+  color: grey;
+}
+.MuiAvatar-root{
+  width: 120px!important;
+  height: 120px!important;
+}
+  ::-webkit-scrollbar {
+    display: none;
+  }
+.MuiTextField-root,.MuiFormControl-root{
+  width: 40rem!important;
+}
+
+.info ._input input[type=text], select {
+  width: 120%;
+  padding: 12px 20px;
+  margin: 8px;
+  display: inline-flex;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-right: 30px;
+}
+._input{
+  display: flex;
+  flex-direction: column;
+}
+._inputs{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.info_details{
+  place-self: normal;
+  width: 100%;
+  place-content: space-evenly;
+}
+/* .MuiFormLabel-root ,.MuiInputLabel-root, .MuiInputLabel-animated{
+  font-size: large!important;
+} */
+/* .MuiInputBase-root{
+  margin: 0!important;
+  width: 100%;
+  margin-left: -35px!important;
+  margin-top: 10px!important;
+} */
+.info ._multiselect{
+  width: 10rem;
+  margin-top: 10px;
+  margin-left: -60px;
+}
+.languages_known_label{
+  margin-left: -10px ;
+  margin-bottom: 20px;
+}
+.languages_known_options{
+  margin-top: 7px;
+}
+.MuiToggleButton-label{
+  color: rgb(93, 93, 93)!important;
+}
+.btn-grad {
+  background-image: linear-gradient(to right, #FF512F 0%, #F09819  51%, #FF512F  100%);
+
+}
+.btn-grad {
+            margin: 10px;
+            padding: 15px 45px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;            
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+            outline: none;
+            border: none;
+          }
+.btn-grad:hover {
+            background-position: right center; /* change the direction of the change here */
+            color: #fff;
+            text-decoration: none;
+          }
+    

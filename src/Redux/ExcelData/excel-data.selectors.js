@@ -6,3 +6,8 @@ export const selectExcelData = createSelector(
   [selectExcelDataReducer],
   user => user.excelData
 );
+export const selectExcelDataColumns = createSelector(
+  [selectExcelDataReducer],
+  user => user.excelDataColumns
+);
+

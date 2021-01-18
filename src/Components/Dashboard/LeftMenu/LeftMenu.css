@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     flex: 0.35;
-    height: 50vh;
+    height: 60vh;
     justify-content: center;
     position: sticky;
     margin-left: 10rem;
@@ -55,3 +55,68 @@ text-decoration:none solid rgb(71, 82, 93);
 text-align:start;
 text-indent:0px;
 }
+.leftmenu h5{
+    color:
+rgb(37, 32, 54);
+font-size:
+14px;
+line-height:
+16.8px;
+vertical-align:
+baseline;
+letter-spacing:
+normal;
+word-spacing:
+0px;
+margin:
+28px 0px 0px;
+padding:
+0px;
+font-weight:
+600;
+font-style:
+normal;
+font-variant:
+normal;
+text-transform:
+none;
+text-decoration:
+none solid rgb(37, 32, 54);
+text-align:
+start;
+text-indent:
+0px;
+}
+.leftmenu h6{
+    color: rgb(121 120 120);
+    font-size: 14px;
+    line-height: 16.8px;
+    vertical-align: baseline;
+    letter-spacing: normal;
+    word-spacing: 0px;
+    font-weight: 600;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-decoration: none solid rgb(37, 32, 54);
+    text-align: start;
+    text-indent: 0px;
+    border: 1px solid #30bcae;
+    padding: 7px;
+    border-radius: 7px;
+    width: max-content;
+    cursor: pointer;
+}
+.leftmenu .MuiInputBase-root{
+    width: 300px;
+}
+.leftmenu .MuiFormControl-root{
+    margin: 0!important;
+    margin-top: 10px!important;
+}
+.leftmenu .selections{
+    display: flex;
+    flex-direction: column;
+}
+/* MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl */
+/* MuiFormControl-root MuiTextField-root */
