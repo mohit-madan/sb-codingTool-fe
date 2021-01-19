@@ -137,7 +137,7 @@ function login(username, password, from) {
                     localStorage.setItem('user', JSON.stringify(user));
                     console.log("user -->",user);
                     dispatch(success(user));
-                    window.location.replace(`${config.redirecturl}/user/profile`);
+                    window.location.replace(`${config.redirecturl}/`);
                     return user;
                 },error => {
                     console.log("error-->actions",error)

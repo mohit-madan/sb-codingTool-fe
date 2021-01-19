@@ -5,7 +5,9 @@ import { setExcelData } from '../../../Redux/ExcelData/excel-data.actions';
 import { setProgressNumber } from '../../../Redux/Progress-number/progress.actions';
 import { make_cols } from './MakeColumns';
 import { SheetJSFT } from './types';
- 
+// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import Loader from 'react-loader-spinner'
+
 class ExcelReader extends Component {
   constructor(props) {
     super(props);
@@ -25,8 +27,9 @@ class ExcelReader extends Component {
     this.setState({loading:true})
     const files = e.target.files;
     if (files && files[0]){ 
-      this.setState({ file: files[0],uploaded:true,loading:true });
+      this.setState({ file: files[0],uploaded:true,loading:true },this.handleFile);
     }
+    
     this.setState({loading:false})
   };
  
@@ -64,23 +67,26 @@ class ExcelReader extends Component {
  
   render() {
     return (
-      <div>
-        {this.state.loading && <h1>Loading ...</h1>}
+      <div className="excel_reader">
+        	{this.state.loading && <Loader className="loader" type="TailSpin" color="#30bcae" height={60} width={60} />
+}
+        {/* {this.state.loading && <h1>Loading ...</h1>} */}
         <label htmlFor="file">Upload </label>
         <br />
         <input type="file" className="form-control" id="file" accept={SheetJSFT} onChange={this.handleChange} />
-        <br />
+        {/* <br />
         {
-          this.state.uploaded && <input type='submit' 
+          <input type='submit' 
             value="Process"
             onClick={this.handleFile} />
-        }
-        
+        }  */}
+        {/* this.state.uploaded &&  */}
         </div>
       
     )
   }
 }
+
 const mapDispatchToProps = dispatch => ({
     updateExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber))

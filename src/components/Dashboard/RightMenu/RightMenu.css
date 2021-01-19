@@ -59,6 +59,24 @@
     display: inline-grid;
     margin: auto;
 }
-
+.excel_reader,.excel_reader label{
+  width: 100%;
+  height: 100%;
+}
+.excel_reader label{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+}
+.excel_reader .loader{
+  position: absolute;
+  z-index: -1;
+  height: 45%;
+    width: 57%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 /* /////////////////////////////////////////////////////////////////////////////////// */
 

@@ -43,16 +43,17 @@ const Tab =({excelData,setRow,setExcelDataColumns})=>{
               accessor:"Qwa",
           }
         ]
+        const sliced=(myObject)=>{
+            Object.keys(myObject).slice(0, 30).reduce((result, key) => {
+                result[key] = myObject[key];
+
+                return result;
+            }, {});
+        }
          return(
-            // <ReactTable
-            // columns={col}
-            // data={tempData}
-            // // defaultPageSize={10}
-            // className="-striped -highlight"
-            // ></ReactTable>
             <MaterialTable
                 icons={tableIcons}
-                data={tempData}
+                data={(tempData)}
                 columns={col}
                 title="Demo"
                 actions = {[
