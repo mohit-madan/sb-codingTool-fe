@@ -1,3 +1,7 @@
 .dash{
     display: flex;
 }
+.codeit_dash{
+    height: 70vh;
+    padding: 30px 50px;
+}
