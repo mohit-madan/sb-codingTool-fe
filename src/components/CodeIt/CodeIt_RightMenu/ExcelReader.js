@@ -5,36 +5,14 @@ import { setExcelData } from '../../../Redux/ExcelData/excel-data.actions';
 import { setProgressNumber } from '../../../Redux/Progress-number/progress.actions';
 import { make_cols } from './MakeColumns';
 import { SheetJSFT } from './types';
+// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from 'react-loader-spinner'
-import { alertActions, userActions } from '../../../_actions';
-import { userConstants } from '../../../Constants';
-import config from '../../../config';
-import { handleResponse } from '../../../services';
-import axios from 'axios';
-
-// const poster = async ({file})=>{
-//     var data = new FormData();
-//     var fileData = document.querySelector('input[type="file"]').files[0];
-//     data.append("file", fileData);
-    
-//     const _token=JSON.parse(localStorage.token).accessToken
-//     axios.post("http://localhost:5000/uploadFile",data, {
-//       headers:{
-//         'Authorization': `Bearer ${_token}`,
-//       },
-//     }).then(reps=>{
-//         console.log(reps)
-//       },
-//       function (e) {
-//         console.log("e! ",e);
-//     })
-// }
 
 class ExcelReader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      file: '',
+      file: {},
       data: [],
       cols: [],
       loading:false,
@@ -44,15 +22,15 @@ class ExcelReader extends Component {
     this.handleFile = this.handleFile.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-  
-    handleChange(e){
+ 
+  handleChange(e) {
     this.setState({loading:true})
     const files = e.target.files;
     if (files && files[0]){ 
-      userActions.uploadFile()
       this.setState({ file: files[0],uploaded:true,loading:true },this.handleFile);
-      console.log("upload")
     }
+    
+    this.setState({loading:false})
   };
  
   handleFile() {
@@ -75,7 +53,6 @@ class ExcelReader extends Component {
       this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
         // console.log(JSON.stringify(this.state.data, null, 2));
         updateExcelData(JSON.stringify(this.state.data, null, 2))
-        localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2))
         setProgressNumber(2)
       });
  
@@ -87,22 +64,16 @@ class ExcelReader extends Component {
       reader.readAsArrayBuffer(this.state.file);
     };
   }
-
+ 
   render() {
     return (
       <div className="excel_reader">
         	{this.state.loading && <Loader className="loader" type="TailSpin" color="#30bcae" height={60} width={60} />
 }
         {/* {this.state.loading && <h1>Loading ...</h1>} */}
-        {/* <label htmlFor="file">Upload </label> */}
+        <label htmlFor="file">Upload </label>
         <br />
-        {/* <input type="file" className="form-control" id="file" accept={SheetJSFT} onChange={this.handleChange} /> */}
-        
-        <form encType="multipart/form-data" action>
-            <label htmlFor="file">Upload </label>
-            <input type="file" className="form-control" id="file" name="file" onChange={this.handleChange}/>
-        </form>
-
+        <input type="file" className="form-control" id="file" accept={SheetJSFT} onChange={this.handleChange} />
         {/* <br />
         {
           <input type='submit' 

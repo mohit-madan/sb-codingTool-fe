@@ -53,7 +53,7 @@ const Tab =({excelData,setRow,setExcelDataColumns})=>{
          return(
             <MaterialTable
                 icons={tableIcons}
-                data={(tempData)}
+                data={(Array.prototype.slice.call(tempData,tempData.length-30))}
                 columns={col}
                 title="Demo"
                 actions = {[

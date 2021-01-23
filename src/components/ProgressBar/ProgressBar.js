@@ -24,17 +24,12 @@ const ProgressBar=({progressNumber})=>{
                 </div>
                 <div className="item">
                     <div  key={3} style={progressNumber>=3 ? highlightStyle : null} className="number">{progressNumber>3 ? `✔`: 3}</div>
-                    <h5  style={progressNumber>3 ? textStyle : null}>Open Ends</h5>
+                    <h5  style={progressNumber>3 ? textStyle : null}>Details</h5>
                     <hr/>
                 </div>
                 <div className="item">
                     <div  key={4} style={progressNumber>=4 ? highlightStyle : null} className="number">{progressNumber>4 ? `✔`: 4}</div>
-                    <h5  style={progressNumber>4 ? textStyle : null}>Details</h5>
-                    <hr/>
-                </div>
-                <div className="item">
-                    <div  key={5} style={progressNumber>=5 ? highlightStyle : null} className="number">{progressNumber>5 ? `✔`: 5}</div>
-                    <h5  style={progressNumber>5 ? textStyle : null}>Review & Submit</h5>
+                    <h5  style={progressNumber>4 ? textStyle : null}>Review & Submit</h5>
                 </div>
             </div>
         </div>

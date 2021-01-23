@@ -9,6 +9,7 @@ import ExcelReader from './ExcelReader';
 import {tempData} from "./Data"
 // import ReactTable from "react-table";
 import Tab from "./Table.js"
+import Upload from './customUpload';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,12 +107,9 @@ function RightMenu({progressNumber}) {
         <div style={progressNumber===1 ?  {border:"1px solid grey"} : null} className="rightmenu">
             
             {progressNumber==1 && <ExcelReader />}
-
             {progressNumber==2 && <Tab />}
-            
-
-            {progressNumber==4 && <SurveyDetails />}
-            {progressNumber==5 && <Summary />}
+            {progressNumber==3 && <SurveyDetails />}
+            {progressNumber==4 && <Summary />}
         </div>
     )
 }

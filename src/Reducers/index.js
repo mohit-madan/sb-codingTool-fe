@@ -8,6 +8,7 @@ import progressNumberReducer from '../Redux/Progress-number/progress.reducer';
 import surveyDetailsReducer from '../Redux/SurveyDetails/survey-details.reducer';
 import excelDataReducer from '../Redux/ExcelData/excel-data.reducer';
 import tableSelectionsReducer from '../Redux/SelectedRowandColumn/tableSelections.reducer';
+import codeItDataReducer from '../Redux/CodeitData/codeit-data.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     surveyDetails:surveyDetailsReducer,
     excelData:excelDataReducer,
     tableSelections:tableSelectionsReducer,
+    codeItData:codeItDataReducer,
 });
 
 export default rootReducer;

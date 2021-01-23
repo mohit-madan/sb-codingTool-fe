@@ -7,9 +7,14 @@ import { selectColumn, selectRow } from '../../Redux/SelectedRowandColumn/tableS
 import { createStructuredSelector } from 'reselect';
 import { selectSurveyDetails } from '../../Redux/SurveyDetails/survey-details.selectors';
 import { selectExcelData } from '../../Redux/ExcelData/excel-data.selectors';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import config from '../../config';
+import { handleResponse } from '../../services';
 
 const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
-    console.log(surveyDetails)
+
+
     const next=()=>{
         if(progressNumber===1 && !excelData){
             alert("Please Uplaod a file")
@@ -25,11 +30,28 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
                 return
             }
         }
-        if(progressNumber===4 && !surveyDetails?.description && !surveyDetails?.name && !surveyDetails?.industry && !surveyDetails?.type){
+        if(progressNumber===3 && !surveyDetails?.description && !surveyDetails?.name && !surveyDetails?.industry && !surveyDetails?.type){
             alert("Please fill all the fields to continue")
             return
         }
-        progressNumber<=4 && setProgressNumber(progressNumber+1)
+        progressNumber<=3 && setProgressNumber(progressNumber+1)
+    }
+    const onSubmit=()=>{
+        const details={
+            "name":surveyDetails.name,
+            "desc":surveyDetails.description,
+            "key":localStorage.fileKey
+        }
+        const _token=JSON.parse(localStorage.token).accessToken
+        const requestOptions = {
+            headers: {'Authorization': `Bearer ${_token}`}
+        };
+         axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
+        .then(data=>{
+            alert(data?.data?.message);
+            window.location.replace(`${config.redirecturl}/tool`);
+        })
+        .catch(err=>alert(`Failed to submit`))
     }
     return (
         <div className="footer">
@@ -39,7 +61,9 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
             <div className="middle"></div>
             <div className="right">
                 <Button color="primary" onClick={()=>{progressNumber>1 && setProgressNumber(progressNumber-1)}}>Prev</Button>
-                <Button variant="contained"  color="primary" onClick={next}>Next</Button>
+                {progressNumber<=3 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
+                {progressNumber===4 && <Button variant="contained"  color="primary" onClick={onSubmit}>Next</Button>}
+            
             </div>
         </div>
     )

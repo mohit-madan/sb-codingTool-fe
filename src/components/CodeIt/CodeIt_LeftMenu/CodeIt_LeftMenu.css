@@ -1,5 +1,5 @@
 .codeit_leftmenu{
-    flex: 0.3;
+    flex: 0.4;
     border: 2px solid black;
     margin-right: 50px;
     display: flex;
@@ -32,7 +32,7 @@
     margin-bottom: 5px;
     align-items: center;
 }
-.codeit_leftmenu .flex input{
+.codeit_leftmenu .flex ._a{
     padding: 0%;
     border-top: 0;
     border-left: 0;
@@ -40,3 +40,10 @@
 .codeit_leftmenu .background-color{
     background-color: #ebeaeb;
 }
+.codeit_leftmenu .width{
+  width: 100px;
+}
+/*  style={{width: "100px"}}  */
+/* .codeit_leftmenu input{
+  width:100px!important;
+} */

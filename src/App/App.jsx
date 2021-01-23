@@ -11,6 +11,7 @@ import PrivateRoute from '../components/PrivateRoute/PrivateRoute';
 import ForgotPassword from '../components/ForgotPassword/ForgotPassword';
 import { ResetPassword } from '../components/Reset-Password/ResetPassword';
 import UploaderPage from "../pages/Uploader/UploaderPage.js"
+import CodeIt from '../pages/CodeIt/CodeIt';
 function App() {
     // const users = useSelector(state => state.users);
     // const user = useSelector(state => state.authentication.user);
@@ -39,8 +40,8 @@ function App() {
                                   )
                                 }
                             /> */}
-                            {/* UploaderPage */}
-                            <Route  path="/" component={UploaderPage} />
+                            <PrivateRoute  path="/tool" component={CodeIt} />
+                            <PrivateRoute  path="/" component={UploaderPage} />
                             <Route  path={`/resetPassword/:token`} component={ResetPassword} />
                             <Redirect from="*" to="/" />
                         </Switch>

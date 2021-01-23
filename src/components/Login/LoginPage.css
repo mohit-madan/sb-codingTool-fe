@@ -20,6 +20,13 @@
     align-items: center;
     place-items: center;
 }
+.login_box .form_box{
+    width: 40rem;
+    padding: 0 20px;
+}
+.MuiFormControl-root{
+    place-self: center;
+}
 .register_box{
     margin-top: 60px;
 }

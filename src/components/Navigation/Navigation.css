@@ -4,6 +4,7 @@
     display: flex;
     /* position: fixed; */
     width: 100%;
+    justify-content: space-around;
 }
 .navigation h2{
     color:#ffffff;

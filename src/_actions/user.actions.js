@@ -4,8 +4,8 @@ import { alertActions } from '.';
 import { history } from '../_helpers';
 import config from "../config.js"
 import { authHeader } from '../_helpers';
-// import {handleResponse} from "../services"
 import axios from "axios"
+// import {handleResponse} from "../services"
 
 export const userActions = {
     login,
@@ -14,9 +14,31 @@ export const userActions = {
     getAll,
     forgotPass,
     resetPass,
-    forgotPassOTP
+    forgotPassOTP,
+    uploadFile,
 };
-
+function uploadFile(){
+    var data = new FormData();
+    var fileData = document.querySelector('input[type="file"]').files[0];
+    data.append("file", fileData);
+    
+    const _token=JSON.parse(localStorage.token).accessToken
+    axios.post(`${config.apiUrl}/uploadFile`,data, {
+      headers:{
+        'Authorization': `Bearer ${_token}`,
+      },
+    }).then(resp=>resp.data).then(resp1=>{
+        console.log(resp1)
+        if(resp1?.err){
+            alert(`${resp1?.err?.message},"Please Login Again"`)
+        }else{
+            if(resp1?.key){
+                localStorage.setItem("fileKey",resp1?.key)
+                alert(`${resp1?.message}`)
+            }
+        }
+    })
+}
 function resetPass(user) {
     return dispatch => {
         // dispatch(request(user));
@@ -94,19 +116,6 @@ function login(username, password, from) {
     return dispatch => {
         dispatch(request({ username }));
 
-        // userService.login(username, password)
-            // .then(
-            //     user => { 
-            //         console.log("user-->actions",user)
-                    // dispatch(success(user));
-                    // window.location.replace(`${config.redirecturl}/user/profile`);
-            //     },
-                // error => {
-                //     console.log("error-->actions",error)
-                //     dispatch(failure(error.toString()));
-                //     dispatch(alertActions.error(error.toString()));
-                // }
-            // );
 
         const requestOptions = {
             method: 'POST',

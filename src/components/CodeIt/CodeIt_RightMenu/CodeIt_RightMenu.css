@@ -1,6 +1,36 @@
 .codeit_rightmenu{
     flex: 0.7;
-    border: 2px solid black;
+    /* border: 2px solid black; */
     height: 100%;
     overflow-y: scroll;
+    
 }
+.MuiTypography-caption{
+    font-size: 1.4rem!important;
+}
+.MuiInputBase-input{
+    font-size: 1.1rem!important;
+}
+.codeit_rightmenu .MuiPaper-root{
+    width: -webkit-fill-available!important;
+}
+.flex{
+    display: inline-flex!important;
+    /* position: fixed; */
+}
+.MuiLinearProgress-root{
+    width: 250px!important;
+    border: 3px solid grey;
+    height: 20px!important;
+    margin-bottom: 3px;
+    display: flex;
+    margin-left: 50px!important;
+}
+/* class="MuiLinearProgress-root WithStyles(ForwardRef(LinearProgress))-root-6 MuiLinearProgress-colorPrimary WithStyles(ForwardRef(LinearProgress))-colorPrimary-7 MuiLinearProgress-determinate" */
+/* MuiPaper-root MuiMenu-paper MuiPopover-paper MuiPaper-elevation8 MuiPaper-rounded */
+/* MuiTypography-root MuiTypography-caption */
+/* MuiSelect-root MuiSelect-select MuiTablePagination-select MuiSelect-selectMenu MuiInputBase-input */
+/* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */
+/* MuiListItemText-root */
+/* MuiList-root MuiMenu-list MuiList-padding */
+/* MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button */
