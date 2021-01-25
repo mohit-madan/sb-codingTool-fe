@@ -43,31 +43,25 @@ const Tab =({excelData,setRow,setExcelDataColumns})=>{
               accessor:"Qwa",
           }
         ]
-        const sliced=(myObject)=>{
-            Object.keys(myObject).slice(0, 30).reduce((result, key) => {
-                result[key] = myObject[key];
 
-                return result;
-            }, {});
-        }
          return(
             <MaterialTable
                 icons={tableIcons}
                 data={(Array.prototype.slice.call(tempData,tempData.length-30))}
                 columns={col}
                 title="Demo"
-                actions = {[
-                    {
-                      icon: () => <AddCircleIcon />,
-                      tooltip: <p>Select this Row</p>,
-                      onClick: (event, rowData) => {setSelectedRow((rowData),console.log(selectedRow));;setRow(rowData)},
-                      position: "row"
-                    }
-                  ]}
+                // actions = {[
+                //     {
+                //       icon: () => <AddCircleIcon />,
+                //       tooltip: <p>Select this Row</p>,
+                //       onClick: (event, rowData) => {setSelectedRow((rowData),console.log(selectedRow));;setRow(rowData)},
+                //       position: "row"
+                //     }
+                //   ]}
                 options={{
                     selection: false,
                     exportButton: true,
-                    filtering: true,
+                    filtering: false,
                     grouping: false,
                     search: false,
                     sorting: true,
@@ -82,7 +76,7 @@ const mapStateToProps=createStructuredSelector({
     excelData:selectExcelData,
 })
 const mapDispatchToProps = dispatch => ({
-    setRow: collectionsMap => dispatch(setRow(collectionsMap)),
+    // setRow: collectionsMap => dispatch(setRow(collectionsMap)),
     setExcelDataColumns: collectionsMap => dispatch(setExcelDataColumns(collectionsMap)),
 });
  export default connect(mapStateToProps,mapDispatchToProps)(Tab)

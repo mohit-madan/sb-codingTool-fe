@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../config';
 import { handleResponse } from '../../services';
+import {history} from "../../_helpers"
 
 const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
@@ -21,10 +22,6 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
             return
         }
         if(progressNumber===2){
-            if(!row ){
-                alert("Please Selelct a Row to Continue")
-                return
-            }
             if(!column){
                 alert("Please Selelct a Column to Continue")
                 return
@@ -49,7 +46,8 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
          axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
         .then(data=>{
             alert(data?.data?.message);
-            window.location.replace(`${config.redirecturl}/tool`);
+            // window.location.replace(`${config.redirecturl}/tool`);
+            history.push('/tool')
         })
         .catch(err=>alert(`Failed to submit`))
     }

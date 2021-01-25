@@ -24,6 +24,7 @@ import Chip from '@material-ui/core/Chip';
 import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNumberOfInputsGreaterThan2, increaseProgressLength, setCodes } from "../../../Redux/CodeitData/codeit-data.actions.js";
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import io from 'socket.io-client'
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -305,18 +306,20 @@ let __data=[
   }
 ]
 
+const socket = io.connect('http://localhost:4000')
 
 
 const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
     const classes = useStyles();
-    const theme = useTheme();
-    const [personName, setPersonName] = React.useState([]);
+    // const theme = useTheme();
+    // const [personName, setPersonName] = React.useState([]);
     // const [progresslength,setProgressLength]=React.useState(0)
 
     const [selectedRow,setSelectedRow]=useState(null)
 
     const tempData=JSON.parse(excelData ? excelData : localStorage.excelData)
     let transformedData=tempData
+
     // Mapper
     let mapper={}
     let i=0
@@ -324,41 +327,56 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
 
     const [keywords,setkeywords]=useState(mapper)
     const [codes,setCodes]=useState(mapper)
+    useEffect( ()=>{
+
+        socket.on('input-box', async ({num ,value}) => {
+            if(codes[num]!==value){
+                setCodes({...codes,[num] : value},()=>
+                console.log(codes[num],value))
+            }
+        })
+        socket.on('keywords', ({num ,value}) => {
+          setkeywords({...keywords,[num] : value})
+        })
+                 
+    })
 
     const handleChange= rowData => (event) => {
-      let value =event.target.value;
-      let num=rowData.tableData.id
-    setPersonName(event.target.value);
-    setkeywords({...keywords,[num] : []})
-    setkeywords({...keywords,[num] : value},console.log(keywords))
-  };
+        let value =event.target.value;
+        let num=rowData.tableData.id
+        // setPersonName(event.target.value);
+        // setkeywords({...keywords,[num] : []})
+        // setkeywords({...keywords,[num] : value},console.log(keywords))
+        socket.emit('keywords',{num,value})
+    };
 
-  var ratio=0;
-  useEffect(()=>{
+//   var ratio=0;
+//   useEffect(()=>{
     //   setProgressLength(count/Object.size(codes))
-    ratio=1/Object.size(codes)
-  },[])
+    // ratio=1/Object.size(codes)
+//   },[])
 
-  const [before,setBefore]=useState(0);
+//   const [before,setBefore]=useState(0);
 
-  const handleCodes=rowData=>(event)=>{
+  const handleCodes=rowData=>async (event)=>{
     let value =event.target.value;
     let num=rowData.tableData.id
-    setBefore(1)
+    socket.emit('input-box',{num,value})
+    // setBefore(1)
     
-    // setCodesinRedux(codes)
-    setCodes({...codes,[num] : value})
-        return ()=>{
-            if(codes[num]?.length < 2 && before===1){
-                decreaseNumberOfInputsGreaterThan2()
-            }
-            if(codes[num].length >= 2 && before===0){
-                increaseNumberOfInputsGreaterThan2()
-            }
-            setBefore(0)
-        }
+   
+    // // setCodesinRedux(codes)
+    //  setCodes({...codes,[num] : value})
+        // return ()=>{
+        //     if(codes[num]?.length < 2 && before===1){
+        //         decreaseNumberOfInputsGreaterThan2()
+        //     }
+        //     if(codes[num].length >= 2 && before===0){
+        //         increaseNumberOfInputsGreaterThan2()
+        //     }
+        //     setBefore(0)
+        // }
     
-
 
     // if(codes[num].length>2){
     //     console.log(codes)
@@ -372,6 +390,10 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
         let columns_titles=[]
         i=0
 
+        useEffect(() => {
+            
+        }, [])
+
         for(i in k){ 
             col=[...col,{title:`${k[i].slice(0,40)}...`,field:k[i]}];
         }
@@ -380,7 +402,7 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
 
 
             {title:"Codes",field:"Codes",
-            render: rowData => <input onChange={handleCodes(rowData)} type="text"/>
+            render: rowData => <input onChange={handleCodes(rowData)} value={codes[rowData.tableData.id]} type="text"/>
             },
 
 
@@ -400,7 +422,7 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
                                     >
                                       {rowData['YAKE Prediction']?.split('/').map((name) => (
                                         <MenuItem key={rowData.tableData.id} value={name}>
-                                          <Checkbox checked={personName.indexOf(name) > -1} />
+                                          <Checkbox checked={keywords[rowData.tableData.id].indexOf(name) > -1} />
                                           <ListItemText primary={name} />
                                         </MenuItem>
                                       ))}
@@ -418,14 +440,16 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
         },[])
         // style={{"display":"flex","placeContent":"center"}}
 
-        Object.size = function(obj) {
-            var size = 0,
-              key;
-            for (key in obj) {
-              if (obj.hasOwnProperty(key)) size++;
-            }
-            return size;
-          }
+        // Object.size = function(obj) {
+        //     var size = 0,
+        //       key;
+        //     for (key in obj) {
+        //       if (obj.hasOwnProperty(key)) size++;
+        //     }
+        //     return size;
+        //   }
+
+
         // var count=0;
         // useEffect(()=>{
         //     for(let i=0;i<Object.size(codes);i++){
@@ -438,23 +462,23 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
         // },[codes])
 
          return(
-    <div style={{border: "2px solid black"}}>
+            <div style={{border: "2px solid black"}}>
                  {/* <div className='flex'>
-             Progress : <BorderLinearProgress variant="determinate" value={progresslength*100} />
-             </div> */}
-            <MaterialTable
-                icons={tableIcons}
+                     Progress : <BorderLinearProgress variant="determinate" value={progresslength*100} />
+                     </div> */}
+                    <MaterialTable
+                        icons={tableIcons}
                 data={(transformedData)}
                 columns={col}
                 title="Demo"
-                actions = {[
-                    {
-                      icon: () => <AddCircleIcon />,
-                      tooltip: <p>Select this Row</p>,
-                      onClick: (event, rowData) => {setSelectedRow((rowData),console.log(selectedRow));;setRow(rowData)},
-                      position: "row"
-                    }
-                  ]}
+                // actions = {[
+                //     {
+                //       icon: () => <AddCircleIcon />,
+                //       tooltip: <p>Select this Row</p>,
+                //       onClick: (event, rowData) => {setSelectedRow((rowData),console.log(selectedRow));;setRow(rowData)},
+                //       position: "row"
+                //     }
+                //   ]}
                 options={{
                     selection: false,
                     exportButton: true,
@@ -488,8 +512,8 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
                     lastTooltip: 'Last Page'
                   }
                 }}
-                onSelectionChange={(rows) => {console.log(rows)}}
-            />
+                        onSelectionChange={(rows) => {console.log(rows)}}
+                    />
             </div>
          )
      }
@@ -503,8 +527,8 @@ const mapDispatchToProps = dispatch => ({
     // setCodesinRedux: collectionsMap => dispatch(setCodes(collectionsMap)),
     // increaseProgressLength: collectionsMap => dispatch(increaseProgressLength(collectionsMap)),
     // decreaseProgressLength: collectionsMap => dispatch(decreaseProgressLength(collectionsMap)),
-    increaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(increaseNumberOfInputsGreaterThan2(collectionsMap)),
-    decreaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(decreaseNumberOfInputsGreaterThan2(collectionsMap)),
+    // increaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(increaseNumberOfInputsGreaterThan2(collectionsMap)),
+    // decreaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(decreaseNumberOfInputsGreaterThan2(collectionsMap)),
     
     // decreaseNumberOfInputsGreaterThan2
     // increaseNumberOfInputsGreaterThan2

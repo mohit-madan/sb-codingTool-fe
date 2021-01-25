@@ -1,5 +1,5 @@
 import { TextField } from "@material-ui/core"
-import React,{useState} from "react"
+import React,{useState,useEffect} from "react"
 import "./SurveyDetails.css"
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,24 +11,6 @@ import { createStructuredSelector } from "reselect"
 
 // import TagsInput from 'react-tagsinput'
 
-const currencies = [
-    {
-      value: 'USD',
-      label: '$',
-    },
-    {
-      value: 'EUR',
-      label: '€',
-    },
-    {
-      value: 'BTC',
-      label: '฿',
-    },
-    {
-      value: 'JPY',
-      label: '¥',
-    },
-  ];
 const industries=[
   {
   "name": "Industry "
@@ -493,18 +475,22 @@ const types=[
 ]
 const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
     const [surveyDetails,setSurveyDetails] = useState({
-        name:"",
-        description:'',
-        industry:'',
-        type:'',
+        name:surveyDetailsFromStore ? surveyDetailsFromStore?.name : "",
+        description:surveyDetailsFromStore ? surveyDetailsFromStore?.description : "",
+        industry:surveyDetailsFromStore ? surveyDetailsFromStore?.industry : "",
+        type:surveyDetailsFromStore ? surveyDetailsFromStore?.type : "",
         tags:[]
     })
-    console.log(surveyDetailsFromStore)
-  const handleChange = (event) => {
+    useEffect(() => {
+      console.log(surveyDetailsFromStore)
+    })
+
+  const handleChange = async (event) => {
     const {value,name}=event.target;
     setSurveyDetails({...surveyDetails,[name]:value})
+    updateSurveyDetails({...surveyDetails,[name]:value})
     console.log(surveyDetails)
-    updateSurveyDetails(surveyDetails)
+    
   };
   const handleChangeTags=event=>{
     setSurveyDetails({...surveyDetails,tags:[...surveyDetails.tags,event.target.value]})
@@ -515,15 +501,15 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
         <div className="survey_details">
             <div className='survey_details_top'>
                 <p>SURVEY 1 of 1</p>
-                <p>0</p>
+                <p>1</p>
             </div>
             <div className='survey_details_title'>
                 <label style={{width:"60%"}} className="container">
-                    <input type="checkbox" defaultChecked="checked" />
+                    {/* <input type="checkbox" defaultChecked="checked" /> */}
                     <span className="checkmark" />
                     SURVEY
                 </label>
-                <a>See Example Row</a>
+                {/* <a>See Example Row</a> */}
             </div>
             <div className='survey_details_main'>
                 <div className="survey_details_main_left">
