@@ -327,18 +327,23 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
 
     const [keywords,setkeywords]=useState(mapper)
     const [codes,setCodes]=useState(mapper)
-    useEffect( ()=>{
 
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+      
+
+    useEffect(()=>{
         socket.on('input-box', async ({num ,value}) => {
             if(codes[num]!==value){
-                setCodes({...codes,[num] : value},()=>
-                console.log(codes[num],value))
+                setCodes({...codes,[num] : value})
             }
         })
         socket.on('keywords', ({num ,value}) => {
           setkeywords({...keywords,[num] : value})
         })
-                 
+        // await sleep(2000)
     })
 
     const handleChange= rowData => (event) => {

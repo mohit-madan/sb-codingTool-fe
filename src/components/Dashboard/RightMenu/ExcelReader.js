@@ -11,24 +11,20 @@ import { userConstants } from '../../../Constants';
 import config from '../../../config';
 import { handleResponse } from '../../../services';
 import axios from 'axios';
+import WithSpinner from "../../with-spinner/with-spinner.component"
 
-// const poster = async ({file})=>{
-//     var data = new FormData();
-//     var fileData = document.querySelector('input[type="file"]').files[0];
-//     data.append("file", fileData);
-    
-//     const _token=JSON.parse(localStorage.token).accessToken
-//     axios.post("http://localhost:5000/uploadFile",data, {
-//       headers:{
-//         'Authorization': `Bearer ${_token}`,
-//       },
-//     }).then(reps=>{
-//         console.log(reps)
-//       },
-//       function (e) {
-//         console.log("e! ",e);
-//     })
-// }
+const ExcelReaderHTML=({x=this.handleChange})=>{
+  return(
+    <div className="excel_reader">
+      <form encType="multipart/form-data" action>
+        <label htmlFor="file">Upload </label>
+        <input type="file" className="form-control" id="file" name="file" onChange={x}/>
+      </form>
+    </div>
+  )
+}
+
+const ExcelReaderWithHOC=WithSpinner(ExcelReaderHTML)
 
 class ExcelReader extends Component {
   constructor(props) {
@@ -90,27 +86,7 @@ class ExcelReader extends Component {
 
   render() {
     return (
-      <div className="excel_reader">
-        	{this.state.loading && <Loader className="loader" type="TailSpin" color="#30bcae" height={60} width={60} />
-}
-        {/* {this.state.loading && <h1>Loading ...</h1>} */}
-        {/* <label htmlFor="file">Upload </label> */}
-        <br />
-        {/* <input type="file" className="form-control" id="file" accept={SheetJSFT} onChange={this.handleChange} /> */}
-        
-        <form encType="multipart/form-data" action>
-            <label htmlFor="file">Upload </label>
-            <input type="file" className="form-control" id="file" name="file" onChange={this.handleChange}/>
-        </form>
-
-        {/* <br />
-        {
-          <input type='submit' 
-            value="Process"
-            onClick={this.handleFile} />
-        }  */}
-        {/* this.state.uploaded &&  */}
-        </div>
+      <ExcelReaderWithHOC isLoading={this.state.loading} x={this.handleChange}/>
       
     )
   }
