@@ -329,11 +329,6 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
     const [codes,setCodes]=useState(mapper)
 
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-      
-
     useEffect(()=>{
         socket.on('input-box', async ({num ,value}) => {
             if(codes[num]!==value){

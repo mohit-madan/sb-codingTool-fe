@@ -9,7 +9,6 @@ import ExcelReader from './ExcelReader';
 import {tempData} from "./Data"
 // import ReactTable from "react-table";
 import Tab from "./Table.js"
-import Upload from './customUpload';
 
 const useStyles = makeStyles((theme) => ({
   root: {

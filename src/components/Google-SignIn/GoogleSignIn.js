@@ -4,10 +4,12 @@ import { connect } from "react-redux";
 import CustomButton from "../custom-button/custom-button.component";
 import config from "../../config.js"
 import { Link } from "react-router-dom";
+import { history } from "../../_helpers";
 
 class GoogleSignIn extends React.Component{
     responseGoogle = async (response) => {
-        window.location.replace(`${config.redirecturl}/user/profile`);
+        // window.location.replace(`${config.redirecturl}/user/profile`);
+        history.push('/user/profile')
         console.log(response);
         const { setGoogleUser } = this.props;
         setGoogleUser(response)
@@ -27,7 +29,7 @@ class GoogleSignIn extends React.Component{
                 redirectUri={`http://localhost:3000/user/profile`}
                 buttonText="Login"
                 onSuccess={this.responseGoogle}
-                onFailure={this.responseGoogle}
+                onFailure={e=>console.log(e)}
                 // cookiePolicy={'single_host_origin'}
             />
           </a>

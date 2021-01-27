@@ -8,106 +8,206 @@ import ListIcon from '@material-ui/icons/List';
 import SearchIcon from '@material-ui/icons/Search';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { connect } from "react-redux";
+import LeftMenuTop from "./LeftMenuTop";
+import LeftMenu_EditOptions from "./LeftMenu_EditOptions";
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu'
+import './styles/react-contextmenu.css'
+import './styles/custom.css'
+import FilterListTwoToneIcon from '@material-ui/icons/FilterListTwoTone';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import SettingsIcon from '@material-ui/icons/Settings';
+import DescriptionIcon from '@material-ui/icons/Description';
+import AddIcon from '@material-ui/icons/Add';
+import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 
-class CodeIt_LeftMenu extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { values: [] };
-      this.handleSubmit = this.handleSubmit.bind(this);
+const styles = {
+  textAlign: 'center',
+  backgroundColor: '#CCC',
+  padding: 30
+}
+
+const ID = 'ID'
+
+const handleClick = (event, data) => {
+  console.log(`clicked`, { event, data })
+}
+
+const attributes = {
+  className: 'custom-root',
+  disabledClassName: 'custom-disabled',
+  dividerClassName: 'custom-divider',
+  selectedClassName: 'custom-selected'
+}
+
+const CodeIt_LeftMenu =()=>{
+    const [state,setState] = useState({ values: [] })
+    let count=0
+    const [inputCodes,setinputCodes]=useState({})
+    const [finalCodes,setFinalCodes]=useState({})
+
+    const handleChange =(i)=>(event)=>{
+      setinputCodes({...inputCodes,[i]:event.target.value})
+      setFinalCodes({...inputCodes,[i]:event.target.value})
+    }
+    const handleSwitchChange=i=>(event)=>{
+      if(!event.target.checked){
+        setFinalCodes({...inputCodes,[i]:null})
+      }else{
+        setFinalCodes({...inputCodes,[i]:inputCodes[i]})
+      }
+      console.log(finalCodes)
     }
 
-    createUI(){
-       return this.state.values.map((el, i) => 
+    function createUI(){
+       return state.values.map((el, i) => 
         <div >
-        <div className="flex">
-            <div style={{alignItems: "end"}} className="flex">
-                &nbsp;&nbsp;
-                {/* <input type="radio" id="other" value="other" /> */}
-                <input type='button' value='remove' onClick={this.removeClick.bind(this, i)}/>
-                {/* <Radio onChange={e=>console.log(e)}/> */}
-                &nbsp;&nbsp;
-                <input className='width'/>
-                {/* style={{border:"none"}} */}
-            </div>
-            <div className="flex" >
-                <ListIcon />&nbsp;&nbsp;&nbsp;
-                86.72%(73)
-            </div>
-        </div>
-         
+          <ContextMenuTrigger id={ID}>
+          <div className="flex">
+              <div style={{alignItems: "center"}} className="flex">
+                  &nbsp;&nbsp;
+                  <Switch
+                    size="small"
+                    defaultChecked
+                    color="default"
+                    inputProps={{ 'aria-label': 'checkbox with default color' }}
+                    onChange={handleSwitchChange(i+1)}
+                  />
+                  {console.log(i)}
+                  <p >{`${i+1}`}</p>
+                  &nbsp;&nbsp;
+                  <input value={inputCodes[i+1]} onChange={handleChange(i+1)} className='width' />
+              </div>
+              <div className="flex" >
+                  <ListIcon />&nbsp;&nbsp;&nbsp;
+                  86.72%(73)
+              </div>
+          </div>
+          </ContextMenuTrigger>
+            <ContextMenu id={ID}>
+              {inputCodes[i+1] && <MenuItem
+                className="input_value_in_dropdown"
+                data={{ action: 'name_of_code' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                {`${i+1} . ${inputCodes[i+1]}`}
+              </MenuItem>}
+              <MenuItem
+                data={{ action: 'Show Suggestions' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <FilterListTwoToneIcon fontSize="small"/> Show Suggestions
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <VisibilityIcon /> Show Coded As
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <VisibilityOffIcon /> Show Not Coded As
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <SettingsIcon /> Apply Text Match rules
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <ListIcon /> Edit Text Match rules
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <DescriptionIcon  /> Set Item Description
+              </MenuItem>
+
+              <MenuItem divider />
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <SettingsIcon /> Apply Text Match Rules (all)
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <VisibilityIcon /> Show Coded
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <VisibilityOffIcon /> Show UnCoded
+              </MenuItem>
+
+              <MenuItem divider />
+              
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <AddIcon /> Add New Item
+              </MenuItem>
+
+              <MenuItem
+                data={{ action: 'paste' }}
+                onClick={handleClick}
+                attributes={attributes}
+              >
+                <AddBoxRoundedIcon /> Add Multiple Items
+              </MenuItem>
+              
+            </ContextMenu>
          </div>
        )
     }
   
-    handleChange(i, event) {
-       let values = [...this.state.values];
-       values[i] = event.target.value;
-       this.setState({ values });
-    }
-    
-    addClick(){
-      this.setState(prevState => ({ values: [...prevState.values, '']}))
-    }
-    
-    removeClick(i){
-       let values = [...this.state.values];
-       values.splice(i,1);
-       this.setState({ values });
+    function addClick(){
+      setState(prevState => ({ values: [...prevState.values, '']}))
+
     }
   
-    handleSubmit(event) {
-      alert('A name was submitted: ' + this.state.values.join(', '));
-      event.preventDefault();
-    }
-  
-    render() {
+
       return (
         
         <div className="codeit_leftmenu">
-                <div className="flex">
-                    <div className="flex">
-                        <input className=" _1"
-                         placeholder={`Filter by Keyword`} />
-                    </div>
-                    <div className="flex">
-                    Order : 
-                        <div class="dropdown">
-                            <button class="dropbtn">Dropdown</button>
-                            <div class="dropdown-content">
-                              <a href="#">Link 1</a>
-                              <a href="#">Link 2</a>
-                              <a href="#">Link 3</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="background-color flex">
-                    <div className="">
-                        Edit mode:
-                        <Switch
-                            defaultChecked
-                            color="default"
-                            inputProps={{ 'aria-label': 'checkbox with default color' }}
-                        />
-                    </div>
-                    <div >
-                        <button> <ChevronRightIcon/></button>
-                        <button> <ExpandMoreIcon/></button>
-                        <button> +</button>
-                        <button> <ChevronRightIcon/></button>
-                        <button> <ExpandMoreIcon/></button>
-                        <button> +</button>
-                    </div>
-                </div>
-                <form onSubmit={this.handleSubmit}>
-                    {this.createUI()}        
-                    <input type='button' value='Add a Code' onClick={this.addClick.bind(this)}/>
-                    {/* <input type="submit" value="Submit" /> */}
-                </form>
-            
-            </div>
+          <LeftMenuTop />
+          <LeftMenu_EditOptions />
+          <form >
+              {createUI()}        
+              <input type='button' value='Add a Code' onClick={addClick}/>
+          </form>
+        </div>
       );
-    }
-  }
+}
 
 export default connect()(CodeIt_LeftMenu)
