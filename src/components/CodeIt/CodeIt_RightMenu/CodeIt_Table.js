@@ -330,13 +330,17 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
 
 
     useEffect(()=>{
-        socket.on('input-box', async ({num ,value}) => {
+        socket.once('input-box', async ({num ,value}) => {
             if(codes[num]!==value){
                 setCodes({...codes,[num] : value})
+                console.log(num,value)
             }
         })
-        socket.on('keywords', ({num ,value}) => {
-          setkeywords({...keywords,[num] : value})
+        socket.once('keywords', ({num ,value}) => {
+            if(keywords[num]!==value){
+                setkeywords({...keywords,[num] : value})
+                keywords[num]===value && console.log("same")
+            }
         })
         // await sleep(2000)
     })
