@@ -118,5 +118,13 @@ text-indent:
     display: flex;
     flex-direction: column;
 }
+.MuiPopover-paper{
+    width: auto!important;
+}
+.leftmenu .MuiFormLabel-root{
+    font-size: 1.7rem!important;
+}
+/* MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink Mui-focused Mui-focused */
+/* MuiPaper-root MuiMenu-paper MuiPopover-paper MuiPaper-elevation8 MuiPaper-rounded */
 /* MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl */
 /* MuiFormControl-root MuiTextField-root */

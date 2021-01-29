@@ -13,7 +13,7 @@ import { handleResponse } from '../../../services';
 import axios from 'axios';
 import WithSpinner from "../../with-spinner/with-spinner.component"
 
-const ExcelReaderHTML=({x=this.handleChange})=>{
+const ExcelReaderHTML=({x})=>{
   return(
     <div className="excel_reader">
       <form encType="multipart/form-data" action>

@@ -7,7 +7,8 @@ import { selectSurveyDetails } from "../../../../Redux/SurveyDetails/survey-deta
 import "./Summary.css"
 
 const Summary=({surveyDetails,row,column,setProgressNumber})=>{
-    console.log(surveyDetails)
+    console.log(column)
+    console.log(typeof(column))
     return(
         <div className="summary">
             <h1>Upload Summary</h1>
@@ -37,7 +38,12 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                         <p>HEADER COLUMN</p>
                         <p className="edit" onClick={()=>setProgressNumber(2)}>Edit</p>
                     </div>
-                    <h5>Row {column}</h5>
+                    {Object.keys(column).map((item,index) => {
+                        return(
+                            <h5 key={index}>{`${(column[item])}`}</h5>
+                        )
+                    })}
+                    {/* <h5>Row {column}</h5> */}
                 </div>
             </div>
         </div>

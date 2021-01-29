@@ -333,7 +333,7 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
         socket.once('input-box', async ({num ,value}) => {
             if(codes[num]!==value){
                 setCodes({...codes,[num] : value})
-                console.log(num,value)
+                console.log(codes)
             }
         })
         socket.once('keywords', ({num ,value}) => {
@@ -342,7 +342,6 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
                 keywords[num]===value && console.log("same")
             }
         })
-        // await sleep(2000)
     })
 
     const handleChange= rowData => (event) => {

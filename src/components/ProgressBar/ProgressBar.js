@@ -1,10 +1,9 @@
 import React from 'react'
 import "./ProgressBar.css"
+import ProgressBarItem from "./ProgressBarItem/ProgressBarItem.js"
+import HeaderData from "../../data/HeaderData.js"
 
-const ProgressBar=({progressNumber})=>{ 
-    const highlightStyle={"backgroundColor":"#00bda7","color":"white","border":"none"}
-    const textStyle={"color":"#15c5b1"}
-
+const ProgressBar=({progressNumber})=>{
     return (
         <div className="progressbar">
             <div className="left">
@@ -12,25 +11,11 @@ const ProgressBar=({progressNumber})=>{
                 <h2>Survey Uploader</h2>
             </div>
             <div className="right">
-                <div className="item">
-                    <div key={1} style={progressNumber>=1 ? highlightStyle : null} className="number">{progressNumber>1 ? `✔`: 1}</div>
-                    <h5  style={progressNumber>1 ? textStyle : null}>Header</h5>
-                    <hr/>
-                </div>
-                <div className="item">
-                    <div  key={2} style={progressNumber>=2 ? highlightStyle : null} className="number">{progressNumber>2 ? `✔`: 2}</div>
-                    <h5 style={progressNumber>2 ? textStyle : null}>Open Ends</h5>
-                    <hr/>
-                </div>
-                <div className="item">
-                    <div  key={3} style={progressNumber>=3 ? highlightStyle : null} className="number">{progressNumber>3 ? `✔`: 3}</div>
-                    <h5  style={progressNumber>3 ? textStyle : null}>Details</h5>
-                    <hr/>
-                </div>
-                <div className="item">
-                    <div  key={4} style={progressNumber>=4 ? highlightStyle : null} className="number">{progressNumber>4 ? `✔`: 4}</div>
-                    <h5  style={progressNumber>4 ? textStyle : null}>Review & Submit</h5>
-                </div>
+                {HeaderData.map((item,index)=>{
+                    return(
+                        <ProgressBarItem progressNumber={progressNumber} index={index+1} text={item} />
+                    )
+                })}
             </div>
         </div>
     )

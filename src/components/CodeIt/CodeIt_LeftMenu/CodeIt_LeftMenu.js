@@ -1,4 +1,4 @@
-import React,{useState} from "react"
+import React,{useState,useEffect} from "react"
 import "./CodeIt_LeftMenu.css"
 import Switch from '@material-ui/core/Switch';
 import { Button, Radio } from "@material-ui/core";
@@ -20,6 +20,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import DescriptionIcon from '@material-ui/icons/Description';
 import AddIcon from '@material-ui/icons/Add';
 import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
+import io from 'socket.io-client'
+const socket = io.connect('http://localhost:4000')
 
 const styles = {
   textAlign: 'center',
@@ -41,14 +43,27 @@ const attributes = {
 }
 
 const CodeIt_LeftMenu =()=>{
-    const [state,setState] = useState({ values: [] })
-    let count=0
-    const [inputCodes,setinputCodes]=useState({})
-    const [finalCodes,setFinalCodes]=useState({})
+    const [state,setState] = useState({ values: [] }) // Map 
+    const [inputCodes,setinputCodes]=useState({}) // All inputs
+    const [finalCodes,setFinalCodes]=useState({}) // Codes Finalised with Switch
+
+    useEffect(()=>{
+      socket.once('left-menu-codes',({i ,value}) => {
+          if(finalCodes[i]!==value){
+            setFinalCodes({...finalCodes,[i] : value})
+            setinputCodes({...inputCodes,[i] : value})
+          }
+      })
+      socket.once('left-menu-state',() => {
+        setState(prevState => ({ values: [...prevState.values, 'default']}))
+      })
+  })
 
     const handleChange =(i)=>(event)=>{
-      setinputCodes({...inputCodes,[i]:event.target.value})
-      setFinalCodes({...inputCodes,[i]:event.target.value})
+      // setinputCodes({...inputCodes,[i]:event.target.value})
+      // setFinalCodes({...inputCodes,[i]:event.target.value})
+      let value=event.target.value 
+      socket.emit('left-menu-codes',{i,value})
     }
     const handleSwitchChange=i=>(event)=>{
       if(!event.target.checked){
@@ -56,7 +71,6 @@ const CodeIt_LeftMenu =()=>{
       }else{
         setFinalCodes({...inputCodes,[i]:inputCodes[i]})
       }
-      console.log(finalCodes)
     }
 
     function createUI(){
@@ -65,6 +79,7 @@ const CodeIt_LeftMenu =()=>{
           <ContextMenuTrigger id={ID}>
           <div className="flex">
               <div style={{alignItems: "center"}} className="flex">
+                  {/* <button key={i} type="button" onClick={removeClick(i)}>Remove</button> */}
                   &nbsp;&nbsp;
                   <Switch
                     size="small"
@@ -73,10 +88,9 @@ const CodeIt_LeftMenu =()=>{
                     inputProps={{ 'aria-label': 'checkbox with default color' }}
                     onChange={handleSwitchChange(i+1)}
                   />
-                  {console.log(i)}
                   <p >{`${i+1}`}</p>
                   &nbsp;&nbsp;
-                  <input value={inputCodes[i+1]} onChange={handleChange(i+1)} className='width' />
+                  <input value={inputCodes[i+1]} placeholder="Code Here" onChange={handleChange(i+1)} className='width' />
               </div>
               <div className="flex" >
                   <ListIcon />&nbsp;&nbsp;&nbsp;
@@ -190,10 +204,18 @@ const CodeIt_LeftMenu =()=>{
          </div>
        )
     }
-  
+    const removeClick=(i)=>event=>{
+      var _val = state.values.filter(function(value, index) {
+        return index != i;
+      })
+      setState({ values: _val});
+      setinputCodes({...inputCodes,[i+1]:""})
+      setFinalCodes({...inputCodes,[i+1]:""})
+      let value=""
+      socket.emit('left-menu-codes',{i,value})
+   }
     function addClick(){
-      setState(prevState => ({ values: [...prevState.values, '']}))
-
+      socket.emit('left-menu-state')
     }
   
 
@@ -204,7 +226,7 @@ const CodeIt_LeftMenu =()=>{
           <LeftMenu_EditOptions />
           <form >
               {createUI()}        
-              <input type='button' value='Add a Code' onClick={addClick}/>
+              <input type='submit' value='Add a Code' onClick={addClick}/>
           </form>
         </div>
       );
