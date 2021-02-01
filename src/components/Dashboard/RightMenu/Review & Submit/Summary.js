@@ -39,9 +39,12 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                         <p className="edit" onClick={()=>setProgressNumber(2)}>Edit</p>
                     </div>
                     {Object.keys(column).map((item,index) => {
-                        return(
-                            <h5 key={index}>{`${(column[item])}`}</h5>
-                        )
+                        console.log(column.index)
+                            if(column[item]){
+                                return(
+                                    <h5 key={index}>{`${Object.keys(column)[index]}`}</h5>
+                                )
+                            }
                     })}
                     {/* <h5>Row {column}</h5> */}
                 </div>

@@ -25,6 +25,10 @@ import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNum
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import io from 'socket.io-client'
+import axios from "axios"
+import config from "../../../config"
+import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
+import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -309,15 +313,37 @@ let __data=[
 const socket = io.connect('http://localhost:4000')
 
 
-const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
+const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
+
+    // const _token=JSON.parse(localStorage.token).accessToken
+    // const requestOptions = {
+    //     headers: {'Authorization': `Bearer ${_token}`}
+    // };
+    // let _data={ questionId: 2 }
+    // let questionId= `1`
+    //  axios.get(`${config.apiUrl}/response/1/10`,({ questionId: 2 }), requestOptions)
+    //  .then(data => console.log(data))
+    //  .catch(err=>console.log(err))
+
+    // const _requestOptions = {
+    //     method: 'POST',
+    //     headers: {'Authorization': `Bearer ${_token}`},
+    //     body:JSON.stringify({ questionId: 2 })
+    // };
+
+    // fetch(`${config.apiUrl}/response/1/10`,_requestOptions)
+    // .then(data => console.log(data))
+    // .catch(err=>console.log(err))
+
+
     const classes = useStyles();
     // const theme = useTheme();
     // const [personName, setPersonName] = React.useState([]);
     // const [progresslength,setProgressLength]=React.useState(0)
 
-    const [selectedRow,setSelectedRow]=useState(null)
-
     const tempData=JSON.parse(excelData ? excelData : localStorage.excelData)
+    
+    // const [transformedData, setTransformedData] = useState(tempData)
     let transformedData=tempData
 
     // Mapper
@@ -361,7 +387,7 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
 
 //   const [before,setBefore]=useState(0);
 
-  const handleCodes=rowData=>async (event)=>{
+  const handleCodes=rowData=>(event)=>{
     let value =event.target.value;
     let num=rowData.tableData.id
     socket.emit('input-box',{num,value})
@@ -386,17 +412,14 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
     //     increaseProgressLength(ratio)
     // }
   }
+  
+  let k=Object.keys(transformedData[0])
+  let col=[]
+  let columns_titles=[]
+  i=0
 
-
-        const k=Object.keys(transformedData[0])
-        let col=[]
-        let columns_titles=[]
-        i=0
-
-        useEffect(() => {
-            
-        }, [])
-
+        // useEffect(() => {
+            k=Object.keys(transformedData[0])
         for(i in k){ 
             col=[...col,{title:`${k[i].slice(0,40)}...`,field:k[i]}];
         }
@@ -437,10 +460,16 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
             render: rowData => <p  key={rowData.tableData.id}>{rowData[k[0]].length}</p>
             }
         ]
+
+        // }, [transformedData])
+
+        
+
         useEffect(()=>{
             for(i in k){ columns_titles= [...columns_titles,{title:k[i]}]}
             setExcelDataColumns(columns_titles)
         },[])
+
         // style={{"display":"flex","placeContent":"center"}}
 
         // Object.size = function(obj) {
@@ -463,66 +492,116 @@ const CodeItTable =({excelData,setRow,setExcelDataColumns,decreaseNumberOfInputs
         //     setProgressLength(count/Object.size(codes))
         //     console.log((progresslength))
         // },[codes])
+        // console.log(transformedData)
+        console.log(codes)
+        console.log(selectShowCodedAs)
+        console.log(typeof(selectShowCodedAs?.id[0]?.toString()))
+
+        const [filteredData,setFilteredData]=useState([])
+
+        useEffect (()=>{
+            if(selectShowCodedAs?.id[0]?.toString())
+            {
+            let transformedData=tempData
+            console.log(filteredData)
+            let ind =[]
+            Object.keys(codes).map((item,index)=>{
+                if(typeof(codes[index])==="string"){
+                    if(codes[index]?.split(';').indexOf(selectShowCodedAs?.id[0]?.toString())!==-1){
+                        ind.push(index)
+                }
+                }
+            })
+
+            let finalData=[]
+            let finalCodes=[]
+            Object.keys(transformedData).map((item,index)=>{
+                if(ind.includes(index)){
+                    finalData = [...finalData ,(transformedData[index]) ]
+                    let _te =codes[index]
+                    finalCodes={...finalCodes,[index-1]:_te }
+            }})
+
+            ind.map((index)=>{
+                let _te =codes[index]
+                finalCodes={...finalCodes,[index-1]:_te }
+            })
+
+            setFilteredData(finalData)
+            setCodes(finalCodes)
+            console.log(filteredData)
+            console.log(codes)}
+        },[selectShowCodedAs])
+
+        console.log((selectContainsKeyword?.code[0]))
+        useEffect(()=>{
+            console.log(selectContainsKeyword)
+            if(selectContainsKeyword)
+            {
+            let data= tempData
+            let _index =[]
+            let finalData=[]
+            data.map((item,index)=>{
+                if(item[Object.keys(data[0])[1]]?.split('/').includes(selectContainsKeyword?.code[0])){
+                    console.log(item)
+                    finalData = [...finalData ,(item) ]
+                    _index.push(index)
+            }})
+            let editCodes ={}
+            _index.map((item,index)=>{
+                editCodes={...editCodes,[index]:codes[item]}
+            })
+            
+            setFilteredData(finalData)
+            setCodes(editCodes)
+        }
+
+        },[selectContainsKeyword])
 
          return(
             <div style={{border: "2px solid black"}}>
                  {/* <div className='flex'>
                      Progress : <BorderLinearProgress variant="determinate" value={progresslength*100} />
                      </div> */}
-                    <MaterialTable
+                    {transformedData && <MaterialTable
                         icons={tableIcons}
-                data={(transformedData)}
-                columns={col}
-                title="Demo"
-                // actions = {[
-                //     {
-                //       icon: () => <AddCircleIcon />,
-                //       tooltip: <p>Select this Row</p>,
-                //       onClick: (event, rowData) => {setSelectedRow((rowData),console.log(selectedRow));;setRow(rowData)},
-                //       position: "row"
-                //     }
-                //   ]}
-                options={{
-                    selection: false,
-                    exportButton: true,
-                    filtering: true,
-                    grouping: false,
-                    search: false,
-                    sorting: true,
-                    paging:true
-                }}
-                options={{
-                  selection: false,
-                  exportButton: true,
-                  filtering: false,
-                  grouping: false,
-                  search: false,
-                  sorting: true,
-                  paging:true
-                }}
-                localization={{
-                  pagination: {
-                    labelDisplayedRows: '{from}-{to} of {count}',
-                    labelRowsSelect: 'Rows Per Page',
-                    labelRowsPerPage: 'Rows Per Page',
-                    firstAriaLabel: 'First Page',
-                    firstTooltip: 'First Page',
-                    previousAriaLabel: 'Previous Page',
-                    previousTooltip: 'Previous Page',
-                    nextAriaLabel: 'Next Page',
-                    nextTooltip: 'Next Page',
-                    lastAriaLabel: 'Last Page',
-                    lastTooltip: 'Last Page'
-                  }
-                }}
+                        data={filteredData.length==0 ? transformedData : filteredData}
+                        columns={col}
+                        title="Demo"
+                        options={{
+                          selection: true,
+                          exportButton: true,
+                          filtering: false,
+                          grouping: false,
+                          search: false,
+                          sorting: true,
+                          paging:true
+                        }}
+                        localization={{
+                          pagination: {
+                            labelDisplayedRows: '{from}-{to} of {count}',
+                            labelRowsSelect: 'Rows Per Page',
+                            labelRowsPerPage: 'Rows Per Page',
+                            firstAriaLabel: 'First Page',
+                            firstTooltip: 'First Page',
+                            previousAriaLabel: 'Previous Page',
+                            previousTooltip: 'Previous Page',
+                            nextAriaLabel: 'Next Page',
+                            nextTooltip: 'Next Page',
+                            lastAriaLabel: 'Last Page',
+                            lastTooltip: 'Last Page'
+                          }
+                        }}
                         onSelectionChange={(rows) => {console.log(rows)}}
-                    />
+                    />}
             </div>
          )
      }
 
 const mapStateToProps=createStructuredSelector({
     excelData:selectExcelData,
+    selectShowCodedAs:selectShowCodedAs,
+    selectContainsKeyword:selectContainsKeyword,
 })
 const mapDispatchToProps = dispatch => ({
     setRow: collectionsMap => dispatch(setRow(collectionsMap)),

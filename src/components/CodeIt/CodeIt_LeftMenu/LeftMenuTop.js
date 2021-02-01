@@ -3,12 +3,12 @@ import React from 'react'
 function LeftMenuTop() {
     return (
             <div className="flex">
-                <div className="flex">
+                <div className="flex input_box_div">
                     <input className=" _1"
                      placeholder={`Filter by Keyword`} />
                 </div>
-                <div className="flex">
-                <p>Order : </p>
+                <div className="flex" style={{alignItems: "start"}}>
+                <p style={{width: "max-content"}}>Order : </p>
                     <div class="dropdown">
                         <button class="dropbtn">Dropdown</button>
                         <div class="dropdown-content">

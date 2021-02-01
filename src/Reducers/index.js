@@ -9,6 +9,8 @@ import surveyDetailsReducer from '../Redux/SurveyDetails/survey-details.reducer'
 import excelDataReducer from '../Redux/ExcelData/excel-data.reducer';
 import tableSelectionsReducer from '../Redux/SelectedRowandColumn/tableSelections.reducer';
 import codeItDataReducer from '../Redux/CodeitData/codeit-data.reducer';
+import showCodedAsReducer from '../Redux/Show_Coded_As/Show_Coded_As.reducer';
+import ContainsKeywordReducer from '../Redux/ContainsKeyword/ContainsKeyword.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -21,6 +23,8 @@ const rootReducer = combineReducers({
     excelData:excelDataReducer,
     tableSelections:tableSelectionsReducer,
     codeItData:codeItDataReducer,
+    showCodedAs:showCodedAsReducer,
+    ContainsKeyword:ContainsKeywordReducer,
 });
 
 export default rootReducer;

@@ -44,10 +44,10 @@
 .codeit_leftmenu .width{
   width: 100px;
 }
-form{
+.codeit_leftmenu form{
   overflow: auto;
 }
-/*  style={{width: "100px"}}  */
-/* .codeit_leftmenu input{
-  width:100px!important;
-} */
+.input_box_div{
+  align-self: self-start;
+  margin-right: 5px;
+}

@@ -1,4 +1,5 @@
-import React,{useState,useEffect} from "react"
+import React,{useState,useEffect,Fragment} from "react"
+import EditIcon from '@material-ui/icons/Edit';
 import "./CodeIt_LeftMenu.css"
 import Switch from '@material-ui/core/Switch';
 import { Button, Radio } from "@material-ui/core";
@@ -21,17 +22,19 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import AddIcon from '@material-ui/icons/Add';
 import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:4000')
+import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actions";
+import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions";
+const socket = io.connect('http://localhost:4000', {
+  transports: ['websocket'], 
+  upgrade: false
+})
 
 const styles = {
   textAlign: 'center',
   backgroundColor: '#CCC',
   padding: 30
 }
-
-const ID = 'ID'
-
-const handleClick = (event, data) => {
+const handleClick=(event, data) => {
   console.log(`clicked`, { event, data })
 }
 
@@ -42,28 +45,33 @@ const attributes = {
   selectedClassName: 'custom-selected'
 }
 
-const CodeIt_LeftMenu =()=>{
+const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
     const [state,setState] = useState({ values: [] }) // Map 
     const [inputCodes,setinputCodes]=useState({}) // All inputs
     const [finalCodes,setFinalCodes]=useState({}) // Codes Finalised with Switch
 
     useEffect(()=>{
-      socket.once('left-menu-codes',({i ,value}) => {
-          if(finalCodes[i]!==value){
-            setFinalCodes({...finalCodes,[i] : value})
-            setinputCodes({...inputCodes,[i] : value})
-          }
-      })
-      socket.once('left-menu-state',() => {
-        setState(prevState => ({ values: [...prevState.values, 'default']}))
-      })
-  })
+          socket.once('left-menu-codes',({i ,value}) => {
+            if(inputCodes[i]!==value){
+              // setFinalCodes({...finalCodes,[i] : value})
+              setinputCodes({...inputCodes,[i] : {
+                text : value,
+                disabled : false}
+              })
+            }
+        })
+        socket.once('left-menu-state', () => {
+          setState(prevState => ({ values: [...prevState.values, 'default']}))
+        })
+      // return () => { socket.disconnect();socket.connect(); };
+    })
 
     const handleChange =(i)=>(event)=>{
       // setinputCodes({...inputCodes,[i]:event.target.value})
       // setFinalCodes({...inputCodes,[i]:event.target.value})
       let value=event.target.value 
       socket.emit('left-menu-codes',{i,value})
+      // console.log(inputCodes)
     }
     const handleSwitchChange=i=>(event)=>{
       if(!event.target.checked){
@@ -72,11 +80,23 @@ const CodeIt_LeftMenu =()=>{
         setFinalCodes({...inputCodes,[i]:inputCodes[i]})
       }
     }
-
+    function Show_Coded_As(event, data) {
+      console.log(`clicked`, { event, data })
+      if(data.code !==`undefined`){
+        setShowCodedAs({id: [data.id] ,code: [data.code]})
+      }
+    }
+    function handleContainsKeyword(event, data){
+      console.log(`clicked`, { event, data })
+      if(data.code !==`undefined`){
+        setContainsKeyword({id: [data.id] ,code: [data.code]})
+      }
+    }
     function createUI(){
        return state.values.map((el, i) => 
         <div >
-          <ContextMenuTrigger id={ID}>
+          <ContextMenuTrigger id={i}>
+            <Fragment >
           <div className="flex">
               <div style={{alignItems: "center"}} className="flex">
                   {/* <button key={i} type="button" onClick={removeClick(i)}>Remove</button> */}
@@ -90,22 +110,32 @@ const CodeIt_LeftMenu =()=>{
                   />
                   <p >{`${i+1}`}</p>
                   &nbsp;&nbsp;
-                  <input value={inputCodes[i+1]} placeholder="Code Here" onChange={handleChange(i+1)} className='width' />
+                  {/* {console.log(parseInt(Object.keys(inputCodes).slice(-1)) , i)} */}
+                  <input disabled={parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  } value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' />
               </div>
-              <div className="flex" >
-                  <ListIcon />&nbsp;&nbsp;&nbsp;
+              <div className="flex" key={i}>
+                  <EditIcon
+                  fontSize="large"
+                    onClick={()=>{setinputCodes({...inputCodes,[i] : {
+                      ...inputCodes[i],
+                      disabled : !inputCodes[i]?.disabled
+                    }
+                  })}} />
+                  &nbsp;&nbsp;&nbsp;
                   86.72%(73)
               </div>
           </div>
+          </Fragment>
           </ContextMenuTrigger>
-            <ContextMenu id={ID}>
-              {inputCodes[i+1] && <MenuItem
+            <ContextMenu id={i}>
+              {inputCodes[i+1] &&
+               <MenuItem
                 className="input_value_in_dropdown"
                 data={{ action: 'name_of_code' }}
                 onClick={handleClick}
                 attributes={attributes}
               >
-                {`${i+1} . ${inputCodes[i+1]}`}
+                {`${i+1} . ${inputCodes[i+1]?.text}`}
               </MenuItem>}
               <MenuItem
                 data={{ action: 'Show Suggestions' }}
@@ -116,8 +146,8 @@ const CodeIt_LeftMenu =()=>{
               </MenuItem>
 
               <MenuItem
-                data={{ action: 'paste' }}
-                onClick={handleClick}
+                data={{ code: inputCodes[i+1]?.text,id:i+1 }}
+                onClick={Show_Coded_As}
                 attributes={attributes}
               >
                 <VisibilityIcon /> Show Coded As
@@ -200,6 +230,14 @@ const CodeIt_LeftMenu =()=>{
                 <AddBoxRoundedIcon /> Add Multiple Items
               </MenuItem>
               
+              <MenuItem
+                data={{ code: inputCodes[i+1]?.text,id:i+1 }}
+                onClick={handleContainsKeyword}
+                attributes={attributes}
+              >
+                <AddBoxRoundedIcon /> Conatins keyword {inputCodes[i+1]?.text}
+              </MenuItem>
+
             </ContextMenu>
          </div>
        )
@@ -215,10 +253,9 @@ const CodeIt_LeftMenu =()=>{
       socket.emit('left-menu-codes',{i,value})
    }
     function addClick(){
-      socket.emit('left-menu-state')
+        socket.emit('left-menu-state')
     }
-  
-
+    
       return (
         
         <div className="codeit_leftmenu">
@@ -231,5 +268,8 @@ const CodeIt_LeftMenu =()=>{
         </div>
       );
 }
-
-export default connect()(CodeIt_LeftMenu)
+const mapDispatchToProps = dispatch => ({
+  setShowCodedAs: collectionsMap => dispatch(setShowCodedAs(collectionsMap)),
+  setContainsKeyword: collectionsMap => dispatch(setContainsKeyword(collectionsMap)),
+});
+export default connect(null,mapDispatchToProps)(CodeIt_LeftMenu)
