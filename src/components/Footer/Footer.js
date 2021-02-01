@@ -46,9 +46,11 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
          axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
         .then(data=>{
             alert(data?.data?.message);
-            history.push('/tool')
+            // history.push('/tool')
         })
         .catch(err=>console.log(err))
+        history.push('/tool')
+
     }
     return (
         <div className="footer">

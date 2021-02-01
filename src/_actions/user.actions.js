@@ -17,17 +17,19 @@ export const userActions = {
     forgotPassOTP,
     uploadFile,
 };
-function uploadFile(){
+
+async function uploadFile(){
     var data = new FormData();
     var fileData = document.querySelector('input[type="file"]').files[0];
     data.append("file", fileData);
     
     const _token=JSON.parse(localStorage.token).accessToken
-    axios.post(`${config.apiUrl}/uploadFile`,data, {
+    await axios.post(`${config.apiUrl}/uploadFile`,data, {
       headers:{
         'Authorization': `Bearer ${_token}`,
       },
-    }).then(resp=>resp.data).then(resp1=>{
+    }).then(resp=>resp.data)
+    .then(resp1=>{
         console.log(resp1)
         if(resp1?.err){
             alert(`${resp1?.err?.message},"Please Login Again"`)
@@ -35,10 +37,14 @@ function uploadFile(){
             if(resp1?.key){
                 localStorage.setItem("fileKey",resp1?.key)
                 alert(`${resp1?.message}`)
+                return 2
             }
         }
     })
+    .catch(err=> alert(`Please Login Again`))
 }
+
+
 function resetPass(user) {
     return dispatch => {
         // dispatch(request(user));
@@ -146,7 +152,8 @@ function login(username, password, from) {
                     localStorage.setItem('user', JSON.stringify(user));
                     console.log("user -->",user);
                     dispatch(success(user));
-                    window.location.replace(`${config.redirecturl}/`);
+                    // window.location.replace(`${config.redirecturl}/`);
+                    history.push('/')
                     return user;
                 },error => {
                     console.log("error-->actions",error)

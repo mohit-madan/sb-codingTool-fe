@@ -252,7 +252,8 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
       let value=""
       socket.emit('left-menu-codes',{i,value})
    }
-    function addClick(){
+    function addClick(e){
+      e.preventDefault()
         socket.emit('left-menu-state')
     }
     

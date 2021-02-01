@@ -10,6 +10,8 @@
     -moz-osx-font-smoothing: grayscale;
     font-family: 'Montserrat', sans-serif;
     box-sizing: border-box;
+    touch-action: none; 
+
   }
   
   code {

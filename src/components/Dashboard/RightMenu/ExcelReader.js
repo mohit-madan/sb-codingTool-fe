@@ -40,12 +40,13 @@ class ExcelReader extends Component {
     this.handleFile = this.handleFile.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-  
+    
     handleChange(e){
     this.setState({loading:true})
     const files = e.target.files;
     if (files && files[0]){ 
       userActions.uploadFile()
+
       this.setState({ file: files[0],uploaded:true,loading:true },this.handleFile);
       console.log("upload")
     }

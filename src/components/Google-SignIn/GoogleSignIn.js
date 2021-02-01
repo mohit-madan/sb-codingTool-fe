@@ -13,7 +13,8 @@ class GoogleSignIn extends React.Component{
         console.log(response);
         const { setGoogleUser } = this.props;
         setGoogleUser(response)
-        await localStorage.setItem('user', JSON.stringify(response));
+        
+        localStorage.setItem('user', JSON.stringify(response));
     }
 
     render(){

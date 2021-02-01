@@ -353,7 +353,7 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
 
     const [keywords,setkeywords]=useState(mapper)
     const [codes,setCodes]=useState(mapper)
-
+    let dublicateCodes={}
 
     useEffect(()=>{
         socket.once('input-box', async ({num ,value}) => {
@@ -551,12 +551,30 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
             _index.map((item,index)=>{
                 editCodes={...editCodes,[index]:codes[item]}
             })
-            
+            console.log(finalData,editCodes)
             setFilteredData(finalData)
             setCodes(editCodes)
-        }
+            }else{
+                setFilteredData(tempData)
+            }
 
         },[selectContainsKeyword])
+
+        const ChooseData =()=>{
+            if(filteredData.length==0){
+                if(selectContainsKeyword || selectShowCodedAs){
+                    return true
+                }else{
+                    return false
+                }
+            }else{
+                return true
+            }
+        }
+        useEffect(() => {
+            ChooseData()
+        }, [selectContainsKeyword,filteredData])
+
 
          return(
             <div style={{border: "2px solid black"}}>
@@ -565,7 +583,7 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
                      </div> */}
                     {transformedData && <MaterialTable
                         icons={tableIcons}
-                        data={filteredData.length==0 ? transformedData : filteredData}
+                        data={!ChooseData() ? transformedData : filteredData}
                         columns={col}
                         title="Demo"
                         options={{

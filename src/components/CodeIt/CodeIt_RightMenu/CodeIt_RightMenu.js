@@ -9,6 +9,8 @@ import { selectCodes, selectnumberOfInputsGreaterThan2, selectProgressLength } f
 import { createStructuredSelector } from "reselect";
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
+import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actions.js";
+import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -24,7 +26,7 @@ const BorderLinearProgress = withStyles((theme) => ({
     },
   }))(LinearProgress);
 
-const CodeIt_RightMenu =({selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
+const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
     
     // const [progressLength,setProgressLength]=React.useState(0)
 
@@ -54,6 +56,17 @@ const CodeIt_RightMenu =({selectContainsKeyword,progressNumber,codes,selectnumbe
     useEffect(() => {
       console.log((selectnumberOfInputsGreaterThan2/3000)*10000000)
     }, [selectnumberOfInputsGreaterThan2])
+
+    const handleClickRemoveContainsKeyword=(e)=>{
+      e.preventDefault()
+      setContainsKeyword(null)
+    }
+    const handleClickRemoveShowCodedAs =(e)=>{
+      e.preventDefault()
+      setShowCodedAs(null)
+      console.log(`eve`)
+    }
+
     return(
         <div className="codeit_rightmenu_">
             <div className='flex'>
@@ -63,7 +76,7 @@ const CodeIt_RightMenu =({selectContainsKeyword,progressNumber,codes,selectnumbe
                 <div className='filteredOn flex'>
                   <p>Filtered On :</p>
                   <div className="selectShowCodedAs">
-                    Coded As : [1] {selectShowCodedAs.code} x
+                    Coded As : [1] {selectShowCodedAs.code} <button onClick={handleClickRemoveShowCodedAs} >x</button>
                   </div>
                 </div>
               }
@@ -71,7 +84,7 @@ const CodeIt_RightMenu =({selectContainsKeyword,progressNumber,codes,selectnumbe
                 <div className='filteredOn flex'>
                   <p>Filtered On :</p>
                   <div className="selectShowCodedAs">
-                    Contains Keyword : [1] {selectContainsKeyword.code} x
+                    Contains Keyword : [1] {selectContainsKeyword.code} <button onClick={handleClickRemoveContainsKeyword} > x </button>
                   </div>
                 </div>
               }
@@ -89,4 +102,8 @@ const mapStateToProps=createStructuredSelector({
     selectShowCodedAs:selectShowCodedAs,
     selectContainsKeyword:selectContainsKeyword,
 })
-export default connect(mapStateToProps)(CodeIt_RightMenu)
+const mapDispatchToProps = dispatch => ({
+  setShowCodedAs: collectionsMap => dispatch(setShowCodedAs(collectionsMap)),
+  setContainsKeyword: collectionsMap => dispatch(setContainsKeyword(collectionsMap)),
+});
+export default connect(mapStateToProps,mapDispatchToProps)(CodeIt_RightMenu)

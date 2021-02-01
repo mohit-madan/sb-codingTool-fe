@@ -13,13 +13,25 @@ import { ResetPassword } from '../components/Reset-Password/ResetPassword';
 import UploaderPage from "../pages/Uploader/UploaderPage.js"
 import CodeIt from '../pages/CodeIt/CodeIt';
 function App() {
-    // const users = useSelector(state => state.users);
-    // const user = useSelector(state => state.authentication.user);
-    const dispatch = useDispatch();
-    // let re= new RegExp("[A-za-z0–9_]")
+
+    function hasQuiet() {
+        var cold = false,
+        hike = function() {};
+        
+        try {
+        var aid = Object.defineProperty({}, 'passive', {
+        get: function() {cold = true}
+        });
+        window.addEventListener('test', hike, aid);
+        window.removeEventListener('test', hike, aid);
+        } catch (e) {}
+
+        return cold;
+    }
     useEffect(() => {
-        dispatch(userActions.getAll());
-    }, []);
+        window.addEventListener('wheel', function() {
+        }, hasQuiet() ? {passive: false} : false);
+    }, [])
     return (
         <div className="">
             <div className="">
