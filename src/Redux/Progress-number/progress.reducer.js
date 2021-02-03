@@ -1,7 +1,7 @@
 import { ProgressActionTypes } from './progress.types';
 
 const INITIAL_STATE = {
-  progressNumber: 3
+  progressNumber: 1
 };
 
 const progressNumberReducer = (state = INITIAL_STATE, action) => {
