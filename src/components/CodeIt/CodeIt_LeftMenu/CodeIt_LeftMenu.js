@@ -49,6 +49,7 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
     const [state,setState] = useState({ values: [] }) // Map 
     const [inputCodes,setinputCodes]=useState({}) // All inputs
     const [finalCodes,setFinalCodes]=useState({}) // Codes Finalised with Switch
+    const [selectedRows,setSelectedRows]=useState(null)
 
     useEffect(()=>{
           socket.once('left-menu-codes',({i ,value}) => {
@@ -92,6 +93,7 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
         setContainsKeyword({id: [data.id] ,code: [data.code]})
       }
     }
+    var disabled
     function createUI(){
        return state.values.map((el, i) => 
         <div >
@@ -111,7 +113,11 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
                   <p >{`${i+1}`}</p>
                   &nbsp;&nbsp;
                   {/* {console.log(parseInt(Object.keys(inputCodes).slice(-1)) , i)} */}
-                  <input disabled={parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  } value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' />
+                  { disabled = parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  }
+                  
+                  {!disabled ? <input value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' /> : <p>{inputCodes[i+1]?.text}</p> }
+                  
+                  
               </div>
               <div className="flex" key={i}>
                   <EditIcon
@@ -254,9 +260,10 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
    }
     function addClick(e){
       e.preventDefault()
-        socket.emit('left-menu-state')
+      socket.emit('left-menu-state')
     }
-    
+   
+
       return (
         
         <div className="codeit_leftmenu">

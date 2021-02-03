@@ -83,7 +83,7 @@
 .react-contextmenu-wrapper:hover{
     background-color: lightblue;
 }
-.react-contextmenu-wrapper{
+.codeit_leftmenu .react-contextmenu-wrapper{
   padding-top: 15px!important;
 }
 .input_value_in_dropdown{
@@ -92,4 +92,7 @@
 }
 .react-contextmenu-item .MuiSvgIcon-root{
   color:#20a0ff !important;
+}
+.react-contextmenu-wrapper{
+  padding: 20px;
 }

@@ -5,6 +5,7 @@ const INITIAL_STATE = {
     keywords:null,
     progresslength:0,
     numberOfInputsGreaterThan2:0,//numberOfInputsGreaterThan2
+    selectedRows:null,
 };
 
 const codeItDataReducer = (state = INITIAL_STATE, action) => {
@@ -38,6 +39,11 @@ const codeItDataReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         numberOfInputsGreaterThan2: state.numberOfInputsGreaterThan2-1
+    };
+    case codeItDataActionTypes.SET_SELECTED_ROWS:
+      return {
+        ...state,
+        selectedRows: action.payload
     };
     default:
       return state;

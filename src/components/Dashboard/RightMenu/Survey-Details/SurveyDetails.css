@@ -186,7 +186,7 @@ text-indent:
 .survey_details_main_right .MuiMenuItem-root,.MuiMenuItem-gutters ,.MuiListItem-gutters ,.MuiListItem-button{
     font-size: 1.4rem!important;
 }
-.MuiButtonBase-root{
+.MuiButtonBase-root,.MuiChip-label{
     font-size: 1.4rem!important;
 }
 /* MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button */

@@ -19,3 +19,7 @@ export const selectnumberOfInputsGreaterThan2 = createSelector(
   [codeItDataReducer],
   user => user.numberOfInputsGreaterThan2
 );
+export const selectSelectedRows = createSelector(
+  [codeItDataReducer],
+  user => user.selectedRows
+);

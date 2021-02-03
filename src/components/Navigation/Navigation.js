@@ -12,7 +12,7 @@ const Navigation=()=>{
     
     return(
     <div className="navigation">
-        <h2>Canvas</h2>
+        <h2>Coding Tool</h2>
         <h2 onClick={logout}>Logout</h2>
     </div>
 )}

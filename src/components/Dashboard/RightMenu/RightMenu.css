@@ -45,8 +45,11 @@
     flex-direction: column;
     border: none;
 }
+.height100{
+  height: 100%;
+}
 .MuiButton-containedPrimary{
-    background-color:#30bcae!important ;
+    background-color:#00a8cc!important ;
 }
 .ReactTable{
     overflow-x: auto; 
@@ -77,6 +80,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.file_details{
+  display: flex;
+  flex-direction: column;
+  margin-top: 10rem;
+
+}
+.file_img{
+  height: 100px;
+  object-fit: contain;
+
+}
+.rightmenu  td,.rightmenu   th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.rightmenu  tr:nth-child(even){background-color: #f2f2f2;}
+
+.rightmenu  tr:hover {background-color: #ddd;}
+
+.rightmenu  th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+.rightmenu .MuiTableCell-body{
+    margin: auto;
+    padding: 0!important;
 }
 /* /////////////////////////////////////////////////////////////////////////////////// */
 

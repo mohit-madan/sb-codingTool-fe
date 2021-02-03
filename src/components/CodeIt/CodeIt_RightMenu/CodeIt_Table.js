@@ -11,7 +11,7 @@ import { RemoveCircleOutlineOutlined as RemoveCircleIcon } from '@material-ui/ic
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { setRow } from "../../../Redux/SelectedRowandColumn/tableSelections.actions.js";
 import { setExcelDataColumns } from "../../../Redux/ExcelData/excel-data.actions.js";
-
+import $ from "jquery"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -21,7 +21,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
-import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNumberOfInputsGreaterThan2, increaseProgressLength, setCodes } from "../../../Redux/CodeitData/codeit-data.actions.js";
+import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNumberOfInputsGreaterThan2, increaseProgressLength, setCodes, setSelectedRows } from "../../../Redux/CodeitData/codeit-data.actions.js";
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import io from 'socket.io-client'
@@ -29,6 +29,7 @@ import axios from "axios"
 import config from "../../../config"
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
+import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -47,6 +48,7 @@ const BorderLinearProgress = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
     formControl: {
       margin: theme.spacing(1),
+      paddingRight:'20px',
       minWidth: 120,
       maxWidth: 300,
     },
@@ -312,39 +314,26 @@ let __data=[
 
 const socket = io.connect('http://localhost:4000')
 
+  
+  const attributes = {
+    className: 'custom-root',
+    disabledClassName: 'custom-disabled',
+    dividerClassName: 'custom-divider',
+    selectedClassName: 'custom-selected'
+  }
 
-const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
-
-    // const _token=JSON.parse(localStorage.token).accessToken
-    // const requestOptions = {
-    //     headers: {'Authorization': `Bearer ${_token}`}
-    // };
-    // let _data={ questionId: 2 }
-    // let questionId= `1`
-    //  axios.get(`${config.apiUrl}/response/1/10`,({ questionId: 2 }), requestOptions)
-    //  .then(data => console.log(data))
-    //  .catch(err=>console.log(err))
-
-    // const _requestOptions = {
-    //     method: 'POST',
-    //     headers: {'Authorization': `Bearer ${_token}`},
-    //     body:JSON.stringify({ questionId: 2 })
-    // };
-
-    // fetch(`${config.apiUrl}/response/1/10`,_requestOptions)
-    // .then(data => console.log(data))
-    // .catch(err=>console.log(err))
-
+const CodeItTable =({reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
 
     const classes = useStyles();
-    // const theme = useTheme();
-    // const [personName, setPersonName] = React.useState([]);
-    // const [progresslength,setProgressLength]=React.useState(0)
 
     const tempData=JSON.parse(excelData ? excelData : localStorage.excelData)
-    
-    // const [transformedData, setTransformedData] = useState(tempData)
     let transformedData=tempData
+    transformedData.map((item,index)=>{
+        let keys = Object.keys(transformedData[index])
+        if(item[keys[0]]?.length > 30){
+            item[keys[0]]=`${item[keys[0]].slice(0,30)} ....`
+        }
+    })
 
     // Mapper
     let mapper={}
@@ -353,7 +342,6 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
 
     const [keywords,setkeywords]=useState(mapper)
     const [codes,setCodes]=useState(mapper)
-    let dublicateCodes={}
 
     useEffect(()=>{
         socket.once('input-box', async ({num ,value}) => {
@@ -378,14 +366,6 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
         // setkeywords({...keywords,[num] : value},console.log(keywords))
         socket.emit('keywords',{num,value})
     };
-
-//   var ratio=0;
-//   useEffect(()=>{
-    //   setProgressLength(count/Object.size(codes))
-    // ratio=1/Object.size(codes)
-//   },[])
-
-//   const [before,setBefore]=useState(0);
 
   const handleCodes=rowData=>(event)=>{
     let value =event.target.value;
@@ -417,11 +397,38 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
   let col=[]
   let columns_titles=[]
   i=0
+  
+const handleClick=(event, data) => {
+    console.log(`clicked`, { event, data })
+  }
+        var __num
+        k=Object.keys(transformedData[0])
+        for(i in k){
+            var increase=-1
+            col=[...col,
+                {title:`${k[i]?.slice(0,40)}...`,
+                field:k[i],
+                render: rowData =>  <div>
+                                        <ContextMenuTrigger id={__num}>
+                                            
+                                        <div style={{display:"none"}} >{increase=increase+1} { __num = Math.floor(Math.random() * 101)  }</div>
+                                        
+                                        <p >{increase%2 ==0 ? rowData[k[0]] : rowData[k[1]] }</p>
+                                        </ContextMenuTrigger>
 
-        // useEffect(() => {
-            k=Object.keys(transformedData[0])
-        for(i in k){ 
-            col=[...col,{title:`${k[i].slice(0,40)}...`,field:k[i]}];
+                                        <ContextMenu id={__num}>
+                                            <ContextMenuItem
+                                              className="input_value_in_dropdown"
+                                              data={{ action: rowData }}
+                                              onClick={handleClick}
+                                              attributes={attributes}
+                                            >
+                                             hiasd
+                                            </ContextMenuItem>
+                                        </ContextMenu>
+                                    </div>
+                }
+            ];
         }
 
         col=[...col,
@@ -439,7 +446,6 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
                                       labelId="demo-mutiple-checkbox-label"
                                       id="demo-mutiple-checkbox"
                                       multiple
-                                    //   value={keywords[rowData.tableData.id]}
                                       value={keywords[rowData.tableData.id]}
                                       onChange={handleChange(rowData)}
                                       input={<Input />}
@@ -461,41 +467,11 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
             }
         ]
 
-        // }, [transformedData])
-
-        
-
         useEffect(()=>{
             for(i in k){ columns_titles= [...columns_titles,{title:k[i]}]}
             setExcelDataColumns(columns_titles)
         },[])
 
-        // style={{"display":"flex","placeContent":"center"}}
-
-        // Object.size = function(obj) {
-        //     var size = 0,
-        //       key;
-        //     for (key in obj) {
-        //       if (obj.hasOwnProperty(key)) size++;
-        //     }
-        //     return size;
-        //   }
-
-
-        // var count=0;
-        // useEffect(()=>{
-        //     for(let i=0;i<Object.size(codes);i++){
-        //         if(codes[i].length>2){
-        //             count++
-        //         }
-        //     }
-        //     setProgressLength(count/Object.size(codes))
-        //     console.log((progresslength))
-        // },[codes])
-        // console.log(transformedData)
-        console.log(codes)
-        console.log(selectShowCodedAs)
-        console.log(typeof(selectShowCodedAs?.id[0]?.toString()))
 
         const [filteredData,setFilteredData]=useState([])
 
@@ -529,21 +505,19 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
 
             setFilteredData(finalData)
             setCodes(finalCodes)
-            console.log(filteredData)
+            // console.log(filteredData)
             console.log(codes)}
         },[selectShowCodedAs])
-
-        console.log((selectContainsKeyword?.code[0]))
         useEffect(()=>{
-            console.log(selectContainsKeyword)
+            // console.log(selectContainsKeyword)
             if(selectContainsKeyword)
             {
             let data= tempData
             let _index =[]
             let finalData=[]
             data.map((item,index)=>{
-                if(item[Object.keys(data[0])[1]]?.split('/').includes(selectContainsKeyword?.code[0])){
-                    console.log(item)
+                if(item[Object.keys(data[0])[0]]?.split(' ').includes(selectContainsKeyword?.code[0])){
+                    // console.log(item)
                     finalData = [...finalData ,(item) ]
                     _index.push(index)
             }})
@@ -551,7 +525,7 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
             _index.map((item,index)=>{
                 editCodes={...editCodes,[index]:codes[item]}
             })
-            console.log(finalData,editCodes)
+            // console.log(finalData,editCodes)
             setFilteredData(finalData)
             setCodes(editCodes)
             }else{
@@ -574,18 +548,55 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
         useEffect(() => {
             ChooseData()
         }, [selectContainsKeyword,filteredData])
+        
+        const [selectedRows,setSelectedRows]=useState(null)
+        var _index=[]
+        const handleRowSelections =(rows)=>{
+            console.log(_index)
+            _index.map((item,index)=>{
+                if($(`tr:nth-child(${(item+1)})`).hasClass(`selectedRow`)){
+                    console.log($(`tr:nth-child(${(item+1)})`).hasClass(`selectedRow`))
+                    $(`tr:nth-child(${(item+1)})`).removeClass(`selectedRow`,function() {
+                        console.log(`insode`)
+                      });
+                }
+                console.log(`remove`)
+            })
+            // console.log(rows)
+            // setSelectedRows(rows)
+            _index.length =0
+            rows.map((item,index)=>{
+                _index.push(item.tableData.id)
+                $(`tr:nth-child(${(item.tableData.id+1)})`).removeClass("selectedRow");
+            })
+            // setSelectedRowsIndexes(_index)
+            _index.map((item,index)=>{
+                $(`tr:nth-child(${(item+1)})`).addClass("selectedRow");
+                console.log(`add class`)
+            })
+            console.log(_index)
+        }
+        const handleScroll = (e) => {
+            const bottom = Math.round(e.target.scrollHeight - e.target.scrollTop) === e.target.clientHeight;
+            console.log(e.target.scrollHeight - e.target.scrollTop)
+            console.log( e.target.clientHeight)
 
-
+            if (bottom) { 
+              alert(`end`)
+            }
+        }
+        useEffect(() => {
+            if(reachedEnd){
+                console.log(`load Data end reached`)
+            }
+        }, [reachedEnd])
          return(
-            <div style={{border: "2px solid black"}}>
-                 {/* <div className='flex'>
-                     Progress : <BorderLinearProgress variant="determinate" value={progresslength*100} />
-                     </div> */}
+            <div onScroll={handleScroll} >
                     {transformedData && <MaterialTable
                         icons={tableIcons}
                         data={!ChooseData() ? transformedData : filteredData}
                         columns={col}
-                        title="Demo"
+                        title="Coding Tool"
                         options={{
                           selection: true,
                           exportButton: true,
@@ -610,7 +621,7 @@ const CodeItTable =({selectContainsKeyword,selectShowCodedAs,excelData,setRow,se
                             lastTooltip: 'Last Page'
                           }
                         }}
-                        onSelectionChange={(rows) => {console.log(rows)}}
+                        onSelectionChange={handleRowSelections}
                     />}
             </div>
          )
@@ -624,12 +635,13 @@ const mapStateToProps=createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
     setRow: collectionsMap => dispatch(setRow(collectionsMap)),
     setExcelDataColumns: collectionsMap => dispatch(setExcelDataColumns(collectionsMap)),
+    // setSelectedRows: collectionsMap => dispatch(setSelectedRows(collectionsMap)),
     // setCodesinRedux: collectionsMap => dispatch(setCodes(collectionsMap)),
     // increaseProgressLength: collectionsMap => dispatch(increaseProgressLength(collectionsMap)),
     // decreaseProgressLength: collectionsMap => dispatch(decreaseProgressLength(collectionsMap)),
     // increaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(increaseNumberOfInputsGreaterThan2(collectionsMap)),
     // decreaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(decreaseNumberOfInputsGreaterThan2(collectionsMap)),
-    
+    // setSelectedRows
     // decreaseNumberOfInputsGreaterThan2
     // increaseNumberOfInputsGreaterThan2
 });

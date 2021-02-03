@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component,useEffect } from 'react';
 import { connect } from 'react-redux';
 import XLSX from 'xlsx';
-import { setExcelData } from '../../../Redux/ExcelData/excel-data.actions';
+import { setExcelData, setExcelFileName } from '../../../Redux/ExcelData/excel-data.actions';
 import { setProgressNumber } from '../../../Redux/Progress-number/progress.actions';
 import { make_cols } from './MakeColumns';
 import { SheetJSFT } from './types';
@@ -12,15 +12,30 @@ import config from '../../../config';
 import { handleResponse } from '../../../services';
 import axios from 'axios';
 import WithSpinner from "../../with-spinner/with-spinner.component"
+import { Button } from '@material-ui/core';
+import { selectExcelData, selectExcelFileName } from '../../../Redux/ExcelData/excel-data.selectors';
+import { createStructuredSelector } from 'reselect';
 
-const ExcelReaderHTML=({x})=>{
+let file_name =''
+
+const ExcelReaderHTML=({removeExcelData,file,excelFileName,x,fileName,selectExcelData})=>{
+  console.log((fileName),excelFileName)
+  
   return(
     <div className="excel_reader">
-      <form encType="multipart/form-data" action>
+      {!selectExcelData &&
+       <form className="height100" encType="multipart/form-data" action>
         <label htmlFor="file">Upload </label>
-        <input type="file" className="form-control" id="file" name="file" onChange={x}/>
-      </form>
-    </div>
+        <input type="file" className="form-control custom-file-upload" id="file" name="file" onChange={x}/>
+      </form>}
+      {(selectExcelData) && 
+        <div  className="file_details" >
+          <img className="file_img" src="https://png.pngtree.com/svg/20170708/_type_excel_file_1154793.png"/>
+          <Button><Button>{fileName}</Button><Button onClick={removeExcelData}>X</Button></Button>
+        </div>
+        /* {fileName} */
+       }
+      </div>
   )
 }
 
@@ -35,20 +50,22 @@ class ExcelReader extends Component {
       cols: [],
       loading:false,
       uploaded:false,
+      fileName:this.props.excelFileName,
     }
     
     this.handleFile = this.handleFile.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-    
+  
     handleChange(e){
     this.setState({loading:true})
     const files = e.target.files;
     if (files && files[0]){ 
       userActions.uploadFile()
-
-      this.setState({ file: files[0],uploaded:true,loading:true },this.handleFile);
-      console.log("upload")
+      this.props.setExcelFileName(files[0].name)
+      console.log(files[0].name)
+      file_name = files[0].name
+      this.setState({ file: files[0],fileName:files[0]?.name,uploaded:true,loading:true },this.handleFile);
     }
   };
  
@@ -74,8 +91,9 @@ class ExcelReader extends Component {
         updateExcelData(JSON.stringify(this.state.data, null, 2))
         localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2))
         setProgressNumber(2)
+        this.setState({loading:false})
       });
- 
+      
     };
  
     if (rABS) {
@@ -84,10 +102,20 @@ class ExcelReader extends Component {
       reader.readAsArrayBuffer(this.state.file);
     };
   }
+  removeExcelData=()=>{
+    const {updateExcelData }=this.props
+    updateExcelData(null)
+  }
 
   render() {
+      console.log(this.state.fileName)
     return (
-      <ExcelReaderWithHOC isLoading={this.state.loading} x={this.handleChange}/>
+      <ExcelReaderWithHOC isLoading={this.state.loading}
+      
+      selectExcelData={this.props.excelData}
+      excelFileName={this.props.excelFileName} 
+      removeExcelData={this.removeExcelData}
+      x={this.handleChange} file={this.state.file} fileName={this.state.fileName}  />
       
     )
   }
@@ -95,6 +123,12 @@ class ExcelReader extends Component {
 
 const mapDispatchToProps = dispatch => ({
     updateExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
-    setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber))
+    setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),
+    setExcelFileName: progressNumber =>dispatch(setExcelFileName(progressNumber)),
+    // setExcelFileName
 });
-export default connect(null,mapDispatchToProps)(ExcelReader);
+const mapStateToProps=createStructuredSelector({
+  excelFileName: selectExcelFileName,
+  excelData:selectExcelData,
+})
+export default connect(mapStateToProps,mapDispatchToProps)(ExcelReader);

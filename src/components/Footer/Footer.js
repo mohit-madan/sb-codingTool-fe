@@ -61,7 +61,7 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
             <div className="right">
                 <Button color="primary" onClick={()=>{progressNumber>1 && setProgressNumber(progressNumber-1)}}>Prev</Button>
                 {progressNumber<=3 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
-                {progressNumber===4 && <Button variant="contained"  color="primary" onClick={onSubmit}>Next</Button>}
+                {progressNumber===4 && <Button variant="contained"  color="primary" onClick={onSubmit}>Submit</Button>}
             
             </div>
         </div>

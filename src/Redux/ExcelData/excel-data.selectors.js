@@ -11,3 +11,7 @@ export const selectExcelDataColumns = createSelector(
   user => user.excelDataColumns
 );
 
+export const selectExcelFileName = createSelector(
+  [selectExcelDataReducer],
+  user => user.excelFileName
+);

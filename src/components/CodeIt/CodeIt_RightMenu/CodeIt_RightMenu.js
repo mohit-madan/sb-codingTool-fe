@@ -1,5 +1,5 @@
 import  Tab from "../../Dashboard/RightMenu/Table.js"
-import React,{useEffect} from "react"
+import React,{useEffect,useState,Component} from "react"
 import "./CodeIt_RightMenu.css"
 import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
@@ -27,35 +27,6 @@ const BorderLinearProgress = withStyles((theme) => ({
   }))(LinearProgress);
 
 const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
-    
-    // const [progressLength,setProgressLength]=React.useState(0)
-
-    // Object.size = function(obj) {
-    //     var size = 0,
-    //       key;
-    //     for (key in obj) {
-    //       if (obj.hasOwnProperty(key)) size++;
-    //     }
-    //     return size;
-    //   }
-
-    //   var count=0;
-
-    // useEffect(()=>{
-    //     console.log(progressLength)
-    //     for(let i=0;i<Object.size(codes);i++){
-    //         if(codes[i].length>2){
-    //             count++
-    //         }
-    //     }
-    //     setProgressLength(count/Object.size(codes))
-    // },[codes])
-    // useEffect(() => {
-    //   console.log(progressLength*10000)
-    // }, [progressLength])
-    useEffect(() => {
-      console.log((selectnumberOfInputsGreaterThan2/3000)*10000000)
-    }, [selectnumberOfInputsGreaterThan2])
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -66,9 +37,21 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
       setShowCodedAs(null)
       console.log(`eve`)
     }
+    const handleScroll = (e) => {
+      e.preventDefault()
+      const bottom = Math.round(e.target.scrollHeight - e.target.scrollTop) === e.target.clientHeight;
+      if (bottom) {
+        setReachedEnd(true)
+        return
+      }else{
+        setReachedEnd(false)
+        return
+      }
+    }
+    const [reachedEnd,setReachedEnd]=useState(false)
 
     return(
-        <div className="codeit_rightmenu_">
+        <div className="codeit_rightmenu_"  onScroll={handleScroll}>
             <div className='flex'>
               <div className='flex'> Progress : <BorderLinearProgress variant="determinate" value={(selectnumberOfInputsGreaterThan2/3000)*10000000} />
               </div>
@@ -90,8 +73,8 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
               }
              </div>
 
-            <div className="codeit_rightmenu">
-                <CodeItTable />
+            <div className="codeit_rightmenu" >
+                <CodeItTable reachedEnd={reachedEnd}/>
             </div>
         </div>
     )

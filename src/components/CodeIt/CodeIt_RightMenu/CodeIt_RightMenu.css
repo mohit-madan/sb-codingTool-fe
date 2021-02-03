@@ -1,5 +1,5 @@
-.codeit_rightmenu{
-    flex: 0.7;
+.codeit_rightmenu_{
+    flex: 0.8;
     /* border: 2px solid black; */
     height: 100%;
     overflow-y: scroll;
@@ -18,7 +18,7 @@
     display: inline-flex!important;
     /* position: fixed; */
 }
-.MuiLinearProgress-root{
+.codeit_rightmenu_ .MuiLinearProgress-root{
     width: 250px!important;
     border: 3px solid grey;
     height: 20px!important;
@@ -36,6 +36,34 @@
 .codeit_rightmenu_ .remove_button{
     /* background: none; */
 }
+.codeit_rightmenu .MuiTableCell-head{
+    background-color: #c6c6c6!important;
+}
+.codeit_rightmenu  td,.codeit_rightmenu   th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.codeit_rightmenu  tr:nth-child(even){background-color: #f2f2f2;}
+
+.codeit_rightmenu  tr:hover {background-color: #ddd;}
+
+.codeit_rightmenu  th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+.codeit_rightmenu .MuiTableCell-body{
+    margin: auto;
+    padding: 0!important;
+}
+.selectedRow{
+    background-color: rgb(255, 200, 200)!important;
+}
+/* MuiFormControl-root makeStyles-formControl-8 */
+/* MuiTableCell-root MuiTableCell-body MuiTableCell-alignLeft */
 /* class="MuiLinearProgress-root WithStyles(ForwardRef(LinearProgress))-root-6 MuiLinearProgress-colorPrimary WithStyles(ForwardRef(LinearProgress))-colorPrimary-7 MuiLinearProgress-determinate" */
 /* MuiPaper-root MuiMenu-paper MuiPopover-paper MuiPaper-elevation8 MuiPaper-rounded */
 /* MuiTypography-root MuiTypography-caption */

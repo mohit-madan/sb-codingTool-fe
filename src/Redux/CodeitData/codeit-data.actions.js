@@ -22,3 +22,8 @@ export const increaseNumberOfInputsGreaterThan2 = () => ({
 export const decreaseNumberOfInputsGreaterThan2 = () => ({
   type: codeItDataActionTypes.DECREASE_NUMBER_OF_INPUTS,
 });
+// SET_SELECTED_ROWS
+export const setSelectedRows = (user) => ({
+  type: codeItDataActionTypes.SET_SELECTED_ROWS,
+  payload: user
+});

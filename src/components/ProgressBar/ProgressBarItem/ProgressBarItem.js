@@ -1,6 +1,6 @@
 function ProgressBarItem({index,progressNumber,text}){
-    const highlightStyle={"backgroundColor":"#00bda7","color":"white","border":"none"}
-    const textStyle={"color":"#15c5b1"}
+    const highlightStyle={"backgroundColor":"#00a8cc","color":"white","border":"none"}
+    const textStyle={"color":"#00a8cc"}
     return (
             <div className="item">
                 <div  key={index} style={progressNumber>=index ? highlightStyle : null} className="number">{progressNumber>index ? `✔`: index}</div>

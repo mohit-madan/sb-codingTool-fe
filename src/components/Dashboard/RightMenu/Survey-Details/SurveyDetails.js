@@ -1,13 +1,21 @@
 import { TextField } from "@material-ui/core"
 import React,{useState,useEffect} from "react"
 import "./SurveyDetails.css"
-import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from "react-redux";
 import {setSurveyDetails} from "../../../../Redux/SurveyDetails/survey-details.actions.js"
 import surveyDetailsReducer from "../../../../Redux/SurveyDetails/survey-details.reducer";
 import { selectSurveyDetails } from "../../../../Redux/SurveyDetails/survey-details.selectors";
 import { createStructuredSelector } from "reselect"
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import ListItemText from '@material-ui/core/ListItemText';
+import Select from '@material-ui/core/Select';
+import Checkbox from '@material-ui/core/Checkbox';
+import Chip from '@material-ui/core/Chip';
+
 
 // import TagsInput from 'react-tagsinput'
 
@@ -473,7 +481,63 @@ const types=[
   {name:"Service Feedback"},
   {name:"Unaided Awareness"},
 ]
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
+}));
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const names = [
+  'Oliver Hansen',
+  'Van Henry',
+  'April Tucker',
+  'Ralph Hubbard',
+  'Omar Alexander',
+  'Carlos Abbott',
+  'Miriam Wagner',
+  'Bradley Wilkerson',
+  'Virginia Andrews',
+  'Kelly Snyder',
+];
+
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
+
 const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
+  const classes = useStyles();
+  const theme = useTheme();
+  const [personName, setPersonName] = React.useState([]);
+  
     const [surveyDetails,setSurveyDetails] = useState({
         name:surveyDetailsFromStore ? surveyDetailsFromStore?.name : "",
         description:surveyDetailsFromStore ? surveyDetailsFromStore?.description : "",
@@ -493,9 +557,7 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
     
   };
   const handleChangeTags=event=>{
-    setSurveyDetails({...surveyDetails,tags:[...surveyDetails.tags,event.target.value]})
-    console.log(surveyDetails)
-    updateSurveyDetails(surveyDetails)
+    setPersonName(event.target.value);
   }
     return(
         <div className="survey_details">
@@ -513,12 +575,6 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
             </div>
             <div className='survey_details_main'>
                 <div className="survey_details_main_left">
-                    {/* <TextField
-                    onChange={handleChange}
-                    name="name"
-                    value={surveyDetails.name}
-                    size='small'
-                    id="outlined-basic" label="NAME" variant="outlined" /> */}
                     <p>Name</p>
                     <h6>Please enter a title</h6>
                     <input
@@ -582,15 +638,33 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
                       </MenuItem>
                     ))}
                 </TextField>
-                {/* <TagsInput 
-                    // id="standard-secondary"
-                    label="TAGS"
-                    // color="secondary"
-                    value={surveyDetails.tags}
+
+                <FormControl className={classes.formControl}>
+                  <InputLabel id="demo-mutiple-chip-label">Chip</InputLabel>
+                  <Select
+                    labelId="demo-mutiple-chip-label"
+                    id="demo-mutiple-chip"
+                    multiple
+                    size="large"
+                    value={personName}
                     onChange={handleChangeTags}
-                    name="tags"
-                    // size='small'
-                /> */}
+                    input={<Input id="select-multiple-chip" />}
+                    renderValue={(selected) => (
+                      <div className={classes.chips}>
+                        {selected.map((value) => (
+                          <Chip size="large" key={value} label={value} className={classes.chip} />
+                        ))}
+                      </div>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {names.map((name) => (
+                      <MenuItem size="large" key={name} value={name} style={getStyles(name, personName, theme)}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 </div>
             </div>
         </div>
