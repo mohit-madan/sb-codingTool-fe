@@ -37,7 +37,7 @@ const CodeIt=({progressNumber})=>{
       setAge(event.target.value);
     };
     return(
-        <div className="uploader_page">
+        <div className="uploader_page codeIt_page">
             <Navigation />
             <ProgressBar progressNumber={progressNumber}/>
 

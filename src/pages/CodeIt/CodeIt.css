@@ -8,7 +8,6 @@
 .MuiFormLabel-root{
     font-size: 1.4rem!important;
 }
-.uploader_page .MuiFormControl-root,.uploader_page .MuiFormLabel-root{
+.codeIt_page .MuiFormControl-root,.codeIt_page .MuiFormLabel-root{
     padding-left: 50px!important;
 }
-/* MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated */
