@@ -10,7 +10,7 @@ import MaterialTable from "material-table"
 import { RemoveCircleOutlineOutlined as RemoveCircleIcon } from '@material-ui/icons';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { setRow } from "../../../Redux/SelectedRowandColumn/tableSelections.actions.js";
-import { setExcelDataColumns } from "../../../Redux/ExcelData/excel-data.actions.js";
+import { setExcelData, setExcelDataColumns } from "../../../Redux/ExcelData/excel-data.actions.js";
 import $ from "jquery"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
@@ -30,6 +30,7 @@ import config from "../../../config"
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
+import { userActions } from "../../../_actions/index.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -321,12 +322,52 @@ const socket = io.connect('http://localhost:4000')
     dividerClassName: 'custom-divider',
     selectedClassName: 'custom-selected'
   }
+const ContextMenuSkin=({select,data,handleClick})=>{
+    var __num= Math.floor(Math.random() * 101)  
+    return (
+        <div>
+         <ContextMenuTrigger id={__num}>
+            <p >{select}</p>
+            </ContextMenuTrigger>
+            <ContextMenu id={__num}>
+                <ContextMenuItem
+                  className="input_value_in_dropdown"
+                  data={{ action: [data] }}
+                  onClick={handleClick}
+                  attributes={attributes}
+                >
+                 Sample Context Item
+                </ContextMenuItem>
+            </ContextMenu>
+        </div>
+    )
+}
+const CodeItTable =({setExcelData,reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
 
-const CodeItTable =({reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
+        let customCol=[
+        {
+            title:`desc`,
+            field:`desc`,
+            render: rowData => <ContextMenuSkin select={rowData?.desc} data={rowData} handleClick={handleClick} />
+        },{
+            title:`codeword`,
+            field:`codeword`,
+            render: rowData => <ContextMenuSkin select={rowData?.codeword} data={rowData} handleClick={handleClick} />
+        },{
+            title:`length`,
+            field:`length`,
+            render: rowData => <ContextMenuSkin select={rowData?.length} data={rowData} handleClick={handleClick} />
+        },{
+            title:"Codes",
+            field:"Codes",
+            render: rowData => <input onChange={handleCodes(rowData)} value={codes[rowData.tableData.id]} type="text"/>
+        },
+    ]
 
-    const classes = useStyles();
-
-    const tempData=JSON.parse(excelData ? excelData : localStorage.excelData)
+    let tempData=(JSON.parse(localStorage.excelData))
+    useEffect(() => {
+        tempData=(JSON.parse(localStorage.excelData))
+    }, [localStorage.excelData])
     let transformedData=tempData
     transformedData.map((item,index)=>{
         let keys = Object.keys(transformedData[index])
@@ -335,7 +376,6 @@ const CodeItTable =({reachedEnd,selectContainsKeyword,selectShowCodedAs,excelDat
         }
     })
 
-    // Mapper
     let mapper={}
     let i=0
     for ( i=0 ; i<transformedData?.length;i++){mapper[i]=[]}
@@ -358,120 +398,15 @@ const CodeItTable =({reachedEnd,selectContainsKeyword,selectShowCodedAs,excelDat
         })
     })
 
-    const handleChange= rowData => (event) => {
-        let value =event.target.value;
-        let num=rowData.tableData.id
-        // setPersonName(event.target.value);
-        // setkeywords({...keywords,[num] : []})
-        // setkeywords({...keywords,[num] : value},console.log(keywords))
-        socket.emit('keywords',{num,value})
-    };
-
   const handleCodes=rowData=>(event)=>{
     let value =event.target.value;
     let num=rowData.tableData.id
     socket.emit('input-box',{num,value})
-    // setBefore(1)
-    
-   
-    // // setCodesinRedux(codes)
-    //  setCodes({...codes,[num] : value})
-        // return ()=>{
-        //     if(codes[num]?.length < 2 && before===1){
-        //         decreaseNumberOfInputsGreaterThan2()
-        //     }
-        //     if(codes[num].length >= 2 && before===0){
-        //         increaseNumberOfInputsGreaterThan2()
-        //     }
-        //     setBefore(0)
-        // }
-    
-
-    // if(codes[num].length>2){
-    //     console.log(codes)
-    //     increaseProgressLength(ratio)
-    // }
   }
-  
-  let k=Object.keys(transformedData[0])
-  let col=[]
-  let columns_titles=[]
-  i=0
   
 const handleClick=(event, data) => {
     console.log(`clicked`, { event, data })
   }
-        var __num
-        k=Object.keys(transformedData[0])
-        for(i in k){
-            var increase=-1
-            col=[...col,
-                {title:`${k[i]?.slice(0,40)}...`,
-                field:k[i],
-                render: rowData =>  <div>
-                                        <ContextMenuTrigger id={__num}>
-                                            
-                                        <div style={{display:"none"}} >{increase=increase+1} { __num = Math.floor(Math.random() * 101)  }</div>
-                                        
-                                        <p >{increase%2 ==0 ? rowData[k[0]] : rowData[k[1]] }</p>
-                                        </ContextMenuTrigger>
-
-                                        <ContextMenu id={__num}>
-                                            <ContextMenuItem
-                                              className="input_value_in_dropdown"
-                                              data={{ action: rowData }}
-                                              onClick={handleClick}
-                                              attributes={attributes}
-                                            >
-                                             hiasd
-                                            </ContextMenuItem>
-                                        </ContextMenu>
-                                    </div>
-                }
-            ];
-        }
-
-        col=[...col,
-
-
-            {title:"Codes",field:"Codes",
-            render: rowData => <input onChange={handleCodes(rowData)} value={codes[rowData.tableData.id]} type="text"/>
-            },
-
-
-            {title:"input",field:"input",
-            render: rowData =>  <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-mutiple-checkbox-label">Tag</InputLabel>
-                                    <Select
-                                      labelId="demo-mutiple-checkbox-label"
-                                      id="demo-mutiple-checkbox"
-                                      multiple
-                                      value={keywords[rowData.tableData.id]}
-                                      onChange={handleChange(rowData)}
-                                      input={<Input />}
-                                      renderValue={(selected) => selected.join(', ')}
-                                      MenuProps={MenuProps}
-                                    >
-                                      {rowData['YAKE Prediction']?.split('/').map((name) => (
-                                        <MenuItem key={rowData.tableData.id} value={name}>
-                                          <Checkbox checked={keywords[rowData.tableData.id].indexOf(name) > -1} />
-                                          <ListItemText primary={name} />
-                                        </MenuItem>
-                                      ))}
-                                    </Select>
-                                    {/* {console.log(rowData)} */}
-                                </FormControl>
-            },
-            {title:"length",feild:"null1",
-            render: rowData => <p  key={rowData.tableData.id}>{rowData[k[0]].length}</p>
-            }
-        ]
-
-        useEffect(()=>{
-            for(i in k){ columns_titles= [...columns_titles,{title:k[i]}]}
-            setExcelDataColumns(columns_titles)
-        },[])
-
 
         const [filteredData,setFilteredData]=useState([])
 
@@ -548,11 +483,9 @@ const handleClick=(event, data) => {
         useEffect(() => {
             ChooseData()
         }, [selectContainsKeyword,filteredData])
-        
-        const [selectedRows,setSelectedRows]=useState(null)
+
         var _index=[]
         const handleRowSelections =(rows)=>{
-            console.log(_index)
             _index.map((item,index)=>{
                 if($(`tr:nth-child(${(item+1)})`).hasClass(`selectedRow`)){
                     console.log($(`tr:nth-child(${(item+1)})`).hasClass(`selectedRow`))
@@ -560,43 +493,45 @@ const handleClick=(event, data) => {
                         console.log(`insode`)
                       });
                 }
-                console.log(`remove`)
             })
-            // console.log(rows)
-            // setSelectedRows(rows)
             _index.length =0
             rows.map((item,index)=>{
                 _index.push(item.tableData.id)
                 $(`tr:nth-child(${(item.tableData.id+1)})`).removeClass("selectedRow");
             })
-            // setSelectedRowsIndexes(_index)
             _index.map((item,index)=>{
                 $(`tr:nth-child(${(item+1)})`).addClass("selectedRow");
-                console.log(`add class`)
             })
             console.log(_index)
         }
-        const handleScroll = (e) => {
-            const bottom = Math.round(e.target.scrollHeight - e.target.scrollTop) === e.target.clientHeight;
-            console.log(e.target.scrollHeight - e.target.scrollTop)
-            console.log( e.target.clientHeight)
 
-            if (bottom) { 
-              alert(`end`)
-            }
-        }
-        useEffect(() => {
+        useEffect(async () => {
             if(reachedEnd){
                 console.log(`load Data end reached`)
+                let data =  await userActions.responsePagination({pageNumber:1,limit:20})
+                if(filteredData.length > 0){
+                    setFilteredData([...filteredData,...data])
+                }else{
+                    setFilteredData([...transformedData,...data])
+                }
             }
         }, [reachedEnd])
+        const [selectedRow, setSelectedRow] = useState(null);
+
          return(
-            <div onScroll={handleScroll} >
+            <div >
                     {transformedData && <MaterialTable
                         icons={tableIcons}
                         data={!ChooseData() ? transformedData : filteredData}
-                        columns={col}
+                        columns={customCol}
                         title="Coding Tool"
+                        options={{
+                            rowStyle: rowData => ({
+                              backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
+                            })
+                        }}
+                        onSelectionChange={handleRowSelections}
+                        onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
                         options={{
                           selection: true,
                           exportButton: true,
@@ -621,7 +556,7 @@ const handleClick=(event, data) => {
                             lastTooltip: 'Last Page'
                           }
                         }}
-                        onSelectionChange={handleRowSelections}
+                        
                     />}
             </div>
          )
@@ -635,6 +570,8 @@ const mapStateToProps=createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
     setRow: collectionsMap => dispatch(setRow(collectionsMap)),
     setExcelDataColumns: collectionsMap => dispatch(setExcelDataColumns(collectionsMap)),
+    setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
+    // setExcelData
     // setSelectedRows: collectionsMap => dispatch(setSelectedRows(collectionsMap)),
     // setCodesinRedux: collectionsMap => dispatch(setCodes(collectionsMap)),
     // increaseProgressLength: collectionsMap => dispatch(increaseProgressLength(collectionsMap)),

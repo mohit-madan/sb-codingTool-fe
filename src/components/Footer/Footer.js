@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import "./Footer.css"
 import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
@@ -12,9 +12,15 @@ import axios from 'axios';
 import config from '../../config';
 import { handleResponse } from '../../services';
 import {history} from "../../_helpers"
+import { userActions } from '../../_actions';
+import { setExcelData } from '../../Redux/ExcelData/excel-data.actions';
 
-const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
+const Footer=({setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
+    // {
+    //     "projectId":"601a4556fb38610c70c688ba",
+    //     "questionId":"601a4577fb38610c70c688bb"
+    // }
 
     const next=()=>{
         if(progressNumber===1 && !excelData){
@@ -33,11 +39,23 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
         }
         progressNumber<=3 && setProgressNumber(progressNumber+1)
     }
-    const onSubmit=()=>{
+    const [excel,setExcel] = React.useState(null) 
+    useEffect(() => {
+        if(typeof(excel)==`object` && excel?.length > 0){
+            history.push('/tool')
+        }
+        console.log(excel)
+    }, [excel])
+    const onSubmit=async ()=>{
+        // const details={
+        //     "name":surveyDetails.name,
+        //     "desc":surveyDetails.description,
+        //     "key":localStorage.fileKey
+        // }
         const details={
-            "name":surveyDetails.name,
-            "desc":surveyDetails.description,
-            "key":localStorage.fileKey
+            "name":`surveyDetails.name`,
+            "desc":`surveyDetails.descriptio`,
+            "key":`localStorage.fileKey`
         }
         const _token=JSON.parse(localStorage.token).accessToken
         const requestOptions = {
@@ -47,10 +65,13 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
         .then(data=>{
             alert(data?.data?.message);
             // history.push('/tool')
+            localStorage.setItem('projectId',data?.data?.project?._id)
+            console.log(data)
         })
         .catch(err=>console.log(err))
-        history.push('/tool')
-
+        // history.push('/tool')
+        let dataResp = await userActions.responsePagination({pageNumber:1,limit:20})
+        setExcel(dataResp)
     }
     return (
         <div className="footer">
@@ -69,6 +90,7 @@ const Footer=({setProgressNumber,progressNumber,row,column,surveyDetails,excelDa
 }
 const mapDispatchToProps = dispatch => ({
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),
+    setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
 
 });
 const mapStateToProps=createStructuredSelector({

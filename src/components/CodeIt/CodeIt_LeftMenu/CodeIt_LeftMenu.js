@@ -46,6 +46,7 @@ const attributes = {
 }
 
 const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
+    var prev=0,next=0
     const [state,setState] = useState({ values: [] }) // Map 
     const [inputCodes,setinputCodes]=useState({}) // All inputs
     const [finalCodes,setFinalCodes]=useState({}) // Codes Finalised with Switch
@@ -62,9 +63,11 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
             }
         })
         socket.once('left-menu-state', () => {
-          setState(prevState => ({ values: [...prevState.values, 'default']}))
+          if(prev<next){
+            setState(prevState => ({ values: [...prevState.values, 'default']}))
+            prev=prev+1
+          }
         })
-      // return () => { socket.disconnect();socket.connect(); };
     })
 
     const handleChange =(i)=>(event)=>{
@@ -261,6 +264,7 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
     function addClick(e){
       e.preventDefault()
       socket.emit('left-menu-state')
+      next=next+1
     }
    
 

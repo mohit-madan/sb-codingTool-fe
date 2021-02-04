@@ -16,7 +16,61 @@ export const userActions = {
     resetPass,
     forgotPassOTP,
     uploadFile,
+    projectDetails,
+    responsePagination
 };
+
+async function responsePagination({pageNumber,limit}){
+    // "projectId":"601a4556fb38610c70c688ba",
+    // "questionId":(localStorage.listOfQuestion.split(','))[1]
+    var excelData =[]
+
+    const details={
+        "projectId":"601a4556fb38610c70c688ba",
+        "questionId":"601a4577fb38610c70c688bb"
+    }
+    const _token=JSON.parse(localStorage.token).accessToken
+    const requestOptions = {
+        headers: {'Authorization': `Bearer ${_token}`}
+    };
+    await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions)
+    .then(data=>{
+        if(data?.data?.length!==0){
+            data?.data?.map((item,index)=>{
+                let dataItem ={}
+                dataItem= {
+                    desc : item?.desc,
+                    codeword : item?.codebook?.codeword,
+                    length : item?.codebook?.length
+                }
+                excelData.push(dataItem)
+            })
+            console.log(data)
+        }
+    },err=>console.log(err))
+    console.log(excelData)
+    localStorage.setItem('excelData',JSON.stringify(excelData))
+    return (excelData)
+}
+
+function projectDetails(){
+    // "id":(localStorage.projectId),
+    const details={
+        "id":"601a4556fb38610c70c688ba",
+    }
+    const _token=JSON.parse(localStorage.token).accessToken
+    const requestOptions = {
+        headers: {'Authorization': `Bearer ${_token}`}
+    };
+    axios.post(`${config.apiUrl}/projectDetails`,(details), requestOptions)
+    .then(data=>{
+        console.log(data)
+        localStorage.setItem('fileKey',data?.data?.project?.docKey)
+        localStorage.setItem('codebook',data?.data?.project?.codebook)
+        localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
+
+    },err=>console.log(err))
+}
 
 async function uploadFile(){
     var data = new FormData();

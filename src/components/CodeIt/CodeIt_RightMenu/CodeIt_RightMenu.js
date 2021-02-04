@@ -40,6 +40,7 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
     const handleScroll = (e) => {
       e.preventDefault()
       const bottom = Math.round(e.target.scrollHeight - e.target.scrollTop) === e.target.clientHeight;
+      // console.log(bottom)
       if (bottom) {
         setReachedEnd(true)
         return
@@ -77,6 +78,7 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
                 <CodeItTable reachedEnd={reachedEnd}/>
             </div>
         </div>
+        //
     )
 }
 const mapStateToProps=createStructuredSelector({

@@ -38,7 +38,7 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                         <p>HEADER COLUMN</p>
                         <p className="edit" onClick={()=>setProgressNumber(2)}>Edit</p>
                     </div>
-                    {Object.keys(column).map((item,index) => {
+                    {column && Object.keys(column).map((item,index) => {
                         console.log(column.index)
                             if(column[item]){
                                 return(

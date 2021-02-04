@@ -55,8 +55,7 @@ const CodeIt=({progressNumber})=>{
                 <MenuItem value="" disabled>
                     Select Question
                 </MenuItem>
-                 <MenuItem value={10}>Q148 What, if anything, about Westworld draws you into this show and makes you want to watch? What makes it a good show? (Please be as detailed and complete as possible in your reply.)
-                </MenuItem>
+                 <MenuItem value={10}>Q148 What, if anything, about Westworld draws ... </MenuItem>
                </Select>
             </FormControl>
 
