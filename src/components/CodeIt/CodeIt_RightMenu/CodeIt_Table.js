@@ -31,6 +31,8 @@ import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.se
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
 import { userActions } from "../../../_actions/index.js";
+import { selectFilters ,selectSubmitFilters} from "../../../Redux/Filters/Filters.selectors.js";
+import { setSubmitFilters } from "../../../Redux/Filters/Filters.actions.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -322,12 +324,13 @@ const socket = io.connect('http://localhost:4000')
     dividerClassName: 'custom-divider',
     selectedClassName: 'custom-selected'
   }
-const ContextMenuSkin=({select,data,handleClick})=>{
+const ContextMenuSkin=({slice,select,data,handleClick})=>{
     var __num= Math.floor(Math.random() * 101)  
     return (
         <div>
          <ContextMenuTrigger id={__num}>
-            <p >{select}</p>
+             {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && <p >{select?.slice(0,data?.fIndex)}<p style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</p>{select?.slice(data?.lIndex+1,)}</p>}
+            {!slice && <p >{select}</p>}
             </ContextMenuTrigger>
             <ContextMenu id={__num}>
                 <ContextMenuItem
@@ -342,13 +345,13 @@ const ContextMenuSkin=({select,data,handleClick})=>{
         </div>
     )
 }
-const CodeItTable =({setExcelData,reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
+const CodeItTable =({setSubmitFiltersInRedux,selectSubmitFiltersFromRedux,selectFiltersFromRedux,setExcelData,reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
 
         let customCol=[
         {
             title:`desc`,
             field:`desc`,
-            render: rowData => <ContextMenuSkin select={rowData?.desc} data={rowData} handleClick={handleClick} />
+            render: rowData => <ContextMenuSkin slice select={rowData?.desc} data={rowData} handleClick={handleClick} />
         },{
             title:`codeword`,
             field:`codeword`,
@@ -472,7 +475,7 @@ const handleClick=(event, data) => {
         },[selectContainsKeyword])
 
         const ChooseData =()=>{
-            if(filteredData.length==0){
+            if(filteredData?.length==0){
                 if(selectContainsKeyword || selectShowCodedAs){
                     return true
                 }else{
@@ -508,8 +511,10 @@ const handleClick=(event, data) => {
         }
         let data
         const [pageCount,setPageCount]=useState(2)
+        const [filteredPageCount,setFilteredPageCount]=useState(2)
+
         useEffect(async () => {
-            if(reachedEnd){
+            if(reachedEnd && selectFiltersFromRedux?.searchValue?.length===0  ){
                 console.log(`load Data end reached`)
                 data = ( await userActions.responsePagination({pageNumber:pageCount,limit:20,push:false}))
                 data=JSON.parse(data)
@@ -519,8 +524,49 @@ const handleClick=(event, data) => {
                     data!==`undefined` && setFilteredData([...transformedData,...data])
                 }
                 setPageCount(pageCount+1)
+            }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length>0){
+
+                data =await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
+                data=JSON.parse(data)
+ 
+                setSubmitFiltersInRedux(false);
+                
+                setFilteredData(data)
+ 
+                setFilteredPageCount(filteredPageCount+1)
             }
         }, [reachedEnd])
+
+        const getFiltersArray=(_string)=>{
+            console.log(`_string`,_string)
+            let filters =[]
+            if(selectFiltersFromRedux?.match===`Exact Match`){
+                filters.push({"filter":6,"pattern":_string})
+            }else if(selectFiltersFromRedux?.match===`Contains In`){
+                filters.push({"filter":5,"pattern":_string})
+            }
+            return filters
+        }
+
+
+        useEffect(async () => {
+           if(selectSubmitFiltersFromRedux){
+
+               data = await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
+               data=JSON.parse(data)
+               if(data==null){
+                   data =userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
+                   data=JSON.parse(data)
+                }
+               console.log(`caalling fetch`,data)
+               setSubmitFiltersInRedux(false);
+               
+               setFilteredData(data)
+
+               setFilteredPageCount(filteredPageCount+1)
+
+           }
+        }, [selectSubmitFiltersFromRedux])
 
         const [selectedRow, setSelectedRow] = useState(null);
          return(
@@ -542,9 +588,9 @@ const handleClick=(event, data) => {
                           exportButton: true,
                           filtering: false,
                           grouping: false,
-                          search: false,
+                          search: true,
                           sorting: true,
-                          paging:true
+                          paging:false
                         }}
                         localization={{
                           pagination: {
@@ -571,11 +617,14 @@ const mapStateToProps=createStructuredSelector({
     excelData:selectExcelData,
     selectShowCodedAs:selectShowCodedAs,
     selectContainsKeyword:selectContainsKeyword,
+    selectFiltersFromRedux:selectFilters,
+    selectSubmitFiltersFromRedux:selectSubmitFilters,
 })
 const mapDispatchToProps = dispatch => ({
     setRow: collectionsMap => dispatch(setRow(collectionsMap)),
     setExcelDataColumns: collectionsMap => dispatch(setExcelDataColumns(collectionsMap)),
     setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
+    setSubmitFiltersInRedux: collectionsMap => dispatch(setSubmitFilters(collectionsMap)),
     // setExcelData
     // setSelectedRows: collectionsMap => dispatch(setSelectedRows(collectionsMap)),
     // setCodesinRedux: collectionsMap => dispatch(setCodes(collectionsMap)),

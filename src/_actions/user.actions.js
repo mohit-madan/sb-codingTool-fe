@@ -18,11 +18,31 @@ export const userActions = {
     forgotPassOTP,
     uploadFile,
     projectDetails,
-    responsePagination
+    responsePagination,
+    filteredPagination
 };
 
-async function filteredPagination(filterID) {
-    
+async function filteredPagination({pageNumber,limit,filters}) {
+    let temp3=null
+    const details={
+        "projectId":localStorage.projectId,
+        "questionId":localStorage.listOfQuestion,
+        "filters":filters
+    }
+    const _token=JSON.parse(localStorage.token).accessToken
+    const requestOptions = {
+        headers: {'Authorization': `Bearer ${_token}`}
+    };
+    await axios.post(`${config.apiUrl}/filter/${pageNumber}/${limit}`,(details), requestOptions)
+    .then(data=>{
+        if(data?.data?.length!==0){
+            // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
+            localStorage.setItem('filterdExcelData',JSON.stringify(data?.data))
+            console.log(`Filtered Pagination DAta from user actions`,data?.data)
+            temp3=data?.data
+        }
+    },err=>console.log(err))
+    return JSON.stringify(temp3)
 }
 
 async function responsePagination({pageNumber,limit,push}){
@@ -171,8 +191,6 @@ function forgotPass(user) {
 function login(username, password, from) {
     return dispatch => {
         dispatch(request({ username }));
-
-
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -203,6 +221,13 @@ function login(username, password, from) {
                     console.log("user -->",user);
                     dispatch(success(user));
                     // window.location.replace(`${config.redirecturl}/`);
+                    const interval = setInterval(() => {
+                        localStorage.removeItem('user')
+                        history.push('/login')
+                        alert('Session Timed Out ! , Please Login Again')
+                        clearInterval(interval);
+                    }, 1000*60*30);
+
                     history.push('/')
                     return user;
                 },error => {

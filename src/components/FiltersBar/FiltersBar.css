@@ -1,0 +1,77 @@
+.FiltersBar{
+    display: flex;
+}
+.FiltersBar .question_dropdown{
+    flex: 0.3;
+}
+.FiltersBar .filters{
+    display: flex;
+    flex-direction: column;
+    flex: 0.7;
+}
+* {
+    box-sizing: border-box;
+  }
+  
+.FiltersBar   form.example input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 80%;
+  background: #f1f1f1;
+}
+
+.FiltersBar   form.example button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
+
+.FiltersBar  form.example button:hover {
+  background: #0b7dda;
+}
+
+.FiltersBar   form.example::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.FiltersBar .filters_settings{
+    display: flex;
+}
+.FiltersBar .btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 12px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: auto 0;
+    height: 50px;
+  }
+  
+  /* Darker background on mouse-over */
+  .FiltersBar   .btn:hover {
+    background-color: RoyalBlue;
+  }
+  .filter_btn{
+      color: rgb(29, 29, 29)!important;
+    background-color: rgb(211, 230, 248)!important;
+    margin: 0 10px!important;
+  }
+  .filter_btn:hover{
+    background-color: rgb(118, 189, 255)!important;
+  }
+  .FiltersBar  .remove_btn{
+    background: transparent;
+    border: none;
+    color: dodgerblue;
+    outline: none;
+  }

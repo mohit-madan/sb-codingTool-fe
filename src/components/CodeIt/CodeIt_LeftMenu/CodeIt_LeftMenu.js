@@ -268,6 +268,7 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
       next=next+1
       console.log(inputCodes)
     }
+    
     function disableInputBoxes(e){
       e.preventDefault()
       var temp1 =(inputCodes)

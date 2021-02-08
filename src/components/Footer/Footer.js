@@ -48,7 +48,14 @@ const Footer=({setLoading,setExcelData,setProgressNumber,progressNumber,row,colu
     const [gettingProjectDetails,setGettingProjectDetails]=useState(true)
     const [gettingPaginationData,setPaginationData]=useState(false)
 
-    useEffect( () => {
+    useEffect( async () => {
+        if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
+            console.log(`getting pagination Data`)
+            setPaginationData(true)
+            await userActions.responsePagination({pageNumber:1,limit:20,push:true})
+        }
+    }, [gettingProjectDetails])
+    useEffect(  () => {
         if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
             console.log(`getting pagination Data`)
             setPaginationData(true)

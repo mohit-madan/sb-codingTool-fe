@@ -39,11 +39,11 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
     }
     const handleScroll = (e) => {
       e.preventDefault()
-      var temp1=Math.round(e.target.scrollHeight - e.target.scrollTop)
-      const bottom = temp1 === e.target.clientHeight;
+      var temp1=Math.round((e.target.scrollHeight - e.target.scrollTop)/100)*100
+      const bottom = temp1 ===  Math.round(e.target.clientHeight/100)*100
       // console.log(`REahed End `)
-      //       console.log(Math.round(e.target.scrollHeight - e.target.scrollTop))
-      //       console.log(e.target.clientHeight)
+            // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop))
+            // console.log(e.target.clientHeight)
       // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop)+10 === e.target.clientHeight)
       if (bottom) {
         setReachedEnd(true)
