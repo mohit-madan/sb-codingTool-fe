@@ -39,8 +39,12 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
     }
     const handleScroll = (e) => {
       e.preventDefault()
-      const bottom = Math.round(e.target.scrollHeight - e.target.scrollTop) === e.target.clientHeight;
-      // console.log(bottom)
+      var temp1=Math.round(e.target.scrollHeight - e.target.scrollTop)
+      const bottom = temp1 === e.target.clientHeight;
+      // console.log(`REahed End `)
+      //       console.log(Math.round(e.target.scrollHeight - e.target.scrollTop))
+      //       console.log(e.target.clientHeight)
+      // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop)+10 === e.target.clientHeight)
       if (bottom) {
         setReachedEnd(true)
         return
@@ -54,7 +58,7 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
     return(
         <div className="codeit_rightmenu_"  onScroll={handleScroll}>
             <div className='flex'>
-              <div className='flex'> Progress : <BorderLinearProgress variant="determinate" value={(selectnumberOfInputsGreaterThan2/3000)*10000000} />
+              <div className='flex'> Progress : <BorderLinearProgress variant="determinate" value={50} />
               </div>
               {selectShowCodedAs && 
                 <div className='filteredOn flex'>

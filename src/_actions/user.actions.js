@@ -5,6 +5,7 @@ import { history } from '../_helpers';
 import config from "../config.js"
 import { authHeader } from '../_helpers';
 import axios from "axios"
+import { useParams } from "react-router-dom";
 // import {handleResponse} from "../services"
 
 export const userActions = {
@@ -20,14 +21,15 @@ export const userActions = {
     responsePagination
 };
 
-async function responsePagination({pageNumber,limit}){
-    // "projectId":"601a4556fb38610c70c688ba",
-    // "questionId":(localStorage.listOfQuestion.split(','))[1]
-    var excelData =[]
+async function filteredPagination(filterID) {
+    
+}
 
+async function responsePagination({pageNumber,limit,push}){
+    let temp3=null
     const details={
-        "projectId":"601a4556fb38610c70c688ba",
-        "questionId":"601a4577fb38610c70c688bb"
+        "projectId":localStorage.projectId,
+        "questionId":localStorage.listOfQuestion
     }
     const _token=JSON.parse(localStorage.token).accessToken
     const requestOptions = {
@@ -36,37 +38,31 @@ async function responsePagination({pageNumber,limit}){
     await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions)
     .then(data=>{
         if(data?.data?.length!==0){
-            data?.data?.map((item,index)=>{
-                let dataItem ={}
-                dataItem= {
-                    desc : item?.desc,
-                    codeword : item?.codebook?.codeword,
-                    length : item?.codebook?.length
-                }
-                excelData.push(dataItem)
-            })
-            console.log(data)
+            // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
+            push && localStorage.setItem('excelData',JSON.stringify(data?.data))
+            push && history.push('/tool')
+            console.log(`Pagination DAta from user actions`,data?.data)
+            temp3=data?.data
+            
         }
     },err=>console.log(err))
-    console.log(excelData)
-    localStorage.setItem('excelData',JSON.stringify(excelData))
-    return (excelData)
+    return JSON.stringify(temp3)
 }
 
-function projectDetails(){
+async function projectDetails(){
     // "id":(localStorage.projectId),
     const details={
-        "id":"601a4556fb38610c70c688ba",
+        "id":localStorage.projectId,
     }
     const _token=JSON.parse(localStorage.token).accessToken
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    axios.post(`${config.apiUrl}/projectDetails`,(details), requestOptions)
+    await axios.post(`${config.apiUrl}/projectDetails`,(details), requestOptions)
     .then(data=>{
-        console.log(data)
+        console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
-        localStorage.setItem('codebook',data?.data?.project?.codebook)
+        localStorage.setItem('codebook',data?.data?.project?.codebooks)
         localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
 
     },err=>console.log(err))
@@ -84,7 +80,7 @@ async function uploadFile(){
       },
     }).then(resp=>resp.data)
     .then(resp1=>{
-        console.log(resp1)
+        console.log('Upload FIle Response',resp1)
         if(resp1?.err){
             alert(`${resp1?.err?.message},"Please Login Again"`)
         }else{

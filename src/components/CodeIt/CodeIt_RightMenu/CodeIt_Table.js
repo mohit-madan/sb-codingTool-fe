@@ -365,6 +365,8 @@ const CodeItTable =({setExcelData,reachedEnd,selectContainsKeyword,selectShowCod
     ]
 
     let tempData=(JSON.parse(localStorage.excelData))
+    console.log(`tempData`,tempData)
+
     useEffect(() => {
         tempData=(JSON.parse(localStorage.excelData))
     }, [localStorage.excelData])
@@ -504,22 +506,25 @@ const handleClick=(event, data) => {
             })
             console.log(_index)
         }
-
+        let data
+        const [pageCount,setPageCount]=useState(2)
         useEffect(async () => {
             if(reachedEnd){
                 console.log(`load Data end reached`)
-                let data =  await userActions.responsePagination({pageNumber:1,limit:20})
-                if(filteredData.length > 0){
+                data = ( await userActions.responsePagination({pageNumber:pageCount,limit:20,push:false}))
+                data=JSON.parse(data)
+                if(filteredData.length > 0 && data!==`undefined`){
                     setFilteredData([...filteredData,...data])
                 }else{
-                    setFilteredData([...transformedData,...data])
+                    data!==`undefined` && setFilteredData([...transformedData,...data])
                 }
+                setPageCount(pageCount+1)
             }
         }, [reachedEnd])
-        const [selectedRow, setSelectedRow] = useState(null);
 
+        const [selectedRow, setSelectedRow] = useState(null);
          return(
-            <div >
+            <div>
                     {transformedData && <MaterialTable
                         icons={tableIcons}
                         data={!ChooseData() ? transformedData : filteredData}

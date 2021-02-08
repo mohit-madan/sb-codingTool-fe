@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React,{useEffect,useState} from 'react'
 import "./Footer.css"
 import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
@@ -14,13 +14,9 @@ import { handleResponse } from '../../services';
 import {history} from "../../_helpers"
 import { userActions } from '../../_actions';
 import { setExcelData } from '../../Redux/ExcelData/excel-data.actions';
+import { setLoading } from '../../Redux/Loading/Loading.actions';
 
-const Footer=({setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
-
-    // {
-    //     "projectId":"601a4556fb38610c70c688ba",
-    //     "questionId":"601a4577fb38610c70c688bb"
-    // }
+const Footer=({setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
     const next=()=>{
         if(progressNumber===1 && !excelData){
@@ -43,35 +39,65 @@ const Footer=({setExcelData,setProgressNumber,progressNumber,row,column,surveyDe
     useEffect(() => {
         if(typeof(excel)==`object` && excel?.length > 0){
             history.push('/tool')
+            console.log(excel)
         }
         console.log(excel)
     }, [excel])
-    const onSubmit=async ()=>{
-        // const details={
-        //     "name":surveyDetails.name,
-        //     "desc":surveyDetails.description,
-        //     "key":localStorage.fileKey
-        // }
+
+    const [creatingProject,setCreatingProject]=useState(true)
+    const [gettingProjectDetails,setGettingProjectDetails]=useState(true)
+    const [gettingPaginationData,setPaginationData]=useState(false)
+
+    useEffect( () => {
+        if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
+            console.log(`getting pagination Data`)
+            setPaginationData(true)
+             userActions.responsePagination({pageNumber:1,limit:20,push:true})
+        }
+    }, [gettingProjectDetails])
+
+
+    useEffect(async() => {
+        if(creatingProject===false && localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
+             console.log(`getting project Details`)
+              await userActions.projectDetails()
+             setGettingProjectDetails(false)
+        }
+    }, [creatingProject])
+
+
+    const handleColumns=(temp1)=>{
+        let col =[]
+        Object.keys(temp1).map((item,index)=>{
+            if(temp1[item]==true){
+                col= [...col,{"coloumn":index,"question":item}]
+            }})
+            return col
+    }
+
+
+    const onSubmit= async ()=>{
+        setLoading(true)
         const details={
-            "name":`surveyDetails.name`,
-            "desc":`surveyDetails.descriptio`,
-            "key":`localStorage.fileKey`
+            "name":surveyDetails?.name ? surveyDetails?.name : "test",
+            "desc":surveyDetails?.description ? surveyDetails?.description : "test",
+            "key":localStorage?.fileKey,
+            "coloumns":handleColumns(column),
+            "industry":surveyDetails?.industry ? surveyDetails?.industry : "test",
+            "type":surveyDetails?.type ? surveyDetails?.type : "test",
+            "tags":(surveyDetails?.tags ? surveyDetails?.tags : ["test"]),
         }
         const _token=JSON.parse(localStorage.token).accessToken
         const requestOptions = {
             headers: {'Authorization': `Bearer ${_token}`}
         };
-         axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
+        await axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
         .then(data=>{
-            alert(data?.data?.message);
-            // history.push('/tool')
-            localStorage.setItem('projectId',data?.data?.project?._id)
+            console.log(data?.data?.message);
+            localStorage.setItem('projectId',data?.data?.projectId)
             console.log(data)
-        })
-        .catch(err=>console.log(err))
-        // history.push('/tool')
-        let dataResp = await userActions.responsePagination({pageNumber:1,limit:20})
-        setExcel(dataResp)
+            setCreatingProject(false)
+        },err=>console.log(err))
     }
     return (
         <div className="footer">
@@ -91,7 +117,7 @@ const Footer=({setExcelData,setProgressNumber,progressNumber,row,column,surveyDe
 const mapDispatchToProps = dispatch => ({
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),
     setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
-
+    setLoading: collectionsMap => dispatch(setLoading(collectionsMap)),
 });
 const mapStateToProps=createStructuredSelector({
     surveyDetails:selectSurveyDetails,

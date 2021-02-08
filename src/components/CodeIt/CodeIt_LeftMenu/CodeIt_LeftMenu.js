@@ -96,7 +96,8 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
         setContainsKeyword({id: [data.id] ,code: [data.code]})
       }
     }
-    var disabled
+    // var disabled = Array()
+    const [disabled, setDisabled] =useState([])
     function createUI(){
        return state.values.map((el, i) => 
         <div >
@@ -116,9 +117,9 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
                   <p >{`${i+1}`}</p>
                   &nbsp;&nbsp;
                   {/* {console.log(parseInt(Object.keys(inputCodes).slice(-1)) , i)} */}
-                  { disabled = parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  }
+                  { disabled[i] = parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  }
                   
-                  {!disabled ? <input value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' /> : <p>{inputCodes[i+1]?.text}</p> }
+                  {!disabled[i] ? <input value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' /> : <p>{inputCodes[i+1]?.text}</p> }
                   
                   
               </div>
@@ -265,8 +266,24 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
       e.preventDefault()
       socket.emit('left-menu-state')
       next=next+1
+      console.log(inputCodes)
     }
-   
+    function disableInputBoxes(e){
+      e.preventDefault()
+      var temp1 =(inputCodes)
+      Object.keys(temp1).map((item,index)=>{
+        if(!temp1[item]?.disabled){
+          temp1[item]={...temp1[item],disabled:true}
+        }
+      })
+      var temp2 = disabled
+      temp2.map((item,index)=>{
+        temp2[index]=true
+      })
+      setDisabled(temp2)
+      console.log(temp1)
+      setinputCodes(temp1)
+    }
 
       return (
         
@@ -274,8 +291,9 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
           <LeftMenuTop />
           <LeftMenu_EditOptions />
           <form >
-              {createUI()}        
-              <input type='submit' value='Add a Code' onClick={addClick}/>
+              {createUI()} 
+              <input style={{display:"none"}} type='submit' onClick={disableInputBoxes}  />       
+              <input type="button" value='Add a Code' onClick={addClick}/>
           </form>
         </div>
       );

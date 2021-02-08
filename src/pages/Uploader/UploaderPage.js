@@ -10,15 +10,21 @@ import "./UploaderPage.css"
 import {selectProgressNumber} from "../../Redux/Progress-number/progress.selectors.js"
 import CodeIt_RightMenu from "../../components/CodeIt/CodeIt_RightMenu/CodeIt_RightMenu.js"
 import CodeIt_LeftMenu from "../../components/CodeIt/CodeIt_LeftMenu/CodeIt_LeftMenu.js"
+import WithSpinner from "../../components/with-spinner/with-spinner.component.jsx"
+import { selectLoading } from "../../Redux/Loading/Loading.selectors.js"
 
-const UploaderPage=({progressNumber})=>{
+const UploaderRightMenuWithSpinner=WithSpinner(RightMenu)
+
+const UploaderPage=({progressNumber,loading})=>{
     return(
         <div className="uploader_page">
             <Navigation />
             <ProgressBar progressNumber={progressNumber}/>
             { <div className="dash">
                 <LeftMenu progressNumber={progressNumber}/>
-                <RightMenu progressNumber={progressNumber} />
+                <UploaderRightMenuWithSpinner
+                isLoading={loading}
+                progressNumber={progressNumber} />
             </div>}
             {/* {
                 <div className="dash codeit_dash">
@@ -31,5 +37,6 @@ const UploaderPage=({progressNumber})=>{
 }
 const mapStateToProps=createStructuredSelector({
     progressNumber:selectProgressNumber,
+    loading:selectLoading,
 })
 export default connect(mapStateToProps,null)(UploaderPage)

@@ -19,7 +19,8 @@
     /* position: fixed; */
 }
 .codeit_rightmenu_ .MuiLinearProgress-root{
-    width: 250px!important;
+    width: 400px!important;
+    height: 18px!important;
     border: 3px solid grey;
     height: 20px!important;
     margin-bottom: 3px;

@@ -543,7 +543,7 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
         description:surveyDetailsFromStore ? surveyDetailsFromStore?.description : "",
         industry:surveyDetailsFromStore ? surveyDetailsFromStore?.industry : "",
         type:surveyDetailsFromStore ? surveyDetailsFromStore?.type : "",
-        tags:[]
+        tags:surveyDetailsFromStore ? surveyDetailsFromStore?.tags : []
     })
     useEffect(() => {
       console.log(surveyDetailsFromStore)
@@ -557,7 +557,10 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
     
   };
   const handleChangeTags=event=>{
-    setPersonName(event.target.value);
+    var val = event.target.value
+    setSurveyDetails({...surveyDetails,tags:val });
+    updateSurveyDetails({...surveyDetails,tags:val })
+    
   }
     return(
         <div className="survey_details">
@@ -646,7 +649,7 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
                     id="demo-mutiple-chip"
                     multiple
                     size="large"
-                    value={personName}
+                    value={surveyDetails?.tags}
                     onChange={handleChangeTags}
                     input={<Input id="select-multiple-chip" />}
                     renderValue={(selected) => (

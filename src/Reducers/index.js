@@ -11,6 +11,7 @@ import tableSelectionsReducer from '../Redux/SelectedRowandColumn/tableSelection
 import codeItDataReducer from '../Redux/CodeitData/codeit-data.reducer';
 import showCodedAsReducer from '../Redux/Show_Coded_As/Show_Coded_As.reducer';
 import ContainsKeywordReducer from '../Redux/ContainsKeyword/ContainsKeyword.reducer';
+import LoadingReducer from '../Redux/Loading/Loading.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     codeItData:codeItDataReducer,
     showCodedAs:showCodedAsReducer,
     ContainsKeyword:ContainsKeywordReducer,
+    loading:LoadingReducer
 });
 
 export default rootReducer;

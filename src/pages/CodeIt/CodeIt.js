@@ -63,7 +63,7 @@ const CodeIt=({progressNumber})=>{
                     <CodeIt_LeftMenu progressNumber={progressNumber}/>
                     <CodeIt_RightMenu progressNumber={progressNumber}/>
                 </div>
-            <Footer progressNumber={progressNumber} />
+            {/* <Footer progressNumber={progressNumber} /> */}
         </div>
     )
 }
