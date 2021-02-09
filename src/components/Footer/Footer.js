@@ -15,8 +15,10 @@ import {history} from "../../_helpers"
 import { userActions } from '../../_actions';
 import { setExcelData } from '../../Redux/ExcelData/excel-data.actions';
 import { setLoading } from '../../Redux/Loading/Loading.actions';
+import { bindActionCreators } from "redux";
+import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
 
-const Footer=({setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
+const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
     const next=()=>{
         if(progressNumber===1 && !excelData){
@@ -48,21 +50,32 @@ const Footer=({setLoading,setExcelData,setProgressNumber,progressNumber,row,colu
     const [gettingProjectDetails,setGettingProjectDetails]=useState(true)
     const [gettingPaginationData,setPaginationData]=useState(false)
 
-    useEffect( async () => {
-        if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
-            console.log(`getting pagination Data`)
-            setPaginationData(true)
-            await userActions.responsePagination({pageNumber:1,limit:20,push:true})
-        }
-    }, [gettingProjectDetails])
+    // useEffect( async () => {
+    //     if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
+    //         console.log(`getting pagination Data`)
+    //         setPaginationData(true)
+    //         await requestApiData()
+    //         await userActions.responsePagination({pageNumber:1,limit:20,push:true})
+    //        setGettingProjectDetails(false)
+    //     }
+    // }, [gettingProjectDetails])
+    // useEffect(  () => {
+    //     if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
+    //         console.log(`getting pagination Data`)
+    //         setPaginationData(true)
+    //         requestApiData()
+    //         userActions.responsePagination({pageNumber:1,limit:20,push:true})
+    //        setGettingProjectDetails(false)
+    //     }
+    // }, [gettingProjectDetails])
+
     useEffect(  () => {
         if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
-            console.log(`getting pagination Data`)
+            console.log(`moving next`)
             setPaginationData(true)
-             userActions.responsePagination({pageNumber:1,limit:20,push:true})
+            history.push('/tool')
         }
     }, [gettingProjectDetails])
-
 
     useEffect(async() => {
         if(creatingProject===false && localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
@@ -105,6 +118,11 @@ const Footer=({setLoading,setExcelData,setProgressNumber,progressNumber,row,colu
             console.log(data)
             setCreatingProject(false)
         },err=>console.log(err))
+
+
+
+        // requestApiData()
+
     }
     return (
         <div className="footer">
@@ -125,6 +143,9 @@ const mapDispatchToProps = dispatch => ({
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),
     setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
     setLoading: collectionsMap => dispatch(setLoading(collectionsMap)),
+    requestApiData: collectionsMap => dispatch(requestApiData(collectionsMap)),
+    
+    // bindActionCreators({ requestApiData }, dispatch)
 });
 const mapStateToProps=createStructuredSelector({
     surveyDetails:selectSurveyDetails,

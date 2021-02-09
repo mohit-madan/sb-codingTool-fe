@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import Summary from './Review & Submit/Summary'
 import "./RightMenu.css"
 import SurveyDetails from './Survey-Details/SurveyDetails'
@@ -9,6 +9,7 @@ import ExcelReader from './ExcelReader';
 import {tempData} from "./Data"
 // import ReactTable from "react-table";
 import Tab from "./Table.js"
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,6 +104,8 @@ function RightMenu({progressNumber}) {
         }
       ]
     return (
+
+
         <div style={progressNumber===1 ?  {border:"1px solid grey"} : null} className="rightmenu">
             
             {progressNumber==1 && <ExcelReader />}
@@ -113,24 +116,5 @@ function RightMenu({progressNumber}) {
     )
 }
 
-export default RightMenu
-            
-            {/* <ReactTable
-            columns={columns}
-            data={tempData}
-            ></ReactTable> */}
-
-                        {/* <div className={classes.root}>
-              <input
-                accept="*"
-                onChange={filePathset}
-                className={classes.input}
-                id="contained-button-file"
-                type="file"
-              />
-              <label htmlFor="contained-button-file">
-                <Button size="large" variant="contained" color="primary" component="span">
-                  Upload
-                </Button>
-              </label>
-        </div>*/}
+export default (RightMenu);
+     

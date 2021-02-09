@@ -6,10 +6,16 @@ const INITIAL_STATE = {
     progresslength:0,
     numberOfInputsGreaterThan2:0,//numberOfInputsGreaterThan2
     selectedRows:null,
+    filteredData:null
 };
 
 const codeItDataReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case codeItDataActionTypes.SET_FILTERED_DATA:
+      return {
+        ...state,
+        filteredData: action.payload
+      };
     case codeItDataActionTypes.SET_CODES:
       return {
         ...state,

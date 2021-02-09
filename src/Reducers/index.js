@@ -13,6 +13,7 @@ import showCodedAsReducer from '../Redux/Show_Coded_As/Show_Coded_As.reducer';
 import ContainsKeywordReducer from '../Redux/ContainsKeyword/ContainsKeyword.reducer';
 import LoadingReducer from '../Redux/Loading/Loading.reducer';
 import FiltersReducer from '../Redux/Filters/Filters.reducer';
+import ApiCallsReducer from '../Redux/ApiCalls/ApiCalls.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     ContainsKeyword:ContainsKeywordReducer,
     loading:LoadingReducer,
     filters:FiltersReducer,
+    apiCall:ApiCallsReducer,
 });
 
 export default rootReducer;

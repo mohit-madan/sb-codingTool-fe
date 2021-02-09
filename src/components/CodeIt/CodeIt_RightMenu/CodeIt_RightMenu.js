@@ -5,12 +5,14 @@ import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { connect } from "react-redux";
-import { selectCodes, selectnumberOfInputsGreaterThan2, selectProgressLength } from "../../../Redux/CodeitData/codeit-data.selectors.js";
+import { selectCodes, selectFilteredData, selectnumberOfInputsGreaterThan2, selectProgressLength } from "../../../Redux/CodeitData/codeit-data.selectors.js";
 import { createStructuredSelector } from "reselect";
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
 import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actions.js";
 import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions.js";
+import { userActions } from "../../../_actions/index.js";
+import { setFilteredData } from "../../../Redux/CodeitData/codeit-data.actions.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -26,7 +28,24 @@ const BorderLinearProgress = withStyles((theme) => ({
     },
   }))(LinearProgress);
 
-const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
+const CodeIt_RightMenu =({setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
+
+  const [loadigData,setLoadingData]=useState(true)
+  const getData =async()=>{
+    let data 
+    data = await userActions.responsePagination({pageNumber:1,limit:20,push:false})
+    data = JSON.parse(data)
+    
+    if(data !==null && data !=={}){
+      console.log(`hello from rightmenu .js`,data)
+      setFilteredData(data)
+      console.log(filteredData)
+    }
+}
+useEffect(() => {
+  getData()
+}, [])
+
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -41,9 +60,9 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
       e.preventDefault()
       var temp1=Math.round((e.target.scrollHeight - e.target.scrollTop)/100)*100
       const bottom = temp1 ===  Math.round(e.target.clientHeight/100)*100
-      // console.log(`REahed End `)
-            // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop))
-            // console.log(e.target.clientHeight)
+      // console.log(bottom)
+      //       console.log(Math.round(e.target.scrollHeight - e.target.scrollTop))
+      //       console.log(e.target.clientHeight)
       // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop)+10 === e.target.clientHeight)
       if (bottom) {
         setReachedEnd(true)
@@ -54,6 +73,7 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
       }
     }
     const [reachedEnd,setReachedEnd]=useState(false)
+
 
     return(
         <div className="codeit_rightmenu_"  onScroll={handleScroll}>
@@ -79,7 +99,7 @@ const CodeIt_RightMenu =({setShowCodedAs,setContainsKeyword,selectContainsKeywor
              </div>
 
             <div className="codeit_rightmenu" >
-                <CodeItTable reachedEnd={reachedEnd}/>
+               <CodeItTable reachedEnd={reachedEnd}/>
             </div>
         </div>
         //
@@ -90,9 +110,12 @@ const mapStateToProps=createStructuredSelector({
     selectnumberOfInputsGreaterThan2:selectnumberOfInputsGreaterThan2,
     selectShowCodedAs:selectShowCodedAs,
     selectContainsKeyword:selectContainsKeyword,
+    filteredData:selectFilteredData,
 })
 const mapDispatchToProps = dispatch => ({
   setShowCodedAs: collectionsMap => dispatch(setShowCodedAs(collectionsMap)),
   setContainsKeyword: collectionsMap => dispatch(setContainsKeyword(collectionsMap)),
+  setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
+
 });
 export default connect(mapStateToProps,mapDispatchToProps)(CodeIt_RightMenu)

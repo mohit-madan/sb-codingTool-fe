@@ -27,3 +27,7 @@ export const setSelectedRows = (user) => ({
   type: codeItDataActionTypes.SET_SELECTED_ROWS,
   payload: user
 });
+export const setFilteredData = (user) => ({
+  type: codeItDataActionTypes.SET_FILTERED_DATA,
+  payload: user
+});

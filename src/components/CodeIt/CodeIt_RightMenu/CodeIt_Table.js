@@ -21,7 +21,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
-import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNumberOfInputsGreaterThan2, increaseProgressLength, setCodes, setSelectedRows } from "../../../Redux/CodeitData/codeit-data.actions.js";
+import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNumberOfInputsGreaterThan2, increaseProgressLength, setCodes, setFilteredData, setSelectedRows } from "../../../Redux/CodeitData/codeit-data.actions.js";
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import io from 'socket.io-client'
@@ -33,6 +33,7 @@ import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 're
 import { userActions } from "../../../_actions/index.js";
 import { selectFilters ,selectSubmitFilters} from "../../../Redux/Filters/Filters.selectors.js";
 import { setSubmitFilters } from "../../../Redux/Filters/Filters.actions.js";
+import { selectFilteredData } from "../../../Redux/CodeitData/codeit-data.selectors.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -329,8 +330,8 @@ const ContextMenuSkin=({slice,select,data,handleClick})=>{
     return (
         <div>
          <ContextMenuTrigger id={__num}>
-             {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && <p >{select?.slice(0,data?.fIndex)}<p style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</p>{select?.slice(data?.lIndex+1,)}</p>}
-            {!slice && <p >{select}</p>}
+             {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && <p >{select?.slice(0,data?.fIndex)}<p style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</p>{ data?.lIndex &&  data?.lIndex !==`undefined` && select?.slice(data?.lIndex+1,) }</p>}
+            { data?.fIndex ==`undefined` && <p >{select}</p>}
             </ContextMenuTrigger>
             <ContextMenu id={__num}>
                 <ContextMenuItem
@@ -345,13 +346,13 @@ const ContextMenuSkin=({slice,select,data,handleClick})=>{
         </div>
     )
 }
-const CodeItTable =({setSubmitFiltersInRedux,selectSubmitFiltersFromRedux,selectFiltersFromRedux,setExcelData,reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
+const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,selectSubmitFiltersFromRedux,selectFiltersFromRedux,setExcelData,reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
 
         let customCol=[
         {
             title:`desc`,
             field:`desc`,
-            render: rowData => <ContextMenuSkin slice select={rowData?.desc} data={rowData} handleClick={handleClick} />
+            render: rowData => <ContextMenuSkin slice={true} select={rowData?.desc} data={rowData} handleClick={handleClick} />
         },{
             title:`codeword`,
             field:`codeword`,
@@ -368,11 +369,8 @@ const CodeItTable =({setSubmitFiltersInRedux,selectSubmitFiltersFromRedux,select
     ]
 
     let tempData=(JSON.parse(localStorage.excelData))
-    console.log(`tempData`,tempData)
 
-    useEffect(() => {
-        tempData=(JSON.parse(localStorage.excelData))
-    }, [localStorage.excelData])
+    
     let transformedData=tempData
     transformedData.map((item,index)=>{
         let keys = Object.keys(transformedData[index])
@@ -413,66 +411,66 @@ const handleClick=(event, data) => {
     console.log(`clicked`, { event, data })
   }
 
-        const [filteredData,setFilteredData]=useState([])
+        // const [filteredData,setFilteredData]=useState([])
 
-        useEffect (()=>{
-            if(selectShowCodedAs?.id[0]?.toString())
-            {
-            let transformedData=tempData
-            console.log(filteredData)
-            let ind =[]
-            Object.keys(codes).map((item,index)=>{
-                if(typeof(codes[index])==="string"){
-                    if(codes[index]?.split(';').indexOf(selectShowCodedAs?.id[0]?.toString())!==-1){
-                        ind.push(index)
-                }
-                }
-            })
+        // useEffect (()=>{
+        //     if(selectShowCodedAs?.id[0]?.toString() !==`undefined`)
+        //     {
+        //     let transformedData=tempData
+        //     console.log(filteredData)
+        //     let ind =[]
+        //     Object.keys(codes).map((item,index)=>{
+        //         if(typeof(codes[index])==="string"){
+        //             if(codes[index]?.split(';').indexOf(selectShowCodedAs?.id[0]?.toString())!==-1){
+        //                 ind.push(index)
+        //         }
+        //         }
+        //     })
 
-            let finalData=[]
-            let finalCodes=[]
-            Object.keys(transformedData).map((item,index)=>{
-                if(ind.includes(index)){
-                    finalData = [...finalData ,(transformedData[index]) ]
-                    let _te =codes[index]
-                    finalCodes={...finalCodes,[index-1]:_te }
-            }})
+        //     let finalData=[]
+        //     let finalCodes=[]
+        //     Object.keys(transformedData).map((item,index)=>{
+        //         if(ind.includes(index)){
+        //             finalData = [...finalData ,(transformedData[index]) ]
+        //             let _te =codes[index]
+        //             finalCodes={...finalCodes,[index-1]:_te }
+        //     }})
 
-            ind.map((index)=>{
-                let _te =codes[index]
-                finalCodes={...finalCodes,[index-1]:_te }
-            })
+        //     ind.map((index)=>{
+        //         let _te =codes[index]
+        //         finalCodes={...finalCodes,[index-1]:_te }
+        //     })
 
-            setFilteredData(finalData)
-            setCodes(finalCodes)
-            // console.log(filteredData)
-            console.log(codes)}
-        },[selectShowCodedAs])
-        useEffect(()=>{
-            // console.log(selectContainsKeyword)
-            if(selectContainsKeyword)
-            {
-            let data= tempData
-            let _index =[]
-            let finalData=[]
-            data.map((item,index)=>{
-                if(item[Object.keys(data[0])[0]]?.split(' ').includes(selectContainsKeyword?.code[0])){
-                    // console.log(item)
-                    finalData = [...finalData ,(item) ]
-                    _index.push(index)
-            }})
-            let editCodes ={}
-            _index.map((item,index)=>{
-                editCodes={...editCodes,[index]:codes[item]}
-            })
-            // console.log(finalData,editCodes)
-            setFilteredData(finalData)
-            setCodes(editCodes)
-            }else{
-                setFilteredData(tempData)
-            }
+        //     setFilteredData(finalData)
+        //     setCodes(finalCodes)
+        //     // console.log(filteredData)
+        //     console.log(codes)}
+        // },[selectShowCodedAs])
+        // useEffect(()=>{
+        //     // console.log(selectContainsKeyword)
+        //     if(selectContainsKeyword)
+        //     {
+        //     let data= tempData
+        //     let _index =[]
+        //     let finalData=[]
+        //     data.map((item,index)=>{
+        //         if(item[Object.keys(data[0])[0]]?.split(' ').includes(selectContainsKeyword?.code[0])){
+        //             // console.log(item)
+        //             finalData = [...finalData ,(item) ]
+        //             _index.push(index)
+        //     }})
+        //     let editCodes ={}
+        //     _index.map((item,index)=>{
+        //         editCodes={...editCodes,[index]:codes[item]}
+        //     })
+        //     // console.log(finalData,editCodes)
+        //     setFilteredData(finalData)
+        //     setCodes(editCodes)
+        //     }else{
+        //         setFilteredData(tempData)
+        //     }
 
-        },[selectContainsKeyword])
+        // },[selectContainsKeyword])
 
         const ChooseData =()=>{
             if(filteredData?.length==0){
@@ -514,7 +512,8 @@ const handleClick=(event, data) => {
         const [filteredPageCount,setFilteredPageCount]=useState(2)
 
         useEffect(async () => {
-            if(reachedEnd && selectFiltersFromRedux?.searchValue?.length===0  ){
+            if(reachedEnd &&  (selectFiltersFromRedux?.searchValue?.length ==`undefined` || selectFiltersFromRedux?.searchValue?.length==0) ){
+                
                 console.log(`load Data end reached`)
                 data = ( await userActions.responsePagination({pageNumber:pageCount,limit:20,push:false}))
                 data=JSON.parse(data)
@@ -524,8 +523,9 @@ const handleClick=(event, data) => {
                     data!==`undefined` && setFilteredData([...transformedData,...data])
                 }
                 setPageCount(pageCount+1)
-            }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length>0){
+            }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length > 0){
 
+                console.log(`load filtered Data end reached`)
                 data =await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
                 data=JSON.parse(data)
  
@@ -538,13 +538,13 @@ const handleClick=(event, data) => {
         }, [reachedEnd])
 
         const getFiltersArray=(_string)=>{
-            console.log(`_string`,_string)
             let filters =[]
             if(selectFiltersFromRedux?.match===`Exact Match`){
                 filters.push({"filter":6,"pattern":_string})
             }else if(selectFiltersFromRedux?.match===`Contains In`){
                 filters.push({"filter":5,"pattern":_string})
             }
+            console.log(filters)
             return filters
         }
 
@@ -565,13 +565,17 @@ const handleClick=(event, data) => {
 
                setFilteredPageCount(filteredPageCount+1)
 
-           }
+           }return setSubmitFiltersInRedux(false);
         }, [selectSubmitFiltersFromRedux])
+
+        
+          
+        console.log(filteredData,filteredData?.length > 0 )
 
         const [selectedRow, setSelectedRow] = useState(null);
          return(
             <div>
-                    {transformedData && <MaterialTable
+                    {filteredData?.length > 0 && <MaterialTable
                         icons={tableIcons}
                         data={!ChooseData() ? transformedData : filteredData}
                         columns={customCol}
@@ -619,12 +623,17 @@ const mapStateToProps=createStructuredSelector({
     selectContainsKeyword:selectContainsKeyword,
     selectFiltersFromRedux:selectFilters,
     selectSubmitFiltersFromRedux:selectSubmitFilters,
+    filteredData:selectFilteredData,
+    // selectFilteredData
 })
 const mapDispatchToProps = dispatch => ({
     setRow: collectionsMap => dispatch(setRow(collectionsMap)),
     setExcelDataColumns: collectionsMap => dispatch(setExcelDataColumns(collectionsMap)),
     setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
     setSubmitFiltersInRedux: collectionsMap => dispatch(setSubmitFilters(collectionsMap)),
+    setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
+    
+    // setFilteredData
     // setExcelData
     // setSelectedRows: collectionsMap => dispatch(setSelectedRows(collectionsMap)),
     // setCodesinRedux: collectionsMap => dispatch(setCodes(collectionsMap)),

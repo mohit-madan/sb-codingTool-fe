@@ -84,6 +84,11 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
         // e.preventDefault()
         console.log(`click`)
         setSubmitFiltersInRedux(true)
+        const time = setInterval(() => {
+            setSubmitFiltersInRedux(false)
+            clearInterval(time)
+        }, 1000*2);
+        return
     }
     const handleFilterDetails =(e)=>{
         e.preventDefault()

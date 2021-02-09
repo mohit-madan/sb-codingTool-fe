@@ -55,7 +55,7 @@ async function responsePagination({pageNumber,limit,push}){
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions)
+    return await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions)
     .then(data=>{
         if(data?.data?.length!==0){
             // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
@@ -63,14 +63,14 @@ async function responsePagination({pageNumber,limit,push}){
             push && history.push('/tool')
             console.log(`Pagination DAta from user actions`,data?.data)
             temp3=data?.data
-            
+            return JSON.stringify(temp3)
         }
     },err=>console.log(err))
-    return JSON.stringify(temp3)
+   
 }
 
 async function projectDetails(){
-    // "id":(localStorage.projectId),
+
     const details={
         "id":localStorage.projectId,
     }
@@ -78,13 +78,12 @@ async function projectDetails(){
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    await axios.post(`${config.apiUrl}/projectDetails`,(details), requestOptions)
-    .then(data=>{
+    await axios.post(`${config.apiUrl}/projectDetails`,details, requestOptions)
+    .then(async data=>{
         console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
         localStorage.setItem('codebook',data?.data?.project?.codebooks)
         localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
-
     },err=>console.log(err))
 }
 

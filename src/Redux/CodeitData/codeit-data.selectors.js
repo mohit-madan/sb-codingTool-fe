@@ -23,3 +23,7 @@ export const selectSelectedRows = createSelector(
   [codeItDataReducer],
   user => user.selectedRows
 );
+export const selectFilteredData = createSelector(
+  [codeItDataReducer],
+  user => user.filteredData
+);
