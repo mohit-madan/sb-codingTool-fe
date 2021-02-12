@@ -75,3 +75,6 @@
     color: dodgerblue;
     outline: none;
   }
+  .FiltersBar option{
+    font-size: 1.4rem!important;
+  }

@@ -2,7 +2,7 @@
     flex: 0.8;
     /* border: 2px solid black; */
     height: 100%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     
 }
 .MuiTypography-caption{
@@ -63,6 +63,17 @@
 .selectedRow{
     background-color: rgb(255, 200, 200)!important;
 }
+.MuiTableRow-head th span{
+    width: 100%!important;
+    display: flex!important;
+    justify-content: space-around!important;
+}
+.MuiTableCell-paddingNone{
+    text-align: -webkit-center!important;
+}
+//     text-align: -webkit-center;
+// MuiTableCell-root MuiTableCell-body MuiTableCell-paddingNone
+// MuiTableRow-head th span 
 /* MuiFormControl-root makeStyles-formControl-8 */
 /* MuiTableCell-root MuiTableCell-body MuiTableCell-alignLeft */
 /* class="MuiLinearProgress-root WithStyles(ForwardRef(LinearProgress))-root-6 MuiLinearProgress-colorPrimary WithStyles(ForwardRef(LinearProgress))-colorPrimary-7 MuiLinearProgress-determinate" */

@@ -8,7 +8,7 @@ function LeftMenuTop() {
                      placeholder={`Filter by Keyword`} />
                 </div>
                 <div className="flex" style={{alignItems: "start"}}>
-                <p style={{width: "max-content"}}>Order : </p>
+                {/* <p style={{width: "max-content"}}>Order : </p>
                     <div className="dropdown">
                         <button className="dropbtn">Dropdown</button>
                         <div className="dropdown-content">
@@ -16,7 +16,7 @@ function LeftMenuTop() {
                           <a href="#">Link 2</a>
                           <a href="#">Link 3</a>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
     )

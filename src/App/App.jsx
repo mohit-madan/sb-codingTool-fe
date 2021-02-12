@@ -12,7 +12,17 @@ import ForgotPassword from '../components/ForgotPassword/ForgotPassword';
 import { ResetPassword } from '../components/Reset-Password/ResetPassword';
 import UploaderPage from "../pages/Uploader/UploaderPage.js"
 import CodeIt from '../pages/CodeIt/CodeIt';
+import {initialState} from '../Reducers/authentication.reducer'
+
 function App() {
+    
+    useEffect(() => {
+        if(initialState?.loggedIn ==true){
+            console.log(`logged in`)
+            userActions.jwtTokenCheck()
+        }
+    },[])
+
 
     function hasQuiet() {
         var cold = false,

@@ -7,24 +7,38 @@ import ListIcon from '@material-ui/icons/List';
 import SearchIcon from '@material-ui/icons/Search';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+import { withStyles } from '@material-ui/core/styles';
+const CustomSwitch = withStyles({
+    switchBase: {
+      color: "#d3e6f8",
+      '&$checked': {
+        color:"#1e90ff",
+      },
+      '&$checked + $track': {
+        backgroundColor:"#94cbff",
+      },
+    },
+    checked: {},
+    track: {},
+  })(Switch);
 function LeftMenu_EditOptions() {
     return (
         <div className="background-color flex">
                     <div className="">
                         Edit mode:
-                        <Switch
+                        <CustomSwitch
                             defaultChecked
-                            color="default"
+                            color="#d91b1b"
                             inputProps={{ 'aria-label': 'checkbox with default color' }}
                         />
                     </div>
                     <div >
-                        <button> <ChevronRightIcon/></button>
+                        {/* <button> <ChevronRightIcon/></button>
                         <button> <ExpandMoreIcon/></button>
                         <button> +</button>
                         <button> <ChevronRightIcon/></button>
                         <button> <ExpandMoreIcon/></button>
-                        <button> +</button>
+                        <button> +</button> */}
                     </div>
         </div>
     )

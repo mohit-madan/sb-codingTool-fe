@@ -72,8 +72,6 @@ const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColum
                 
               <FormGroup>
                 {selectExcelDataColumns?.map((item,index)=>{
-
-                  // console.log(state[Object.keys(column)[index]])
                   return(
                   <FormControlLabel
                     control={<Checkbox checked={column ? column[Object.keys(column)[index]] : state[Object.keys(state)[index]]} onChange={handleChange} name={item?.title} />}

@@ -1,4 +1,4 @@
-import React from "react"
+import React,{useEffect} from "react"
 import { connect } from "react-redux"
 import { createStructuredSelector } from "reselect"
 import LeftMenu from "../../components/Dashboard/LeftMenu/LeftMenu.js"
@@ -12,10 +12,22 @@ import CodeIt_RightMenu from "../../components/CodeIt/CodeIt_RightMenu/CodeIt_Ri
 import CodeIt_LeftMenu from "../../components/CodeIt/CodeIt_LeftMenu/CodeIt_LeftMenu.js"
 import WithSpinner from "../../components/with-spinner/with-spinner.component.jsx"
 import { selectLoading } from "../../Redux/Loading/Loading.selectors.js"
+import { initialState } from "../../Reducers/authentication.reducer.js"
+import { userActions } from "../../_actions/index.js"
 
 const UploaderRightMenuWithSpinner=WithSpinner(RightMenu)
 
 const UploaderPage=({progressNumber,loading})=>{
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
+            if(initialState?.loggedIn ==true){
+                console.log(`logged in`)
+                userActions.jwtTokenCheck()
+            }
+          }, 1000*60)
+          return () => clearInterval(intervalId); //This is important
+    })
     return(
         <div className="uploader_page">
             <Navigation />

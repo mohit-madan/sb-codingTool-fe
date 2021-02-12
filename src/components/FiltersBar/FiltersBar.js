@@ -14,6 +14,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
 import { setFilters, setSubmitFilters } from '../../Redux/Filters/Filters.actions';
 import { connect } from 'react-redux';
+import { userActions } from '../../_actions';
+import { setFilteredData } from '../../Redux/CodeitData/codeit-data.actions';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -77,10 +79,24 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
         match:null,
         keywords:[],
         searchValue:"",
-        sort:"",
-        question:""
+        sort:`Sort by length`,
+        question:10
     })
-    const handleSubmitSearch =(e)=>{
+    
+
+    const getFiltersArray=(_string)=>{
+      let filters =[]
+      if(filterDetails?.match===`Exact Match`){
+          filters.push({"filter":6,"pattern":_string})
+      }else if(filterDetails?.match===`Contains In`){
+          filters.push({"filter":5,"pattern":_string})
+      }
+      console.log(filters)
+      return filters
+  }
+
+    let data = null
+    const handleSubmitSearch =async (e)=>{
         // e.preventDefault()
         console.log(`click`)
         setSubmitFiltersInRedux(true)
@@ -88,14 +104,32 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
             setSubmitFiltersInRedux(false)
             clearInterval(time)
         }, 1000*2);
+
+        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails?.searchValue)})
+               data=JSON.parse(data)
+               console.log(`caalling fetch`,data)
+               if(data==null){
+                   data =userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails?.searchValue)})
+                   data=JSON.parse(data)
+                }
+               console.log(`caalling fetch`,data)
+               setSubmitFiltersInRedux(false);
+               
+               setFilteredData(data)
+
         return
     }
+    console.log(filterDetails)
     const handleFilterDetails =(e)=>{
         e.preventDefault()
         setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
         setFiltersInRedux({...filterDetails,[e.target.name]:e.target.value})
+        console.log(filterDetails)
         // setFiltersInRedux
         // console.log(e.target.name,e.target.value)
+    }
+    const filtersDetailsToArray=()=>{
+      
     }
     return (
         <div className="FiltersBar">
@@ -111,6 +145,7 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                      onChange={handleFilterDetails}
                      className={classes.selectEmpty}
                      inputProps={{ 'aria-label': 'Without label' }}
+                     defaultValue={10}
                    >
                     <MenuItem value="" disabled>
                         Select Question
@@ -119,7 +154,7 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                    </Select>
                 </FormControl>
             </div>
-            <div className="filters">
+             <div className="filters">
                 <div className="filters_settings">
                     <form className="example" style={{margin: 'auto 0', maxWidth: '300px'}} >
                       <input type="text" placeholder="Search.." name="searchValue" onChange={handleFilterDetails}/>
@@ -128,17 +163,18 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                     <FormControl variant="filled" className={classes.formControl}>
                        <InputLabel id="demo-simple-select-filled-label">Match</InputLabel>
                        <Select
-                         labelId="demo-simple-select-filled-label"
-                         id="demo-simple-select-filled"
                          value={filterDetails?.match}
                          onChange={handleFilterDetails}
                          name={`match`}
+                         native
+                         inputProps={{
+                           name:`match`,
+                           id: 'filled-age-native-simple',
+                         }}
                        >
-                         <MenuItem value="">
-                           <em>None</em>
-                         </MenuItem>
-                         <MenuItem value={`Exact Match`}>Exact Match</MenuItem>
-                         <MenuItem value={`Contains In`}>Contains In</MenuItem>
+                         <option aria-label="None" value="" />
+                         <option  value={`Exact Match`}>Exact Match</option >
+                         <option  value={`Contains In`}>Contains In</option >
                        </Select>
                      </FormControl>
                      <button class="btn"  onClick={handleSubmitSearch}><i class="fa fa-filter"></i> Filter</button>
@@ -167,29 +203,29 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                       <FormControl variant="filled" className={classes.formControl}>
                        <InputLabel id="demo-simple-select-filled-label">Sort</InputLabel>
                        <Select
-                         labelId="demo-simple-select-filled-label"
-                         id="demo-simple-select-filled"
                          value={filterDetails?.sort}
                          onChange={handleFilterDetails}
                          name={`sort`}
+                         native
+                         inputProps={{
+                           name:`sort`,
+                           id: 'uncontrolled-native',
+                         }}
                        >
-                         <MenuItem value="">
-                           <em>None</em>
-                         </MenuItem>
-                         <MenuItem value={`Sort by length`}>Sort by length</MenuItem>
-                         <MenuItem value={`Sort alphabetically`}>Sort alphabetically</MenuItem>
+                         <option value={`Sort by length`}>Sort by length</option>
+                         <option value={`Sort alphabetically`}>Sort alphabetically</option>
                        </Select>
                      </FormControl>
-                
-                     
                 </div>
                 <div className="filters_list">
-                    <button class="filter_btn btn">Home <button className="remove_btn"><i class="fa fa-times"></i></button> </button>
+                    {/* <button class="filter_btn btn">Home <button className="remove_btn"><i class="fa fa-times"></i></button> </button>
                     <button class="filter_btn btn">Menu<button className="remove_btn"><i class="fa fa-times"></i></button></button>
                     <button class="filter_btn btn">Trash<button className="remove_btn"><i class="fa fa-times"></i></button></button>
                     <button class="filter_btn btn">Close<button className="remove_btn"><i class="fa fa-times"></i></button></button>
                     <button class="filter_btn btn">Folder<button className="remove_btn"><i class="fa fa-times"></i></button></button>
-                    <button class="filter_btn btn">Remove All<button className="remove_btn"><i class="fa fa-trash-alt"></i></button></button>
+                    <button class="filter_btn btn">Remove All<button className="remove_btn"><i class="fa fa-trash-alt"></i></button></button> */}
+                    <button class="filter_btn btn">Remove All<button className="remove_btn"><i class="fa fa-trash-alt"></i></button></button> 
+                    
                 </div>
             </div>
         </div>
@@ -200,6 +236,8 @@ const mapDispatchToProps = dispatch => ({
     setFiltersInRedux: collectionsMap => dispatch(setFilters(collectionsMap)),
     setSubmitFiltersInRedux: collectionsMap => dispatch(setSubmitFilters(collectionsMap)),
     // setSumitFilters
+    setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
+
 });
 
 export default connect(null,mapDispatchToProps)(FiltersBar)

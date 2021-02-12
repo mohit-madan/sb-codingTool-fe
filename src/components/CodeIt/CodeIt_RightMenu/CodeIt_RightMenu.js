@@ -1,6 +1,6 @@
 import  Tab from "../../Dashboard/RightMenu/Table.js"
 import React,{useEffect,useState,Component} from "react"
-import "./CodeIt_RightMenu.css"
+import "./CodeIt_RightMenu.scss"
 import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -31,20 +31,26 @@ const BorderLinearProgress = withStyles((theme) => ({
 const CodeIt_RightMenu =({setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
 
   const [loadigData,setLoadingData]=useState(true)
+
   const getData =async()=>{
     let data 
     data = await userActions.responsePagination({pageNumber:1,limit:20,push:false})
     data = JSON.parse(data)
-    
+    console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
       console.log(`hello from rightmenu .js`,data)
       setFilteredData(data)
       console.log(filteredData)
+      setLoadingData(false)
     }
 }
 useEffect(() => {
-  getData()
-}, [])
+  const time = setInterval(() => {
+    loadigData && getData()
+    clearInterval(time)
+  }, 1000);
+  return 
+})
 
 
     const handleClickRemoveContainsKeyword=(e)=>{
@@ -56,27 +62,11 @@ useEffect(() => {
       setShowCodedAs(null)
       console.log(`eve`)
     }
-    const handleScroll = (e) => {
-      e.preventDefault()
-      var temp1=Math.round((e.target.scrollHeight - e.target.scrollTop)/100)*100
-      const bottom = temp1 ===  Math.round(e.target.clientHeight/100)*100
-      // console.log(bottom)
-      //       console.log(Math.round(e.target.scrollHeight - e.target.scrollTop))
-      //       console.log(e.target.clientHeight)
-      // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop)+10 === e.target.clientHeight)
-      if (bottom) {
-        setReachedEnd(true)
-        return
-      }else{
-        setReachedEnd(false)
-        return
-      }
-    }
     const [reachedEnd,setReachedEnd]=useState(false)
 
 
     return(
-        <div className="codeit_rightmenu_"  onScroll={handleScroll}>
+        <div className="codeit_rightmenu_" >
             <div className='flex'>
               <div className='flex'> Progress : <BorderLinearProgress variant="determinate" value={50} />
               </div>

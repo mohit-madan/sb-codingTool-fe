@@ -19,8 +19,6 @@ import { createStructuredSelector } from 'reselect';
 let file_name =''
 
 const ExcelReaderHTML=({removeExcelData,file,excelFileName,x,fileName,selectExcelData})=>{
-  console.log((fileName),excelFileName)
-  
   return(
     <div className="excel_reader">
       {!selectExcelData &&
@@ -41,7 +39,10 @@ const ExcelReaderHTML=({removeExcelData,file,excelFileName,x,fileName,selectExce
 
 const ExcelReaderWithHOC=WithSpinner(ExcelReaderHTML)
 
+let _data
+
 class ExcelReader extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -51,19 +52,23 @@ class ExcelReader extends Component {
       loading:false,
       uploaded:false,
       fileName:this.props.excelFileName,
+      moveNext:false
     }
     
     this.handleFile = this.handleFile.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-  
-    handleChange(e){
+   async handleChange(e){
     this.setState({loading:true})
+    const {updateExcelData,setProgressNumber }=this.props
     const files = e.target.files;
     if (files && files[0]){ 
-      userActions.uploadFile()
+     _data = await userActions.uploadFile()
+     console.log(`data`,_data)
+      if(_data==2){
+        console.log(`move next`)
+      }
       this.props.setExcelFileName(files[0].name)
-      console.log(files[0].name)
       file_name = files[0].name
       this.setState({ file: files[0],fileName:files[0]?.name,uploaded:true,loading:true },this.handleFile);
     }
@@ -90,6 +95,7 @@ class ExcelReader extends Component {
         // console.log(JSON.stringify(this.state.data, null, 2));
         updateExcelData(JSON.stringify(this.state.data, null, 2))
         localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2))
+        // {this.state.moveNext && setProgressNumber(2)}
         setProgressNumber(2)
         this.setState({loading:false})
       });
@@ -108,7 +114,6 @@ class ExcelReader extends Component {
   }
 
   render() {
-      console.log(this.state.fileName)
     return (
       <ExcelReaderWithHOC isLoading={this.state.loading}
       

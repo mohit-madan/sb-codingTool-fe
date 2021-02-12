@@ -24,6 +24,22 @@ import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 import io from 'socket.io-client'
 import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actions";
 import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions";
+
+import { withStyles } from '@material-ui/core/styles';
+import NEWUI from "./New UI/NEWUI";
+const CustomSwitch = withStyles({
+    switchBase: {
+      color: "#d3e6f8",
+      '&$checked': {
+        color:"#1e90ff",
+      },
+      '&$checked + $track': {
+        backgroundColor:"#94cbff",
+      },
+    },
+    checked: {},
+    track: {},
+  })(Switch);
 const socket = io.connect('http://localhost:4000', {
   transports: ['websocket'], 
   upgrade: false
@@ -51,14 +67,14 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
     const [inputCodes,setinputCodes]=useState({}) // All inputs
     const [finalCodes,setFinalCodes]=useState({}) // Codes Finalised with Switch
     const [selectedRows,setSelectedRows]=useState(null)
-
+    const [disabled, setDisabled] =useState([])
     useEffect(()=>{
           socket.once('left-menu-codes',({i ,value}) => {
             if(inputCodes[i]!==value){
               // setFinalCodes({...finalCodes,[i] : value})
               setinputCodes({...inputCodes,[i] : {
                 text : value,
-                disabled : false}
+                disabled : false},
               })
             }
         })
@@ -96,18 +112,35 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
         setContainsKeyword({id: [data.id] ,code: [data.code]})
       }
     }
+    function isDisabled(i){
+      disabled[i] = parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? true : inputCodes[i]?.disabled 
+      
+      if(disabled[i]===true){
+        const time = setInterval(() => {
+          clearInterval(time)
+        }, 1000*2);
+      }
+      return disabled[i]
+    }
+    useEffect(() => {
+      console.log(`nerw func`,disabled)
+    }, [disabled])
+    function handleEditButton(i){
+      let temp1 = disabled
+      temp1[i]=!temp1[i]
+      setDisabled(temp1)
+    }
     // var disabled = Array()
-    const [disabled, setDisabled] =useState([])
     function createUI(){
        return state.values.map((el, i) => 
         <div >
           <ContextMenuTrigger id={i}>
             <Fragment >
-          <div className="flex">
+          <div className="flex code_row">
               <div style={{alignItems: "center"}} className="flex">
                   {/* <button key={i} type="button" onClick={removeClick(i)}>Remove</button> */}
                   &nbsp;&nbsp;
-                  <Switch
+                  <CustomSwitch
                     size="small"
                     defaultChecked
                     color="default"
@@ -117,20 +150,24 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
                   <p >{`${i+1}`}</p>
                   &nbsp;&nbsp;
                   {/* {console.log(parseInt(Object.keys(inputCodes).slice(-1)) , i)} */}
-                  { disabled[i] = parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  }
-                  
-                  {!disabled[i] ? <input value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' /> : <p>{inputCodes[i+1]?.text}</p> }
+                  {/* { disabled[i] = parseInt(Object.keys(inputCodes).slice(-1))>i+1 ? !inputCodes[i]?.disabled : inputCodes[i]?.disabled  } */}
+                  {console.log(inputCodes[i+1]?.disabled)}
+                  {!isDisabled(i) ? <input value={inputCodes[i+1]?.text} placeholder="Code Here" onChange={handleChange(i+1)} className='width' /> : <p>{inputCodes[i+1]?.text}</p> }
                   
                   
               </div>
               <div className="flex" key={i}>
-                  <EditIcon
-                  fontSize="large"
-                    onClick={()=>{setinputCodes({...inputCodes,[i] : {
-                      ...inputCodes[i],
-                      disabled : !inputCodes[i]?.disabled
-                    }
-                  })}} />
+                    <EditIcon
+                    type="submit"
+                    fontSize="large" 
+                    // onClick={()=>{setinputCodes({...inputCodes,[i] : {
+                    //   ...inputCodes[i],
+                    //   disabled : !inputCodes[i]?.disabled
+                    //   }
+                    // })}}
+                    onClick={()=>handleEditButton(i)}
+                    />
+                  
                   &nbsp;&nbsp;&nbsp;
                   86.72%(73)
               </div>
@@ -296,6 +333,7 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
               <input style={{display:"none"}} type='submit' onClick={disableInputBoxes}  />       
               <input type="button" value='Add a Code' onClick={addClick}/>
           </form>
+          <NEWUI />
         </div>
       );
 }

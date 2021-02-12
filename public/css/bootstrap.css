@@ -2390,7 +2390,7 @@ input[type="search"] {
     line-height: 46px;
   }
 }
-.form-group {
+#menu .form-group {
   margin-bottom: 15px;
 }
 .radio,
@@ -3454,8 +3454,8 @@ tbody.collapse.in {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-.btn-group > .btn:last-child:not(:first-child),
-.btn-group > .dropdown-toggle:not(:first-child) {
+#menu .btn-group > .btn:last-child:not(:first-child),
+#menu .btn-group > .dropdown-toggle:not(:first-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }

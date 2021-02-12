@@ -1,0 +1,51 @@
+.newUI{
+    overflow-y:scroll ;
+    padding-right: 0!important;
+}
+.align_start{
+    place-items: start!important;
+    align-self: flex-end;
+}
+.width_100{
+    width: 100%;
+}
+.width_auto{
+    width: auto;
+}
+.space_between{    
+    justify-content: space-between;
+}
+.todo .left{
+    margin-left: 10px;
+    /*  */
+}
+.todo .left label{
+    margin-left: 10px;
+}
+.todo .left input{
+    margin-right: 10px;
+}
+.todo .right{
+    /* margin-right: 10px; */
+}
+.todo .right .btn{
+    margin-right: 10px;
+}
+.form {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.form  input{
+    height: fit-content;
+}
+.todo {
+    padding: 7px;
+    transition: 0.3s;
+}
+.todo:hover{
+    background-color: #add8e6;
+}
+.todo-label{
+    place-self: flex-end;
+}

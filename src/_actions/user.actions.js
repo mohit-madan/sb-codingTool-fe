@@ -6,6 +6,7 @@ import config from "../config.js"
 import { authHeader } from '../_helpers';
 import axios from "axios"
 import { useParams } from "react-router-dom";
+import { data } from 'jquery';
 // import {handleResponse} from "../services"
 
 export const userActions = {
@@ -19,10 +20,29 @@ export const userActions = {
     uploadFile,
     projectDetails,
     responsePagination,
-    filteredPagination
+    filteredPagination,
+    jwtTokenCheck
 };
 
+function jwtTokenCheck(){
+    const _token=JSON.parse(localStorage.token).accessToken
+    // const _token= `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5heW92ODgyMTlAYm90ZmVkLmNvbSIsImlhdCI6MTYxMjc4MjMwMCwiZXhwIjoxNjEyNzg0MTAwfQ.60498Yy5azPqcnfiuOUTYaIxdvNMW44R14F3MnISjq4`
+    
+    const _RequestOptions = {
+        method: 'GET',
+        headers: {"authorization":`surveybuddytoken ${_token}`}
+    };
+    fetch(`${config.apiUrl}/`, _RequestOptions)
+    .then(data =>{
+         if(data?.ok == false){
+            console.log(data)
+            history.push('/login')
+         }
+    })
+}
+
 async function filteredPagination({pageNumber,limit,filters}) {
+    console.log(`Hi filtered Pagination`)
     let temp3=null
     const details={
         "projectId":localStorage.projectId,
@@ -59,8 +79,8 @@ async function responsePagination({pageNumber,limit,push}){
     .then(data=>{
         if(data?.data?.length!==0){
             // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
-            push && localStorage.setItem('excelData',JSON.stringify(data?.data))
-            push && history.push('/tool')
+            // push && localStorage.setItem('excelData',JSON.stringify(data?.data))
+            // push && history.push('/tool')
             console.log(`Pagination DAta from user actions`,data?.data)
             temp3=data?.data
             return JSON.stringify(temp3)
@@ -101,16 +121,18 @@ async function uploadFile(){
     .then(resp1=>{
         console.log('Upload FIle Response',resp1)
         if(resp1?.err){
-            alert(`${resp1?.err?.message},"Please Login Again"`)
+            localStorage.clear();
+            history.push('login')
         }else{
             if(resp1?.key){
                 localStorage.setItem("fileKey",resp1?.key)
-                alert(`${resp1?.message}`)
+                console.log(`${resp1?.message}`)
                 return 2
             }
         }
     })
-    .catch(err=> alert(`Please Login Again`))
+    .catch(err=>{ localStorage.clear();
+    history.push('login')})
 }
 
 

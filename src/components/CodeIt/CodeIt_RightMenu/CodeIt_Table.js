@@ -328,10 +328,21 @@ const socket = io.connect('http://localhost:4000')
 const ContextMenuSkin=({slice,select,data,handleClick})=>{
     var __num= Math.floor(Math.random() * 101)  
     return (
-        <div>
+        <div >
          <ContextMenuTrigger id={__num}>
-             {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && <p >{select?.slice(0,data?.fIndex)}<p style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</p>{ data?.lIndex &&  data?.lIndex !==`undefined` && select?.slice(data?.lIndex+1,) }</p>}
-            { data?.fIndex ==`undefined` && <p >{select}</p>}
+             {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && 
+                    <p >{select?.slice(0,data?.fIndex)}
+                        <span style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</span>
+                        { data?.lIndex &&  data?.lIndex !==`undefined` && select?.slice(data?.lIndex+1,) }
+                    </p>
+                    // <div className="flex" >
+                    // <p >{select?.slice(0,data?.fIndex)} &nbsp;</p>
+                    //     <p style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</p>
+                    //     <p >  { data?.lIndex &&  data?.lIndex !==`undefined` && select?.slice(data?.lIndex+1,) }
+                    // </p>
+                    // </div>
+            }
+            {!slice && <p style={{textAlign: "center"}} >{select}</p>}
             </ContextMenuTrigger>
             <ContextMenu id={__num}>
                 <ContextMenuItem
@@ -346,25 +357,41 @@ const ContextMenuSkin=({slice,select,data,handleClick})=>{
         </div>
     )
 }
-const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,selectSubmitFiltersFromRedux,selectFiltersFromRedux,setExcelData,reachedEnd,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
+const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,selectSubmitFiltersFromRedux,selectFiltersFromRedux,setExcelData,selectContainsKeyword,selectShowCodedAs,excelData,setRow,setExcelDataColumns,decreaseNumberOfInputsGreaterThan2,increaseNumberOfInputsGreaterThan2,setCodesinRedux,decreaseProgressLength,increaseProgressLength})=>{
 
         let customCol=[
         {
+            title:`ID`,
+            field:`resNum`,
+            cellStyle: {
+                width:"2%",
+            },
+            render: rowData => <ContextMenuSkin select={rowData?.resNum} data={rowData} handleClick={handleClick} />
+        },
+        {
             title:`desc`,
-            field:`desc`,
+            field:`desc`,cellStyle: {
+                width:"50%",
+            },
             render: rowData => <ContextMenuSkin slice={true} select={rowData?.desc} data={rowData} handleClick={handleClick} />
         },{
             title:`codeword`,
             field:`codeword`,
-            render: rowData => <ContextMenuSkin select={rowData?.codeword} data={rowData} handleClick={handleClick} />
+            render: rowData => <ContextMenuSkin select={rowData?.codeword?.join(`;`)} data={rowData} handleClick={handleClick} />
         },{
             title:`length`,
             field:`length`,
+            cellStyle: {
+                width:"2%",
+            },
             render: rowData => <ContextMenuSkin select={rowData?.length} data={rowData} handleClick={handleClick} />
         },{
             title:"Codes",
-            field:"Codes",
-            render: rowData => <input onChange={handleCodes(rowData)} value={codes[rowData.tableData.id]} type="text"/>
+            field:"Codes",cellStyle: {
+                textAlign: "-webkit-center",
+                width:"23%",
+            },
+            render: rowData => <input onChange={handleCodes(rowData)} value={codes[rowData?.resNum]} type="text"/>
         },
     ]
 
@@ -472,6 +499,8 @@ const handleClick=(event, data) => {
 
         // },[selectContainsKeyword])
 
+        const [reachedEnd,setReachedEnd]=useState(false)
+
         const ChooseData =()=>{
             if(filteredData?.length==0){
                 if(selectContainsKeyword || selectShowCodedAs){
@@ -507,13 +536,32 @@ const handleClick=(event, data) => {
             })
             console.log(_index)
         }
-        let data
+        let data=null
         const [pageCount,setPageCount]=useState(2)
         const [filteredPageCount,setFilteredPageCount]=useState(2)
 
+        const handleScroll = async (e) => {
+            e.preventDefault()
+            var temp1=(Math.round((e.target.scrollHeight - e.target.scrollTop)/100)*100)
+            const bottom = temp1 ===  (Math.round(((e.target.clientHeight)+100)/100)*100 )
+            bottom && console.log(`bottom from handleScroll`,bottom)
+            //       console.log(temp1)
+            //       console.log(Math.round((e.target.clientHeight * 2)/100)*100)
+            // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop)+10 === e.target.clientHeight)
+            
+            if (bottom) {
+              setReachedEnd(true)
+              
+              return
+            }else{
+              setReachedEnd(false)
+              return
+            }
+          }
+
         useEffect(async () => {
-            if(reachedEnd &&  (selectFiltersFromRedux?.searchValue?.length ==`undefined` || selectFiltersFromRedux?.searchValue?.length==0) ){
-                
+            console.log(`reached end useEfext`)
+            if(reachedEnd &&  (typeof(selectFiltersFromRedux?.searchValue) ===`undefined` || selectFiltersFromRedux?.searchValue?.length==0) ){
                 console.log(`load Data end reached`)
                 data = ( await userActions.responsePagination({pageNumber:pageCount,limit:20,push:false}))
                 data=JSON.parse(data)
@@ -523,19 +571,21 @@ const handleClick=(event, data) => {
                     data!==`undefined` && setFilteredData([...transformedData,...data])
                 }
                 setPageCount(pageCount+1)
-            }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length > 0){
 
+            }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length > 0){
                 console.log(`load filtered Data end reached`)
                 data =await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
                 data=JSON.parse(data)
- 
+                console.log(`data from filtered useEffect`,data)
                 setSubmitFiltersInRedux(false);
-                
-                setFilteredData(data)
- 
+                if(filteredData.length > 0 && data!==`undefined`  && data!==null){
+                    setFilteredData([...filteredData,...data])
+                }
                 setFilteredPageCount(filteredPageCount+1)
             }
         }, [reachedEnd])
+        
+      
 
         const getFiltersArray=(_string)=>{
             let filters =[]
@@ -548,12 +598,12 @@ const handleClick=(event, data) => {
             return filters
         }
 
-
         useEffect(async () => {
-           if(selectSubmitFiltersFromRedux){
 
+           if(selectSubmitFiltersFromRedux){
                data = await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
                data=JSON.parse(data)
+               console.log(`caalling fetch`,data)
                if(data==null){
                    data =userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
                    data=JSON.parse(data)
@@ -566,25 +616,40 @@ const handleClick=(event, data) => {
                setFilteredPageCount(filteredPageCount+1)
 
            }return setSubmitFiltersInRedux(false);
+
         }, [selectSubmitFiltersFromRedux])
 
-        
-          
-        console.log(filteredData,filteredData?.length > 0 )
+
+        useEffect(() => {
+            const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
+
+                $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div > div").css("height", "350px");
+                
+              })    // , 1000*1
+              return () => clearInterval(intervalId); //This is important
+        },[filteredData])
+
+        useEffect(() => {
+            $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div").scroll(handleScroll)
+
+        })
 
         const [selectedRow, setSelectedRow] = useState(null);
+
          return(
-            <div>
+            <div className="table-container"   onScroll={handleScroll}>
                     {filteredData?.length > 0 && <MaterialTable
+                        // style={{"maxHeight":"480px","overflowY":"auto"}}
                         icons={tableIcons}
                         data={!ChooseData() ? transformedData : filteredData}
                         columns={customCol}
                         title="Coding Tool"
-                        options={{
-                            rowStyle: rowData => ({
-                              backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
-                            })
-                        }}
+                        // options={{
+                        //     rowStyle: rowData => ({
+                        //       backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
+                        //     }),
+                        // }}
+                        options={{ headerStyle: { position: 'sticky', bottom: 0,zIndex:99999999} }}
                         onSelectionChange={handleRowSelections}
                         onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
                         options={{
@@ -633,16 +698,5 @@ const mapDispatchToProps = dispatch => ({
     setSubmitFiltersInRedux: collectionsMap => dispatch(setSubmitFilters(collectionsMap)),
     setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
     
-    // setFilteredData
-    // setExcelData
-    // setSelectedRows: collectionsMap => dispatch(setSelectedRows(collectionsMap)),
-    // setCodesinRedux: collectionsMap => dispatch(setCodes(collectionsMap)),
-    // increaseProgressLength: collectionsMap => dispatch(increaseProgressLength(collectionsMap)),
-    // decreaseProgressLength: collectionsMap => dispatch(decreaseProgressLength(collectionsMap)),
-    // increaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(increaseNumberOfInputsGreaterThan2(collectionsMap)),
-    // decreaseNumberOfInputsGreaterThan2: collectionsMap => dispatch(decreaseNumberOfInputsGreaterThan2(collectionsMap)),
-    // setSelectedRows
-    // decreaseNumberOfInputsGreaterThan2
-    // increaseNumberOfInputsGreaterThan2
 });
- export default connect(mapStateToProps,mapDispatchToProps)(CodeItTable)
+export default connect(mapStateToProps,mapDispatchToProps)(CodeItTable)

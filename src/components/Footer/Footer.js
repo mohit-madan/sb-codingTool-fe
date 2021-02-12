@@ -20,60 +20,43 @@ import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
 
 const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
+    Object.size = function(obj) {
+        var size = 0,
+          key;
+        for (key in obj) {
+          if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+      };
     const next=()=>{
         if(progressNumber===1 && !excelData){
             alert("Please Uplaod a file")
             return
         }
         if(progressNumber===2){
-            if(!column){
+            if(Object.size(column)==0  ){
                 alert("Please Selelct a Column to Continue")
                 return
             }
         }
-        if(progressNumber===3 && !surveyDetails?.description && !surveyDetails?.name && !surveyDetails?.industry && !surveyDetails?.type){
-            alert("Please fill all the fields to continue")
+        if(progressNumber===3 && (surveyDetails==null || surveyDetails?.name?.length==0)){
+            alert("Survey Name Is Required to Continue")
             return
         }
         progressNumber<=3 && setProgressNumber(progressNumber+1)
     }
-    const [excel,setExcel] = React.useState(null) 
-    useEffect(() => {
-        if(typeof(excel)==`object` && excel?.length > 0){
-            history.push('/tool')
-            console.log(excel)
-        }
-        console.log(excel)
-    }, [excel])
 
     const [creatingProject,setCreatingProject]=useState(true)
     const [gettingProjectDetails,setGettingProjectDetails]=useState(true)
     const [gettingPaginationData,setPaginationData]=useState(false)
 
-    // useEffect( async () => {
-    //     if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
-    //         console.log(`getting pagination Data`)
-    //         setPaginationData(true)
-    //         await requestApiData()
-    //         await userActions.responsePagination({pageNumber:1,limit:20,push:true})
-    //        setGettingProjectDetails(false)
-    //     }
-    // }, [gettingProjectDetails])
-    // useEffect(  () => {
-    //     if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
-    //         console.log(`getting pagination Data`)
-    //         setPaginationData(true)
-    //         requestApiData()
-    //         userActions.responsePagination({pageNumber:1,limit:20,push:true})
-    //        setGettingProjectDetails(false)
-    //     }
-    // }, [gettingProjectDetails])
 
     useEffect(  () => {
         if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
             console.log(`moving next`)
             setPaginationData(true)
-            history.push('/tool')
+            // history.push('/tool')
+            window.location.href="http://localhost:3000/tool";
         }
     }, [gettingProjectDetails])
 

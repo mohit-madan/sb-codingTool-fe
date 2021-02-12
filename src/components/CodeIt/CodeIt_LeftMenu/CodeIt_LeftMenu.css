@@ -1,11 +1,13 @@
 .codeit_leftmenu{
     flex: 0.3;
-    border: 2px solid black;
+    border: 1px solid rgb(167, 167, 167);
+    border-radius: 5px;
     margin-right: 50px;
     display: flex;
     flex-direction: column;
     position: sticky;
     z-index:11;
+    min-width: 350px;
 }
 .dropdown {
   position: relative;
@@ -50,4 +52,15 @@
 .input_box_div{
   align-self: self-start;
   margin-right: 5px;
+}
+.codeit_leftmenu .MuiSwitch-switchBase{
+  color: #d3e6f8;
+}
+.codeit_leftmenu .Mui-checked{
+  color: #1e90ff;
+}
+.codeit_leftmenu .code_row{
+  width: 100%;
+  padding: 10px 0;
+  padding-right: 5px;
 }
