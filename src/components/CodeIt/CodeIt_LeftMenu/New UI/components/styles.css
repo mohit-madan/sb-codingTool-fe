@@ -49,3 +49,6 @@
 .todo-label{
     place-self: flex-end;
 }
+.todo input[type="checkbox"]{
+    margin: 0;
+}

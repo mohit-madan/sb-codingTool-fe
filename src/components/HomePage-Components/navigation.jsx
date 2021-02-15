@@ -60,9 +60,12 @@ const Navigation =({showLoginButton,showSignUpButton})=>{
               <span className="icon-bar"></span>{" "}
               <span className="icon-bar"></span>{" "}
             </button>
-            <a className="navbar-brand page-scroll survey_buddy" href="">
-              <Link className="home_link" to="/">{navigationDic.title[detectBrowserLanguage()]}</Link>
-            </a>{" "}
+            <a className="home_link navbar-brand page-scroll survey_buddy " href="">
+              {/* <Link className="home_link" to="/"> */}
+                {navigationDic.title[detectBrowserLanguage()]}
+              {/* </Link> */}
+            </a>
+            {" "}
           </div>
 
           <div
@@ -71,24 +74,24 @@ const Navigation =({showLoginButton,showSignUpButton})=>{
           >
             <ul className="nav navbar-nav navbar-right options">
               <li>
-                <a href="" className="page-scroll">
+                {/* <a href="" className="page-scroll"> */}
                   <Link to="/">{navigationDic.home[detectBrowserLanguage()]}</Link>
-                </a>
+                {/* </a> */}
               </li>
               <li>
-                <a href="" className="page-scroll">
+                {/* <a href="" className="page-scroll"> */}
                  <Link to="/about">{navigationDic.about_us[detectBrowserLanguage()]}</Link>
-                </a>
+                {/* </a> */}
               </li>
               {showLoginButton && <li>
-                <a href="" className="page-scroll">
+                {/* <a href="" className="page-scroll"> */}
                 <Link to="/login"><CustomButton>{navigationDic.login[detectBrowserLanguage()]}</CustomButton></Link> 
-                </a>
+                {/* </a> */}
               </li>}
               {showSignUpButton && <li>
-                <a href="" className="page-scroll">
+                {/* <a href="" className="page-scroll"> */}
                 <Link to="/register"><CustomButton isGoogleSignIn>{navigationDic.Sign_up[detectBrowserLanguage()]}</CustomButton></Link> 
-                </a>
+                {/* </a> */}
               </li>}
             </ul>
           </div>

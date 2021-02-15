@@ -44,14 +44,16 @@ const CodeIt_RightMenu =({setFilteredData,filteredData,setShowCodedAs,setContain
       setLoadingData(false)
     }
 }
-useEffect(() => {
-  const time = setInterval(() => {
-    loadigData && getData()
-    clearInterval(time)
-  }, 1000);
-  return 
-})
 
+// loadigData && getData()
+useEffect(() => {
+  // loadigData && getData()
+  // const time = setInterval(() => {
+  //   loadigData && getData()
+  // }, 1000);
+  // return ()=>clearInterval(time)
+  getData()
+},[])
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -67,8 +69,12 @@ useEffect(() => {
 
     return(
         <div className="codeit_rightmenu_" >
-            <div className='flex'>
-              <div className='flex'> Progress : <BorderLinearProgress variant="determinate" value={50} />
+            <div className='flex width_100'>
+              <div className='flex width_100 spaceBetween'> 
+                  <div className="flex">
+                    Progress : <BorderLinearProgress variant="determinate" value={50} />
+                  </div>
+                  <h5>{filteredData?.length} Responses Loaded Out Of {`3000`} </h5>
               </div>
               {selectShowCodedAs && 
                 <div className='filteredOn flex'>

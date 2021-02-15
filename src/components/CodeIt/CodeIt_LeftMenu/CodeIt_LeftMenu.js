@@ -21,7 +21,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import DescriptionIcon from '@material-ui/icons/Description';
 import AddIcon from '@material-ui/icons/Add';
 import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
-import io from 'socket.io-client'
+import { socket } from "../../../config"
 import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actions";
 import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions";
 
@@ -40,10 +40,6 @@ const CustomSwitch = withStyles({
     checked: {},
     track: {},
   })(Switch);
-const socket = io.connect('http://localhost:4000', {
-  transports: ['websocket'], 
-  upgrade: false
-})
 
 const styles = {
   textAlign: 'center',
@@ -328,11 +324,11 @@ const CodeIt_LeftMenu =({setContainsKeyword,setShowCodedAs})=>{
         <div className="codeit_leftmenu">
           <LeftMenuTop />
           <LeftMenu_EditOptions />
-          <form >
+          {/* <form >
               {createUI()} 
               <input style={{display:"none"}} type='submit' onClick={disableInputBoxes}  />       
               <input type="button" value='Add a Code' onClick={addClick}/>
-          </form>
+          </form> */}
           <NEWUI />
         </div>
       );

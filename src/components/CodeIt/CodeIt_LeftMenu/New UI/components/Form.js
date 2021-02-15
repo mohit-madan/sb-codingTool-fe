@@ -10,11 +10,11 @@ function Form(props) {
       console.log(values)
       setName(values);
     })
-    socket.once('left-menu-add-code', ({values}) => {
-      console.log(values)
-      props.addTask(values);
-      setName("");
-    })
+    // socket.once('left-menu-add-code', ({values}) => {
+    //   // console.log(values)
+    //   // props.addTask(values);
+    //   // setName("");
+    // })
   })
 
   function handleSubmit(e) {
@@ -22,6 +22,9 @@ function Form(props) {
     if (!name.trim()) {
       return;
     }
+    console.log(name)
+      props.addTask(name);
+      setName("");
     socket.emit('left-menu-add-code',name)
   }
 

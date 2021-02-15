@@ -14,6 +14,7 @@ import ContainsKeywordReducer from '../Redux/ContainsKeyword/ContainsKeyword.red
 import LoadingReducer from '../Redux/Loading/Loading.reducer';
 import FiltersReducer from '../Redux/Filters/Filters.reducer';
 import ApiCallsReducer from '../Redux/ApiCalls/ApiCalls.reducer';
+import UploaderAlertsReducer from '../Redux/UploaderAlerts/UploaderAlerts.reducer';
 
 const rootReducer = combineReducers({
     authentication,
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
     loading:LoadingReducer,
     filters:FiltersReducer,
     apiCall:ApiCallsReducer,
+    uploaderAlerts:UploaderAlertsReducer,
 });
 
 export default rootReducer;

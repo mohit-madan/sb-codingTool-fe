@@ -7,6 +7,8 @@ import { authHeader } from '../_helpers';
 import axios from "axios"
 import { useParams } from "react-router-dom";
 import { data } from 'jquery';
+import RESPONSE_MESSAGE from "../responseMessage"
+
 // import {handleResponse} from "../services"
 
 export const userActions = {
@@ -42,7 +44,6 @@ function jwtTokenCheck(){
 }
 
 async function filteredPagination({pageNumber,limit,filters}) {
-    console.log(`Hi filtered Pagination`)
     let temp3=null
     const details={
         "projectId":localStorage.projectId,
@@ -67,6 +68,7 @@ async function filteredPagination({pageNumber,limit,filters}) {
 
 async function responsePagination({pageNumber,limit,push}){
     let temp3=null
+    console.log(`user actions response Pagination reached`)
     const details={
         "projectId":localStorage.projectId,
         "questionId":localStorage.listOfQuestion
@@ -104,6 +106,9 @@ async function projectDetails(){
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
         localStorage.setItem('codebook',data?.data?.project?.codebooks)
         localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
+
+        history.push(`/tool`)
+
     },err=>console.log(err))
 }
 
@@ -276,17 +281,22 @@ function register(user) {
     return dispatch => {
         dispatch(request(user));
         userService.register(user)
-            .then(
-                user => { 
-                    dispatch(success());
-                    history.push('/login');
-                    dispatch(alertActions.success('Registration successful'));
-                },
-                error => {
-                    dispatch(failure(error.toString()));
-                    dispatch(alertActions.error(error.toString()));
-                }
-            );
+            .then(data=> {
+              console.log(data)
+              if(data?.message === RESPONSE_MESSAGE.userRegistered){
+                dispatch(success());
+                history.push('/login');
+                dispatch(alertActions.success('Registration successful'));
+              }else{
+                dispatch(failure(data?.message));
+                dispatch(alertActions.error(data?.message));
+              }
+            },
+            error => {
+                dispatch(failure(error.toString()));
+                dispatch(alertActions.error(error.toString()));
+            })
+           
     };
     
     function request(user) { return { type: userConstants.REGISTER_REQUEST, user } }

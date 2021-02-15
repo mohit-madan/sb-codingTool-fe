@@ -13,7 +13,7 @@ const ProgressBar=({progressNumber})=>{
             <div className="right">
                 {HeaderData.map((item,index)=>{
                     return(
-                        <ProgressBarItem progressNumber={progressNumber} index={index+1} text={item} />
+                        <ProgressBarItem key={index} progressNumber={progressNumber} index={index+1} text={item} />
                     )
                 })}
             </div>

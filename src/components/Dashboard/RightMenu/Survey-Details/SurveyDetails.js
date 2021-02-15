@@ -579,7 +579,7 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
             <div className='survey_details_main'>
                 <div className="survey_details_main_left">
                     <p>Name</p>
-                    <h6>Please enter a title</h6>
+                    <h6>Please enter a title <span style={{color:"#D60409"}} >*required</span> </h6>
                     <input
                     onChange={handleChange}
                     name="name"

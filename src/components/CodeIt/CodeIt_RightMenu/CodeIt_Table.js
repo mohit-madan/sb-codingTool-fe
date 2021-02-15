@@ -24,9 +24,8 @@ import Chip from '@material-ui/core/Chip';
 import { decreaseNumberOfInputsGreaterThan2, decreaseProgressLength, increaseNumberOfInputsGreaterThan2, increaseProgressLength, setCodes, setFilteredData, setSelectedRows } from "../../../Redux/CodeitData/codeit-data.actions.js";
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import io from 'socket.io-client'
+import { socket } from "../../../config"
 import axios from "axios"
-import config from "../../../config"
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
@@ -34,6 +33,8 @@ import { userActions } from "../../../_actions/index.js";
 import { selectFilters ,selectSubmitFilters} from "../../../Redux/Filters/Filters.selectors.js";
 import { setSubmitFilters } from "../../../Redux/Filters/Filters.actions.js";
 import { selectFilteredData } from "../../../Redux/CodeitData/codeit-data.selectors.js";
+import hotkeys from 'hotkeys-js';
+
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -316,20 +317,17 @@ let __data=[
   }
 ]
 
-const socket = io.connect('http://localhost:4000')
-
-  
   const attributes = {
     className: 'custom-root',
-    disabledClassName: 'custom-disabled',
-    dividerClassName: 'custom-divider',
-    selectedClassName: 'custom-selected'
+    // disabledClassName: 'custom-disabled',
+    // dividerClassName: 'custom-divider',
+    // selectedClassName: 'custom-selected'
   }
 const ContextMenuSkin=({slice,select,data,handleClick})=>{
     var __num= Math.floor(Math.random() * 101)  
     return (
         <div >
-         <ContextMenuTrigger id={__num}>
+         <ContextMenuTrigger id={__num.toString()}>
              {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && 
                     <p >{select?.slice(0,data?.fIndex)}
                         <span style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</span>
@@ -344,7 +342,7 @@ const ContextMenuSkin=({slice,select,data,handleClick})=>{
             }
             {!slice && <p style={{textAlign: "center"}} >{select}</p>}
             </ContextMenuTrigger>
-            <ContextMenu id={__num}>
+            <ContextMenu id={__num.toString()}>
                 <ContextMenuItem
                   className="input_value_in_dropdown"
                   data={{ action: [data] }}
@@ -371,13 +369,9 @@ const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,select
         {
             title:`desc`,
             field:`desc`,cellStyle: {
-                width:"50%",
+                width:"60%",
             },
             render: rowData => <ContextMenuSkin slice={true} select={rowData?.desc} data={rowData} handleClick={handleClick} />
-        },{
-            title:`codeword`,
-            field:`codeword`,
-            render: rowData => <ContextMenuSkin select={rowData?.codeword?.join(`;`)} data={rowData} handleClick={handleClick} />
         },{
             title:`length`,
             field:`length`,
@@ -412,13 +406,20 @@ const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,select
 
     const [keywords,setkeywords]=useState(mapper)
     const [codes,setCodes]=useState(mapper)
+    var prev=0,next=0
 
     useEffect(()=>{
-        socket.once('input-box', async ({num ,value}) => {
-            if(codes[num]!==value){
+        socket.once('input-box',({num ,value}) => {
+            // if(codes[num]!=value){
+            // console.log(prev<next)
+            if(prev<next){
                 setCodes({...codes,[num] : value})
-                console.log(codes)
+                prev=prev+1
+                console.log({num ,value})
             }
+            // }else{
+            //     prev=prev-0.5
+            // }
         })
         socket.once('keywords', ({num ,value}) => {
             if(keywords[num]!==value){
@@ -430,7 +431,10 @@ const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,select
 
   const handleCodes=rowData=>(event)=>{
     let value =event.target.value;
-    let num=rowData.tableData.id
+    // let num=rowData.tableData.id
+    let num=rowData?.resNum
+    // rowData?.resNum
+      next=next+2
     socket.emit('input-box',{num,value})
   }
   
@@ -533,12 +537,26 @@ const handleClick=(event, data) => {
             })
             _index.map((item,index)=>{
                 $(`tr:nth-child(${(item+1)})`).addClass("selectedRow");
+                $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-20.MTableToolbar-highlight-21.MuiToolbar-gutters > div.MTableToolbar-title-24 > h6")
+                .css("color","white")
             })
-            console.log(_index)
+            if(_index?.length ===0){
+                console.log(_index,_index?.length)
+                $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-20.MuiToolbar-gutters > div.MTableToolbar-title-24 > h6")
+                .css("color","")
+            }
         }
+
         let data=null
         const [pageCount,setPageCount]=useState(2)
         const [filteredPageCount,setFilteredPageCount]=useState(2)
+
+        // useEffect(() => {
+        //     const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
+        //         setReachedEnd(false)
+        //       }, 1000*5)
+        //       return () => clearInterval(intervalId); //This is important
+        // })
 
         const handleScroll = async (e) => {
             e.preventDefault()
@@ -553,7 +571,8 @@ const handleClick=(event, data) => {
               setReachedEnd(true)
               
               return
-            }else{
+            }
+            else{
               setReachedEnd(false)
               return
             }
@@ -623,25 +642,37 @@ const handleClick=(event, data) => {
         useEffect(() => {
             const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
 
-                $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div > div").css("height", "350px");
-                
-              })    // , 1000*1
+                $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div > div").css("height", "50vh");
+                $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div").css("margin-top", "-10px");
+
+            },1)    // , 1000*1
               return () => clearInterval(intervalId); //This is important
-        },[filteredData])
+        })
 
         useEffect(() => {
             $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div").scroll(handleScroll)
-
+            
         })
+        hotkeys('ctrl+f, command+f', function(e) {
+            e.preventDefault()
+            $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-20.MuiToolbar-gutters > div.MuiFormControl-root.MuiTextField-root.MTableToolbar-searchField-25 > div > input")
+            .focus();
+        });
 
         const [selectedRow, setSelectedRow] = useState(null);
-
+        const constPathColors = {
+            1: '#FFFF00',
+            2: '#FFFF33',
+            3: '#FFFF66',
+            4: '#FFFF99',
+            5: '#FFFFCC'
+          };
          return(
             <div className="table-container"   onScroll={handleScroll}>
-                    {filteredData?.length > 0 && <MaterialTable
+                    {filteredData!==null && <MaterialTable
                         // style={{"maxHeight":"480px","overflowY":"auto"}}
                         icons={tableIcons}
-                        data={!ChooseData() ? transformedData : filteredData}
+                        data={filteredData}
                         columns={customCol}
                         title="Coding Tool"
                         // options={{
@@ -649,8 +680,14 @@ const handleClick=(event, data) => {
                         //       backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
                         //     }),
                         // }}
-                        options={{ headerStyle: { position: 'sticky', bottom: 0,zIndex:99999999} }}
-                        onSelectionChange={handleRowSelections}
+                        // options={{ headerStyle: { position: 'sticky', top: "-20px"} }}
+                        onSelectionChange={(handleRowSelections)}
+                        options={{
+                            rowStyle: rowData => {
+                                console.log(rowData)
+                            }
+                        }}
+                        // onSelectionChange={e=>{console.log(e);}}
                         onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
                         options={{
                           selection: true,

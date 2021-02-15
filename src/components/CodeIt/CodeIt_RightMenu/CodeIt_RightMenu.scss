@@ -61,7 +61,10 @@
     padding: 0!important;
 }
 .selectedRow{
-    background-color: rgb(255, 200, 200)!important;
+    background-color: #d3e6f8!important;
+}
+.MTableToolbar-highlight-21{
+    background-color: #8dc8ff!important;
 }
 .MuiTableRow-head th span{
     width: 100%!important;
@@ -70,6 +73,18 @@
 }
 .MuiTableCell-paddingNone{
     text-align: -webkit-center!important;
+}
+.MuiToolbar-root .MuiFormControl-root{
+    width: 25vw!important;
+}
+.MuiCheckbox-colorSecondary.Mui-checked{
+    color: #3099fc!important;
+}
+.spaceBetween{
+    justify-content: space-between;
+}
+.spaceBetween h5{
+    margin-right: 120px;
 }
 //     text-align: -webkit-center;
 // MuiTableCell-root MuiTableCell-body MuiTableCell-paddingNone

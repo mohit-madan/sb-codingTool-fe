@@ -64,21 +64,21 @@ function LoginPage() {
 					label="Outlined secondary"
     				variant="outlined"
 					color="primary"
-					size="normal"
+					// size="normal"
 					type="text"
 					name="username"
 					value={username}
 					onChange={handleChange}
 					label="Username"
 					required
-					submitted
+					
 				/>
 				<div className="input_row">
 					<TextField
     				id="outlined-secondary"
     				label="Outlined secondary"
     				variant="outlined"
-					size="normal"
+					// size="normal"
     				color="primary"
 					type={!showPassword ? "password" : "text"}
 					name="password"
@@ -86,7 +86,7 @@ function LoginPage() {
 					onChange={handleChange}
 					label="Password"
 					required
-					submitted
+					
 					/>
 					{!showPassword ? <VisibilityIcon onClick={()=>{setShowPassword(!showPassword)}} /> :  <VisibilityOffIcon onClick={()=>{setShowPassword(!showPassword)}}/>}
 

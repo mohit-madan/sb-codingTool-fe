@@ -28,7 +28,6 @@ function LeftMenu_EditOptions() {
                         Edit mode:
                         <CustomSwitch
                             defaultChecked
-                            color="#d91b1b"
                             inputProps={{ 'aria-label': 'checkbox with default color' }}
                         />
                     </div>

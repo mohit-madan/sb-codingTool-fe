@@ -13,7 +13,7 @@
     box-sizing: border-box;
   }
   
-.FiltersBar   form.example input[type=text] {
+.FiltersBar   form.search_form input[type=text] {
   padding: 10px;
   font-size: 17px;
   border: 1px solid grey;
@@ -22,7 +22,7 @@
   background: #f1f1f1;
 }
 
-.FiltersBar   form.example button {
+.FiltersBar   form.search_form button {
   float: left;
   width: 20%;
   padding: 10px;
@@ -34,14 +34,19 @@
   cursor: pointer;
 }
 
-.FiltersBar  form.example button:hover {
+.FiltersBar  form.search_form button:hover {
   background: #0b7dda;
 }
 
-.FiltersBar   form.example::after {
+.FiltersBar   form.search_form::after {
   content: "";
   clear: both;
   display: table;
+}
+.FiltersBar   form.search_form .MuiFormLabel-root,.FiltersBar   form.search_form .MuiFormControl-root{
+  margin-left: 0;
+  margin-right:0;
+padding-left: 0!important;
 }
 .FiltersBar .filters_settings{
     display: flex;

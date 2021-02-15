@@ -74,7 +74,8 @@ const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColum
                 {selectExcelDataColumns?.map((item,index)=>{
                   return(
                   <FormControlLabel
-                    control={<Checkbox checked={column ? column[Object.keys(column)[index]] : state[Object.keys(state)[index]]} onChange={handleChange} name={item?.title} />}
+                    key={index}
+                    control={<Checkbox key={index} checked={column ? column[Object.keys(column)[index]] : state[Object.keys(state)[index]]} onChange={handleChange} name={item?.title} />}
                     label={item?.title}
                   />
                   )

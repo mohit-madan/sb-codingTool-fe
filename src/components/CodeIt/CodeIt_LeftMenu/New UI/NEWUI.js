@@ -23,11 +23,11 @@ const FILTER_MAP = {
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 function NEWUI(props) {
-  var prev=0,next=0
+  const  [ count,setCount]=useState(1)
   const _tasks = [
-    { id: "code-0", name: "Code 1", completed: true },
-    { id: "code-1", name: "Code 2", completed: true },
-    { id: "code-2", name: "Code 3", completed: true },
+    // { id: "1", name: "Code-1", completed: true },
+    // { id: "2", name: "Code-2", completed: true },
+    // { id: "3", name: "Code-3", completed: true },
   ];
   
   const [tasks, setTasks] = useState(_tasks);
@@ -99,10 +99,12 @@ function NEWUI(props) {
   ));
 
   function addTask(name) {
-    const newTask = { id: "todo-" + nanoid(), name: name, completed: true };
+    setCount(count+1)
+    // const newTask = { id: "todo-" + nanoid(), name: name, completed: true };
+    const newTask = { id: "todo-" + nanoid()+` ${count}`, name: name, completed: true };
     // setTasks([...tasks, newTask]);
     let data =[...tasks, newTask]
-    console.log(data)
+    // console.log(data)
     socket.emit('left-menu-codes-object',data)
   }
 
@@ -118,7 +120,6 @@ function NEWUI(props) {
       listHeadingRef.current?.focus();
     }
   }, [tasks.length, prevTaskLength]);
-console.log(tasks)
   return (
     <div className="newUI">
       {/* <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>

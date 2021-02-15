@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import "./FiltersBar.css"
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -16,6 +16,7 @@ import { setFilters, setSubmitFilters } from '../../Redux/Filters/Filters.action
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
 import { setFilteredData } from '../../Redux/CodeitData/codeit-data.actions';
+import { socket } from '../../config';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -75,15 +76,21 @@ const useStyles = makeStyles((theme) => ({
 function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
+    const [codes,setCodes]=useState([])
     const [filterDetails,setFilterDetails] =useState({
-        match:null,
+        match:`Contains In`,
         keywords:[],
         searchValue:"",
         sort:`Sort by length`,
         question:10
     })
     
-
+    useEffect(()=>{
+      socket.once('left-menu-codes-object', (value) => {
+        console.log(value)
+        setCodes(value)
+      })
+    })
     const getFiltersArray=(_string)=>{
       let filters =[]
       if(filterDetails?.match===`Exact Match`){
@@ -95,10 +102,17 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
       return filters
   }
 
+  function isIterable(obj) {
+    // checks for null and undefined
+    if (obj == null) {
+      return false;
+    }
+    return typeof obj[Symbol.iterator] === 'function';
+  }
+
     let data = null
     const handleSubmitSearch =async (e)=>{
         // e.preventDefault()
-        console.log(`click`)
         setSubmitFiltersInRedux(true)
         const time = setInterval(() => {
             setSubmitFiltersInRedux(false)
@@ -106,16 +120,18 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
         }, 1000*2);
 
         data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails?.searchValue)})
-               data=JSON.parse(data)
-               console.log(`caalling fetch`,data)
-               if(data==null){
-                   data =userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails?.searchValue)})
-                   data=JSON.parse(data)
-                }
-               console.log(`caalling fetch`,data)
-               setSubmitFiltersInRedux(false);
-               
-               setFilteredData(data)
+        data=JSON.parse(data)
+        console.log(`caalling fetch`,data)
+        if(typeof(data)==`array` && data?.length==0){
+          setFilteredData(Array())
+          alert(`no data with specified`)
+        }
+        if(isIterable(data)){
+          console.log(`caalling fetch`,data)
+          // setSubmitFiltersInRedux(false);
+          
+          setFilteredData([...data])
+         }
 
         return
     }
@@ -156,11 +172,9 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
             </div>
              <div className="filters">
                 <div className="filters_settings">
-                    <form className="example" style={{margin: 'auto 0', maxWidth: '300px'}} >
-                      <input type="text" placeholder="Search.." name="searchValue" onChange={handleFilterDetails}/>
-                      <button type="submit"><i className="fa fa-search" /></button>
-                    </form>
-                    <FormControl variant="filled" className={classes.formControl}>
+                    <form className="search_form" style={{display : "flex",margin: 'auto 0', minWidth: '300px'}} >
+                      <input type="text" style={{margin: "auto"}} placeholder="Search.." name="searchValue" onChange={handleFilterDetails}/>
+                      <FormControl variant="filled" className={classes.formControl}>
                        <InputLabel id="demo-simple-select-filled-label">Match</InputLabel>
                        <Select
                          value={filterDetails?.match}
@@ -169,15 +183,18 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                          native
                          inputProps={{
                            name:`match`,
-                           id: 'filled-age-native-simple',
+                           id: 'uncontrolled-native',
                          }}
                        >
-                         <option aria-label="None" value="" />
-                         <option  value={`Exact Match`}>Exact Match</option >
                          <option  value={`Contains In`}>Contains In</option >
+                         <option  value={`Exact Match`}>Exact Match</option >
                        </Select>
                      </FormControl>
-                     <button class="btn"  onClick={handleSubmitSearch}><i class="fa fa-filter"></i> Filter</button>
+                     
+                      {/* <button style={{margin: "auto"}} type="submit"><i className="fa fa-search" /></button> */}
+                    </form>
+                    
+                     <button className="btn"  onClick={handleSubmitSearch}><i className="fa fa-filter"></i> Filter</button>
                      <FormControl className={classes.formControl}>
                         <InputLabel id="demo-simple-select-filled-label">Keywords</InputLabel>
                         <Select
@@ -191,10 +208,10 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                           MenuProps={MenuProps}
                           name={`keywords`}
                         >
-                          {names.map((name) => (
-                            <MenuItem key={name} value={name}>
-                              <Checkbox checked={filterDetails?.keywords.indexOf(name) > -1} />
-                              <ListItemText primary={name} />
+                          {codes.map((item) => (
+                            <MenuItem key={item?.id} value={item?.name}>
+                              <Checkbox checked={filterDetails?.keywords.indexOf(item?.name) > -1} />
+                              <ListItemText primary={item?.name} />
                             </MenuItem>
                           ))}
                         </Select>
@@ -224,7 +241,7 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                     <button class="filter_btn btn">Close<button className="remove_btn"><i class="fa fa-times"></i></button></button>
                     <button class="filter_btn btn">Folder<button className="remove_btn"><i class="fa fa-times"></i></button></button>
                     <button class="filter_btn btn">Remove All<button className="remove_btn"><i class="fa fa-trash-alt"></i></button></button> */}
-                    <button class="filter_btn btn">Remove All<button className="remove_btn"><i class="fa fa-trash-alt"></i></button></button> 
+                    <button className="filter_btn btn">Remove All</button> 
                     
                 </div>
             </div>

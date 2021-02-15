@@ -13,15 +13,16 @@ import { ResetPassword } from '../components/Reset-Password/ResetPassword';
 import UploaderPage from "../pages/Uploader/UploaderPage.js"
 import CodeIt from '../pages/CodeIt/CodeIt';
 import {initialState} from '../Reducers/authentication.reducer'
+import ProjectsDashboard from '../pages/ProjectsDashboard/ProjectsDashboard';
 
 function App() {
     
-    useEffect(() => {
-        if(initialState?.loggedIn ==true){
-            console.log(`logged in`)
-            userActions.jwtTokenCheck()
-        }
-    },[])
+    // useEffect(() => {
+    //     if(initialState?.loggedIn ==true){
+    //         console.log(`logged in`)
+    //         userActions.jwtTokenCheck()
+    //     }
+    // },[])
 
 
     function hasQuiet() {
@@ -51,6 +52,7 @@ function App() {
                             <Route  path="/login" component={LoginPage} />
                             <Route  path="/register" component={RegisterPage} />
                             <Route  path="/forgot-password" component={ForgotPassword} />
+                            <Route  path="/dash" component={ProjectsDashboard} />
                             {/* <Route
                                 exact
                                 path='/user'

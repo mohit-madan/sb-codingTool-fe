@@ -11,6 +11,7 @@
 }
 .home_link{
     color: #2e3f5e;
+    font-weight: 350!important;
 }
 #home{
     position: relative;
@@ -18,6 +19,9 @@
 }
 ._header{
     background-color: #eff3ff;
+}
+#menu nav a{
+     margin: 0!important;
 }
 ._header h1{
 color:#091e56;

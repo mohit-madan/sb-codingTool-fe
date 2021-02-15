@@ -12,14 +12,14 @@ import { userActions } from "../../_actions/index.js"
 
 
 const CodeIt=({progressNumber})=>{
-    useEffect(() => {
-        const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
-            if(initialState?.loggedIn ==true){
-                userActions.jwtTokenCheck()
-            }
-          }, 1000*60)
-          return () => clearInterval(intervalId); //This is important
-    })
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
+    //         if(initialState?.loggedIn ==true){
+    //             userActions.jwtTokenCheck()
+    //         }
+    //       }, 1000*60)
+    //       return () => clearInterval(intervalId); //This is important
+    // })
     return(
         <div className="uploader_page codeIt_page">
             <Navigation />

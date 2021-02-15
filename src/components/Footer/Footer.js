@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react'
 import "./Footer.css"
 import { Button } from '@material-ui/core';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import {setProgressNumber} from "../../Redux/Progress-number/progress.actions.js"
 import { selectColumn, selectRow } from '../../Redux/SelectedRowandColumn/tableSelections.selectors';
 import { createStructuredSelector } from 'reselect';
@@ -12,14 +12,16 @@ import axios from 'axios';
 import config from '../../config';
 import { handleResponse } from '../../services';
 import {history} from "../../_helpers"
-import { userActions } from '../../_actions';
+import { alertActions, userActions } from '../../_actions';
 import { setExcelData } from '../../Redux/ExcelData/excel-data.actions';
 import { setLoading } from '../../Redux/Loading/Loading.actions';
 import { bindActionCreators } from "redux";
 import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
+import { setAlertMessage, setShowUploaderAlerts } from '../../Redux/UploaderAlerts/UploaderAlerts.actions';
 
-const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
+const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
+    const dispatch = useDispatch();
     Object.size = function(obj) {
         var size = 0,
           key;
@@ -30,20 +32,34 @@ const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progress
       };
     const next=()=>{
         if(progressNumber===1 && !excelData){
-            alert("Please Uplaod a file")
+            // alert("Please Uplaod a file")
+            setAlertMessage("Please Upload a file")
+            setShowUploaderAlerts(true)
             return
         }
         if(progressNumber===2){
             if(Object.size(column)==0  ){
-                alert("Please Selelct a Column to Continue")
+                // alert("Please Selelct a Column to Continue")
+                setAlertMessage("Please Selelct a Column to Continue")
+                setShowUploaderAlerts(true)
                 return
             }
         }
         if(progressNumber===3 && (surveyDetails==null || surveyDetails?.name?.length==0)){
-            alert("Survey Name Is Required to Continue")
+            // alert("Survey Name Is Required to Continue")
+
+            setAlertMessage("Survey Name Is Required to Continue")
+            setShowUploaderAlerts(true)
+
             return
         }
         progressNumber<=3 && setProgressNumber(progressNumber+1)
+        setShowUploaderAlerts(false)
+    }
+
+    const previous=()=>{
+        progressNumber>1 && setProgressNumber(progressNumber-1)
+        setShowUploaderAlerts(false)
     }
 
     const [creatingProject,setCreatingProject]=useState(true)
@@ -51,14 +67,14 @@ const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progress
     const [gettingPaginationData,setPaginationData]=useState(false)
 
 
-    useEffect(  () => {
-        if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
-            console.log(`moving next`)
-            setPaginationData(true)
-            // history.push('/tool')
-            window.location.href="http://localhost:3000/tool";
-        }
-    }, [gettingProjectDetails])
+    // useEffect(  () => {
+    //     if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
+    //         console.log(`moving next`)
+    //         // setPaginationData(true)
+    //         // history.push('/tool')
+    //         window.location.href="http://localhost:3000/tool";
+    //     }
+    // }, [gettingProjectDetails])
 
     useEffect(async() => {
         if(creatingProject===false && localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
@@ -99,7 +115,9 @@ const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progress
             console.log(data?.data?.message);
             localStorage.setItem('projectId',data?.data?.projectId)
             console.log(data)
+
             setCreatingProject(false)
+
         },err=>console.log(err))
 
 
@@ -114,7 +132,7 @@ const Footer=({requestApiData,setLoading,setExcelData,setProgressNumber,progress
             </div>
             <div className="middle"></div>
             <div className="right">
-                <Button color="primary" onClick={()=>{progressNumber>1 && setProgressNumber(progressNumber-1)}}>Prev</Button>
+                <Button color="primary" onClick={previous}>Prev</Button>
                 {progressNumber<=3 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
                 {progressNumber===4 && <Button variant="contained"  color="primary" onClick={onSubmit}>Submit</Button>}
             
@@ -127,6 +145,8 @@ const mapDispatchToProps = dispatch => ({
     setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
     setLoading: collectionsMap => dispatch(setLoading(collectionsMap)),
     requestApiData: collectionsMap => dispatch(requestApiData(collectionsMap)),
+    setShowUploaderAlerts: collectionsMap => dispatch(setShowUploaderAlerts(collectionsMap)),
+    setAlertMessage: collectionsMap => dispatch(setAlertMessage(collectionsMap)),
     
     // bindActionCreators({ requestApiData }, dispatch)
 });
