@@ -325,21 +325,25 @@ let __data=[
   }
 const ContextMenuSkin=({slice,select,data,handleClick})=>{
     var __num= Math.floor(Math.random() * 101)  
+    // slice && console.log(data)
+    let temp1=data
+    let start=0
     return (
         <div >
          <ContextMenuTrigger id={__num.toString()}>
-             {slice && data?.fIndex !==`undefined` && data?.lIndex !==`undefined` && 
-                    <p >{select?.slice(0,data?.fIndex)}
-                        <span style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</span>
-                        { data?.lIndex &&  data?.lIndex !==`undefined` && select?.slice(data?.lIndex+1,) }
-                    </p>
-                    // <div className="flex" >
-                    // <p >{select?.slice(0,data?.fIndex)} &nbsp;</p>
-                    //     <p style={{color:"red"}}>{select?.slice(data?.fIndex,data?.lIndex+1)}</p>
-                    //     <p >  { data?.lIndex &&  data?.lIndex !==`undefined` && select?.slice(data?.lIndex+1,) }
-                    // </p>
-                    // </div>
+            {slice && temp1?.indices && temp1?.indices.map(item =>{
+                return(
+                        <p>
+                            {temp1.desc.slice(start,item.fIndex)}
+                        
+                            <span style={{color:"red"}}>{temp1.desc.slice(item.fIndex,item.lIndex+1)}</span>
+
+                            <p style={{display:"none"}}>{start=item.lIndex+2}</p>
+                        </p>
+                )
+            })
             }
+            {slice && !data?.indices && <p style={{textAlign: "center"}} >{select}</p> }
             {!slice && <p style={{textAlign: "center"}} >{select}</p>}
             </ContextMenuTrigger>
             <ContextMenu id={__num.toString()}>
@@ -434,7 +438,7 @@ const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,select
     // let num=rowData.tableData.id
     let num=rowData?.resNum
     // rowData?.resNum
-      next=next+2
+    next=next+2
     socket.emit('input-box',{num,value})
   }
   
@@ -551,13 +555,6 @@ const handleClick=(event, data) => {
         const [pageCount,setPageCount]=useState(2)
         const [filteredPageCount,setFilteredPageCount]=useState(2)
 
-        // useEffect(() => {
-        //     const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
-        //         setReachedEnd(false)
-        //       }, 1000*5)
-        //       return () => clearInterval(intervalId); //This is important
-        // })
-
         const handleScroll = async (e) => {
             e.preventDefault()
             var temp1=(Math.round((e.target.scrollHeight - e.target.scrollTop)/100)*100)
@@ -595,7 +592,7 @@ const handleClick=(event, data) => {
                 console.log(`load filtered Data end reached`)
                 data =await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
                 data=JSON.parse(data)
-                console.log(`data from filtered useEffect`,data)
+                console.log(`data from reached end filtered useEffect`,data)
                 setSubmitFiltersInRedux(false);
                 if(filteredData.length > 0 && data!==`undefined`  && data!==null){
                     setFilteredData([...filteredData,...data])
@@ -616,28 +613,6 @@ const handleClick=(event, data) => {
             console.log(filters)
             return filters
         }
-
-        useEffect(async () => {
-
-           if(selectSubmitFiltersFromRedux){
-               data = await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
-               data=JSON.parse(data)
-               console.log(`caalling fetch`,data)
-               if(data==null){
-                   data =userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
-                   data=JSON.parse(data)
-                }
-               console.log(`caalling fetch`,data)
-               setSubmitFiltersInRedux(false);
-               
-               setFilteredData(data)
-
-               setFilteredPageCount(filteredPageCount+1)
-
-           }return setSubmitFiltersInRedux(false);
-
-        }, [selectSubmitFiltersFromRedux])
-
 
         useEffect(() => {
             const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
@@ -726,7 +701,6 @@ const mapStateToProps=createStructuredSelector({
     selectFiltersFromRedux:selectFilters,
     selectSubmitFiltersFromRedux:selectSubmitFilters,
     filteredData:selectFilteredData,
-    // selectFilteredData
 })
 const mapDispatchToProps = dispatch => ({
     setRow: collectionsMap => dispatch(setRow(collectionsMap)),

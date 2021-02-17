@@ -38,20 +38,28 @@ const MenuProps = {
 };
 const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColumn})=> {
     const classes = useStyles();
-    let data={}
-    console.log(column)
-    const [state, setState] = React.useState({});
+
+    const [state, setState] = React.useState(basicMapper());
     useEffect(() => {
       if(!column){
         column={}
-        setColumn({})
+        setColumn(basicMapper())
       }
     }, [])
+
     const handleChange = (event) => {
       setState({ ...state, [event.target.name]: event.target.checked });
-      setColumn({ ...state, [event.target.name]: event.target.checked })
-      console.log(state)
+      setColumn({ ...column, [event.target.name]: event.target.checked })
     };
+
+    function basicMapper(){
+      let mapper=[]
+      selectExcelDataColumns?.map((item,index)=>{
+          let temp=item.title
+          mapper={...mapper,[temp]: false}
+      })
+      return mapper
+    }
 
     return (
         <div className="leftmenu">
@@ -75,7 +83,7 @@ const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColum
                   return(
                   <FormControlLabel
                     key={index}
-                    control={<Checkbox key={index} checked={column ? column[Object.keys(column)[index]] : state[Object.keys(state)[index]]} onChange={handleChange} name={item?.title} />}
+                    control={<Checkbox key={index} checked={state[Object.keys(state)[index]]} onChange={handleChange} name={item?.title} />}
                     label={item?.title}
                   />
                   )

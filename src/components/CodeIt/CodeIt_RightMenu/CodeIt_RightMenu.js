@@ -13,6 +13,7 @@ import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actio
 import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions.js";
 import { userActions } from "../../../_actions/index.js";
 import { setFilteredData } from "../../../Redux/CodeitData/codeit-data.actions.js";
+import ReactVirtualizedTable from "./material-ui-table.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -34,7 +35,7 @@ const CodeIt_RightMenu =({setFilteredData,filteredData,setShowCodedAs,setContain
 
   const getData =async()=>{
     let data 
-    data = await userActions.responsePagination({pageNumber:1,limit:20,push:false})
+    data = await userActions.responsePagination({pageNumber:1,limit:100,push:false})
     data = JSON.parse(data)
     console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
@@ -94,9 +95,10 @@ useEffect(() => {
               }
              </div>
 
-            <div className="codeit_rightmenu" >
+            {/* <div className="codeit_rightmenu" >
                <CodeItTable reachedEnd={reachedEnd}/>
-            </div>
+            </div> */}
+            {filteredData?.length > 0 && <ReactVirtualizedTable />}
         </div>
         //
     )

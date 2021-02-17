@@ -47,20 +47,19 @@ async function filteredPagination({pageNumber,limit,filters}) {
     let temp3=null
     const details={
         "projectId":localStorage.projectId,
-        "questionId":localStorage.listOfQuestion,
-        "filters":filters
+        "questions":[{"questionId":localStorage.listOfQuestion}],
+        "operators":filters
     }
     const _token=JSON.parse(localStorage.token).accessToken
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    await axios.post(`${config.apiUrl}/filter/${pageNumber}/${limit}`,(details), requestOptions)
+    await axios.post(`${config.apiUrl}/operator/${pageNumber}/${limit}`,(details), requestOptions)
     .then(data=>{
         if(data?.data?.length!==0){
-            // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
             localStorage.setItem('filterdExcelData',JSON.stringify(data?.data))
             console.log(`Filtered Pagination DAta from user actions`,data?.data)
-            temp3=data?.data
+            temp3=data?.data?.result
         }
     },err=>console.log(err))
     return JSON.stringify(temp3)
@@ -68,17 +67,18 @@ async function filteredPagination({pageNumber,limit,filters}) {
 
 async function responsePagination({pageNumber,limit,push}){
     let temp3=null
-    console.log(`user actions response Pagination reached`)
+    console.log(`user actions response Pagination reached`,localStorage.listOfQuestion,localStorage.projectId)
     const details={
         "projectId":localStorage.projectId,
-        "questionId":localStorage.listOfQuestion
+        "questions":[{"questionId":localStorage.listOfQuestion}],
     }
     const _token=JSON.parse(localStorage.token).accessToken
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    return await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions)
-    .then(data=>{
+    return await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions).then(data=>{
+        console.log(`user actions response Pagination reached`,data)
+
         if(data?.data?.length!==0){
             // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
             // push && localStorage.setItem('excelData',JSON.stringify(data?.data))
@@ -101,7 +101,7 @@ async function projectDetails(){
         headers: {'Authorization': `Bearer ${_token}`}
     };
     await axios.post(`${config.apiUrl}/projectDetails`,details, requestOptions)
-    .then(async data=>{
+    .then( data=>{
         console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
         localStorage.setItem('codebook',data?.data?.project?.codebooks)
@@ -110,6 +110,22 @@ async function projectDetails(){
         history.push(`/tool`)
 
     },err=>console.log(err))
+    // const _requestOptions = {
+    //     method:"POST",
+    //     headers: {'Authorization': `Bearer ${_token}`},
+    //     body:details
+    // };
+    // await fetch(`${config.apiUrl}/projectDetails`, _requestOptions)
+    // .then( data=>{
+    //     console.log(`project details from user actions`,data)
+    //     localStorage.setItem('fileKey',data?.data?.project?.docKey)
+    //     localStorage.setItem('codebook',data?.data?.project?.codebooks)
+    //     localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
+
+    //     history.push(`/tool`)
+
+    // },err=>console.log(err))
+
 }
 
 async function uploadFile(){

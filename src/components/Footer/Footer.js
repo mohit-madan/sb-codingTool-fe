@@ -67,19 +67,10 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
     const [gettingPaginationData,setPaginationData]=useState(false)
 
 
-    // useEffect(  () => {
-    //     if(gettingProjectDetails===false && localStorage.listOfQuestion!==`undefined` &&localStorage.listOfQuestion?.length !==0){
-    //         console.log(`moving next`)
-    //         // setPaginationData(true)
-    //         // history.push('/tool')
-    //         window.location.href="http://localhost:3000/tool";
-    //     }
-    // }, [gettingProjectDetails])
-
-    useEffect(async() => {
+    useEffect(() => {
         if(creatingProject===false && localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
              console.log(`getting project Details`)
-              await userActions.projectDetails()
+               userActions.projectDetails()
              setGettingProjectDetails(false)
         }
     }, [creatingProject])
@@ -91,9 +82,11 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             if(temp1[item]==true){
                 col= [...col,{"coloumn":index,"question":item}]
             }})
+            console.log(`modified coolumns`,col)
             return col
     }
 
+    const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const onSubmit= async ()=>{
         setLoading(true)
@@ -104,25 +97,28 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             "coloumns":handleColumns(column),
             "industry":surveyDetails?.industry ? surveyDetails?.industry : "test",
             "type":surveyDetails?.type ? surveyDetails?.type : "test",
-            "tags":(surveyDetails?.tags ? surveyDetails?.tags : ["test"]),
+            "tags":surveyDetails?.tags ? surveyDetails?.tags : ["test"],
         }
+        console.log(details)
         const _token=JSON.parse(localStorage.token).accessToken
         const requestOptions = {
             headers: {'Authorization': `Bearer ${_token}`}
         };
         await axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
-        .then(data=>{
+        .then(async data=>{
             console.log(data?.data?.message);
             localStorage.setItem('projectId',data?.data?.projectId)
             console.log(data)
 
-            setCreatingProject(false)
-
+            await delay(200);
+            console.log(`waited 5 seconds`)
+            // setCreatingProject(false)
+            if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
+                console.log(`getting project Details`)
+                await userActions.projectDetails()
+                setGettingProjectDetails(false)
+           }
         },err=>console.log(err))
-
-
-
-        // requestApiData()
 
     }
     return (

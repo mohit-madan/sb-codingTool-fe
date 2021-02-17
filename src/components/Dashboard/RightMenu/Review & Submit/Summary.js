@@ -8,7 +8,6 @@ import "./Summary.css"
 
 const Summary=({surveyDetails,row,column,setProgressNumber})=>{
     console.log(column)
-    console.log(typeof(column))
     return(
         <div className="summary">
             <h1>Upload Summary</h1>
@@ -39,7 +38,6 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                         <p className="edit" onClick={()=>setProgressNumber(2)}>Edit</p>
                     </div>
                     {column && Object.keys(column).map((item,index) => {
-                        console.log(column.index)
                             if(column[item]){
                                 return(
                                     <h5 key={index}>{`${Object.keys(column)[index]}`}</h5>

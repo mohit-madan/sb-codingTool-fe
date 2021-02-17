@@ -2,7 +2,6 @@
   "name": "user-auth-form",
   "version": "0.1.0",
   "private": true,
-  "proxy":"http://localhost:5000",
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
@@ -12,6 +11,7 @@
     "@testing-library/user-event": "^12.5.0",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
+    "clsx": "^1.1.1",
     "compass": "^0.1.1",
     "detect-browser-language": "0.0.2",
     "hotkeys-js": "^3.8.2",
@@ -33,6 +33,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-ui-cards": "^2.0.0",
+    "react-virtualized": "^9.22.3",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",

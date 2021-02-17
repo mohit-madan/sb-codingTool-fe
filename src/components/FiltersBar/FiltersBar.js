@@ -29,27 +29,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -73,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
+function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
     const [codes,setCodes]=useState([])
@@ -81,8 +60,10 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
         match:`Contains In`,
         keywords:[],
         searchValue:"",
-        sort:`Sort by length`,
-        question:10
+        sort:`Sort by length Ascending`,
+        question:10,
+        searchArray:[],
+        filtersArray:[]
     })
     
     useEffect(()=>{
@@ -91,12 +72,20 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
         setCodes(value)
       })
     })
-    const getFiltersArray=(_string)=>{
-      let filters =[]
-      if(filterDetails?.match===`Exact Match`){
-          filters.push({"filter":6,"pattern":_string})
-      }else if(filterDetails?.match===`Contains In`){
-          filters.push({"filter":5,"pattern":_string})
+  const getFiltersArray=()=>{
+      let filters =filterDetails?.filtersArray
+
+
+
+
+      if(filterDetails?.sort===`Sort by length Ascending`){
+        filters.push({"operator":1})
+      }else if(filterDetails?.sort===`Sort by length Descending`){
+        filters.push({"operator":2})
+      }else if(filterDetails?.sort===`Sort alphabetically Ascending`){
+        filters.push({"operator":3})
+      }else if(filterDetails?.sort===`Sort alphabetically Descending`){
+        filters.push({"operator":4})
       }
       console.log(filters)
       return filters
@@ -110,42 +99,64 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
     return typeof obj[Symbol.iterator] === 'function';
   }
 
+  useEffect(() => {
+    console.log(filterDetails)
+  }, [filterDetails])
+
+  const getBasicFiltersArray=()=>{
+    let _string = filterDetails?.searchValue
+    let filters
+    if(filterDetails?.match===`Exact Match`){
+        filters={"operator":6,"pattern":_string}
+    }else if(filterDetails?.match===`Contains In`){
+        filters={"operator":5,"pattern":_string}
+    }
+    return filters
+  }
+
     let data = null
     const handleSubmitSearch =async (e)=>{
-        // e.preventDefault()
-        setSubmitFiltersInRedux(true)
-        const time = setInterval(() => {
-            setSubmitFiltersInRedux(false)
-            clearInterval(time)
-        }, 1000*2);
 
-        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails?.searchValue)})
-        data=JSON.parse(data)
-        console.log(`caalling fetch`,data)
-        if(typeof(data)==`array` && data?.length==0){
-          setFilteredData(Array())
-          alert(`no data with specified`)
+        if(filterDetails?.searchArray !==""){
+          let temp1=filterDetails?.searchArray
+          temp1.push(filterDetails?.searchValue)
+          setFilterDetails({...filterDetails,searchArray:temp1,})
         }
+        let temp2=filterDetails?.filtersArray
+        temp2.push(getBasicFiltersArray())
+        setFilterDetails({...filterDetails,searchValue:"",filtersArray:temp2})
+
+        e.preventDefault()
+        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails)})
+        data=JSON.parse(data)
+        // console.log(data)
         if(isIterable(data)){
-          console.log(`caalling fetch`,data)
-          // setSubmitFiltersInRedux(false);
-          
           setFilteredData([...data])
          }
+         if(data==null){
+          setFilteredData([])
+         }
 
-        return
     }
-    console.log(filterDetails)
+
     const handleFilterDetails =(e)=>{
         e.preventDefault()
         setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
         setFiltersInRedux({...filterDetails,[e.target.name]:e.target.value})
         console.log(filterDetails)
-        // setFiltersInRedux
-        // console.log(e.target.name,e.target.value)
     }
-    const filtersDetailsToArray=()=>{
-      
+  
+    const resetFilterDetails=()=>{
+      setFilterDetails({
+        match:`Contains In`,
+        keywords:[],
+        searchValue:"",
+        sort:`Sort by length`,
+        question:10
+      })
+    }
+    const resetSearchValue=()=>{
+      setFilterDetails({...filterDetails,searchValue:""})
     }
     return (
         <div className="FiltersBar">
@@ -173,7 +184,7 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
              <div className="filters">
                 <div className="filters_settings">
                     <form className="search_form" style={{display : "flex",margin: 'auto 0', minWidth: '300px'}} >
-                      <input type="text" style={{margin: "auto"}} placeholder="Search.." name="searchValue" onChange={handleFilterDetails}/>
+                      <input type="text" style={{margin: "auto"}} placeholder="Search.." name="searchValue" value={filterDetails?.searchValue} onChange={handleFilterDetails}/>
                       <FormControl variant="filled" className={classes.formControl}>
                        <InputLabel id="demo-simple-select-filled-label">Match</InputLabel>
                        <Select
@@ -229,20 +240,25 @@ function FiltersBar({setSubmitFiltersInRedux,setFiltersInRedux}) {
                            id: 'uncontrolled-native',
                          }}
                        >
-                         <option value={`Sort by length`}>Sort by length</option>
-                         <option value={`Sort alphabetically`}>Sort alphabetically</option>
+                         <option value={`Sort by length Ascending`}>Sort by length Ascending </option>
+                         <option value={`Sort by length Descending`}>Sort by length Descending </option>
+                         <option value={`Sort alphabetically Ascending`}>Sort alphabetically Ascending </option>
+                         <option value={`Sort alphabetically Descending`}>Sort alphabetically Descending </option>
                        </Select>
                      </FormControl>
                 </div>
                 <div className="filters_list">
-                    {/* <button class="filter_btn btn">Home <button className="remove_btn"><i class="fa fa-times"></i></button> </button>
-                    <button class="filter_btn btn">Menu<button className="remove_btn"><i class="fa fa-times"></i></button></button>
-                    <button class="filter_btn btn">Trash<button className="remove_btn"><i class="fa fa-times"></i></button></button>
-                    <button class="filter_btn btn">Close<button className="remove_btn"><i class="fa fa-times"></i></button></button>
-                    <button class="filter_btn btn">Folder<button className="remove_btn"><i class="fa fa-times"></i></button></button>
-                    <button class="filter_btn btn">Remove All<button className="remove_btn"><i class="fa fa-trash-alt"></i></button></button> */}
-                    <button className="filter_btn btn">Remove All</button> 
-                    
+
+                    {/* {filterDetails?.searchValue!=="" &&  <button class="filter_btn btn">{`Search : ${filterDetails?.match}`}<button className="remove_btn" onClick={resetSearchValue}><i class="fa fa-times"></i></button> </button>   }                 
+                    {filterDetails?.searchValue!=="" && <button class="filter_btn btn">{filterDetails?.sort} <button className="remove_btn"><i class="fa fa-times"></i></button></button> }
+                    {filterDetails?.searchValue!=="" && <button className="filter_btn btn" onClick={resetFilterDetails}>Remove All</button> } */}
+                    {
+                      filterDetails?.searchArray?.map((item,index)=>{
+                        return (
+                          <button class="filter_btn btn">{item}<button className="remove_btn"><i class="fa fa-times"></i></button></button> 
+                        )
+                      })
+                    }
                 </div>
             </div>
         </div>
