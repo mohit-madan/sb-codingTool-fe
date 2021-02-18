@@ -98,7 +98,7 @@ useEffect(() => {
             {/* <div className="codeit_rightmenu" >
                <CodeItTable reachedEnd={reachedEnd}/>
             </div> */}
-            {filteredData?.length > 0 && <ReactVirtualizedTable />}
+            {filteredData && <ReactVirtualizedTable />}
         </div>
         //
     )
@@ -114,6 +114,5 @@ const mapDispatchToProps = dispatch => ({
   setShowCodedAs: collectionsMap => dispatch(setShowCodedAs(collectionsMap)),
   setContainsKeyword: collectionsMap => dispatch(setContainsKeyword(collectionsMap)),
   setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
-
 });
 export default connect(mapStateToProps,mapDispatchToProps)(CodeIt_RightMenu)

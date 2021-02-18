@@ -73,10 +73,8 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
       })
     })
   const getFiltersArray=()=>{
-      let filters =filterDetails?.filtersArray
 
-
-
+      let filters =JSON.parse(JSON.stringify(filterDetails?.filtersArray))
 
       if(filterDetails?.sort===`Sort by length Ascending`){
         filters.push({"operator":1})
@@ -87,7 +85,6 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
       }else if(filterDetails?.sort===`Sort alphabetically Descending`){
         filters.push({"operator":4})
       }
-      console.log(filters)
       return filters
   }
 
@@ -98,10 +95,6 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
     }
     return typeof obj[Symbol.iterator] === 'function';
   }
-
-  useEffect(() => {
-    console.log(filterDetails)
-  }, [filterDetails])
 
   const getBasicFiltersArray=()=>{
     let _string = filterDetails?.searchValue
@@ -115,19 +108,59 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
   }
 
     let data = null
-    const handleSubmitSearch =async (e)=>{
 
-        if(filterDetails?.searchArray !==""){
+    const handleSubmitSearch =async (e)=>{
+        if(filterDetails?.searchValue !==""){
           let temp1=filterDetails?.searchArray
           temp1.push(filterDetails?.searchValue)
           setFilterDetails({...filterDetails,searchArray:temp1,})
-        }
-        let temp2=filterDetails?.filtersArray
-        temp2.push(getBasicFiltersArray())
-        setFilterDetails({...filterDetails,searchValue:"",filtersArray:temp2})
 
-        e.preventDefault()
+          let temp2=filterDetails?.filtersArray
+          temp2.push(getBasicFiltersArray())
+          setFilterDetails({...filterDetails,searchValue:"",filtersArray:temp2})
+        }
+
+        e?.preventDefault()
         data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails)})
+        data=JSON.parse(data)
+        // console.log(data)
+        if(isIterable(data)){
+          setFilteredData([...data])
+         }
+         if(data==null){
+          setFilteredData([])
+         }
+          console.log(filterDetails?.filtersArray)
+    }
+    const removeSearchItem=async (e,item)=>{
+      e.preventDefault()
+      // console.log(item)
+      let temp1=[]
+      filterDetails?.searchArray?.map((x,index)=>{
+        if(x!==item){
+          temp1.push(x)
+        }
+      })
+      
+      let temp2=[]
+      filterDetails?.filtersArray.map((x,index)=>{
+        if(x.pattern!=item){
+          temp2.push({operator:x.operator,pattern:x.pattern})
+        }
+      })
+      setFilterDetails({...filterDetails,searchArray:temp1,filtersArray:temp2})
+      
+      if(filterDetails?.sort===`Sort by length Ascending`){
+        temp2.push({"operator":1})
+      }else if(filterDetails?.sort===`Sort by length Descending`){
+        temp2.push({"operator":2})
+      }else if(filterDetails?.sort===`Sort alphabetically Ascending`){
+        temp2.push({"operator":3})
+      }else if(filterDetails?.sort===`Sort alphabetically Descending`){
+        temp2.push({"operator":4})
+      }
+
+      data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2})
         data=JSON.parse(data)
         // console.log(data)
         if(isIterable(data)){
@@ -255,7 +288,7 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
                     {
                       filterDetails?.searchArray?.map((item,index)=>{
                         return (
-                          <button class="filter_btn btn">{item}<button className="remove_btn"><i class="fa fa-times"></i></button></button> 
+                          <button key={index} class="filter_btn btn">{item}<button className="remove_btn" onClick={e=>{removeSearchItem(e,item)}}><i class="fa fa-times"></i></button></button> 
                         )
                       })
                     }

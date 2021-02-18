@@ -587,6 +587,7 @@ function ReactVirtualizedTable({codes,filteredData,onRowClick,selectFiltersFromR
         return filters
     }
 
+    console.log(selectFiltersFromRedux)
       useEffect(async () => {
         if(reachedEnd &&  (typeof(selectFiltersFromRedux?.searchValue) ===`undefined` || selectFiltersFromRedux?.searchValue?.length==0) ){
             console.log(`load Data end reached`)
