@@ -5,7 +5,7 @@ import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { connect } from "react-redux";
-import { selectCodes, selectFilteredData, selectnumberOfInputsGreaterThan2, selectProgressLength } from "../../../Redux/CodeitData/codeit-data.selectors.js";
+import { selectCodes, selectFilteredData, selectnumberOfInputsGreaterThan2, selectProgressLength, selectQuestionNumber } from "../../../Redux/CodeitData/codeit-data.selectors.js";
 import { createStructuredSelector } from "reselect";
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
@@ -29,13 +29,13 @@ const BorderLinearProgress = withStyles((theme) => ({
     },
   }))(LinearProgress);
 
-const CodeIt_RightMenu =({setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
+const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
 
   const [loadigData,setLoadingData]=useState(true)
 
   const getData =async()=>{
     let data 
-    data = await userActions.responsePagination({pageNumber:1,limit:100,push:false})
+    data = await userActions.responsePagination({pageNumber:1,limit:20,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
     data = JSON.parse(data)
     console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
@@ -45,16 +45,9 @@ const CodeIt_RightMenu =({setFilteredData,filteredData,setShowCodedAs,setContain
       setLoadingData(false)
     }
 }
-
-// loadigData && getData()
 useEffect(() => {
-  // loadigData && getData()
-  // const time = setInterval(() => {
-  //   loadigData && getData()
-  // }, 1000);
-  // return ()=>clearInterval(time)
   getData()
-},[])
+},[questionNumber])
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -109,6 +102,7 @@ const mapStateToProps=createStructuredSelector({
     selectShowCodedAs:selectShowCodedAs,
     selectContainsKeyword:selectContainsKeyword,
     filteredData:selectFilteredData,
+    questionNumber:selectQuestionNumber,
 })
 const mapDispatchToProps = dispatch => ({
   setShowCodedAs: collectionsMap => dispatch(setShowCodedAs(collectionsMap)),

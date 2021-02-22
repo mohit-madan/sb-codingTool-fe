@@ -5,7 +5,14 @@ export const setFilters = user => ({
   payload: user
 });
 export const setSubmitFilters = user => ({
-    type: FiltersActionTypes.SET_SUBMIT_FILTERS,
-    payload: user
-  });
-  
+  type: FiltersActionTypes.SET_SUBMIT_FILTERS,
+  payload: user
+});
+export const setAppliedFilters = user => ({
+  type: FiltersActionTypes.SET_APPLIED_FILTERS,
+  payload: user
+});
+export const setPageNumber = user => ({
+  type: FiltersActionTypes.SET_PAGE_NUMBER,
+  payload: user
+});

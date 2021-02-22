@@ -31,3 +31,7 @@ export const setFilteredData = (user) => ({
   type: codeItDataActionTypes.SET_FILTERED_DATA,
   payload: user
 });
+export const setQuestionNumber = (user) => ({
+  type: codeItDataActionTypes.SET_QUESTION_NUMBER,
+  payload: user
+});

@@ -23,8 +23,24 @@ export const userActions = {
     projectDetails,
     responsePagination,
     filteredPagination,
-    jwtTokenCheck
+    jwtTokenCheck,
+    questionCodebookId
 };
+ async function questionCodebookId(questionId){
+    const _token=JSON.parse(localStorage.token).accessToken
+    const details={
+        "questionId":questionId
+    }
+    const _RequestOptions = {
+        headers: {"authorization":`surveybuddytoken ${_token}`},
+    };
+    return await axios.post(`${config.apiUrl}/questionCodebook`,details,_RequestOptions)
+    .then(data =>{
+        localStorage.setItem(`questionCodebookId`,data?.data?.codebook?._id)
+        console.log(`<<<<<<<<<<-------`,data?.data?.codebook?.codewords)
+        return (data?.data?.codebook?.codewords)
+    })
+}
 
 function jwtTokenCheck(){
     const _token=JSON.parse(localStorage.token).accessToken
@@ -43,11 +59,11 @@ function jwtTokenCheck(){
     })
 }
 
-async function filteredPagination({pageNumber,limit,filters}) {
+async function filteredPagination({pageNumber,limit,filters,questionId}) {
     let temp3=null
     const details={
         "projectId":localStorage.projectId,
-        "questions":[{"questionId":localStorage.listOfQuestion}],
+        "questions":[{"questionId":questionId}],
         "operators":filters
     }
     const _token=JSON.parse(localStorage.token).accessToken
@@ -65,12 +81,12 @@ async function filteredPagination({pageNumber,limit,filters}) {
     return JSON.stringify(temp3)
 }
 
-async function responsePagination({pageNumber,limit,push}){
+async function responsePagination({pageNumber,limit,push,questionId}){
     let temp3=null
-    console.log(`user actions response Pagination reached`,localStorage.listOfQuestion,localStorage.projectId)
+    console.log(`user actions response Pagination reached`,questionId,localStorage.projectId)
     const details={
         "projectId":localStorage.projectId,
-        "questions":[{"questionId":localStorage.listOfQuestion}],
+        "questions":[{"questionId":questionId}],
     }
     const _token=JSON.parse(localStorage.token).accessToken
     const requestOptions = {
@@ -92,7 +108,7 @@ async function responsePagination({pageNumber,limit,push}){
 }
 
 async function projectDetails(){
-
+//  localStorage.clear()
     const details={
         "id":localStorage.projectId,
     }
@@ -104,7 +120,7 @@ async function projectDetails(){
     .then( data=>{
         console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
-        localStorage.setItem('codebook',data?.data?.project?.codebooks)
+        localStorage.setItem('codebook',data?.data?.project?.codebook)
         localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
 
         history.push(`/tool`)
@@ -266,7 +282,8 @@ function login(username, password, from) {
                     const interval = setInterval(() => {
                         localStorage.removeItem('user')
                         history.push('/login')
-                        alert('Session Timed Out ! , Please Login Again')
+                        dispatch(failure('Session Timed Out ! , Please Login Again'));
+                        dispatch(alertActions.error('Session Timed Out ! , Please Login Again'));
                         clearInterval(interval);
                     }, 1000*60*30);
 

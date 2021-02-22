@@ -26,8 +26,8 @@ const CodeIt=({progressNumber})=>{
             <FiltersBar />
 
                 <div className="dash codeit_dash">
-                    <CodeIt_LeftMenu progressNumber={progressNumber}/>
-                    <CodeIt_RightMenu progressNumber={progressNumber}/>
+                    <CodeIt_LeftMenu />
+                    <CodeIt_RightMenu />
                 </div>
         </div>
     )

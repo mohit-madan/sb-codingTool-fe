@@ -27,3 +27,8 @@ export const selectFilteredData = createSelector(
   [codeItDataReducer],
   user => user.filteredData
 );
+export const selectQuestionNumber = createSelector(
+  [codeItDataReducer],
+  user => user.questionNumber
+);
+// questionNumber

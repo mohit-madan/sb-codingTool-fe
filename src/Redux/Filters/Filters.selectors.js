@@ -7,7 +7,14 @@ export const selectFilters = createSelector(
   user => user.filters
 );
 export const selectSubmitFilters = createSelector(
-    [selectFiltersReducer],
-    user => user.submitFilters
-  );
-  
+  [selectFiltersReducer],
+  user => user.submitFilters
+);
+export const selectAppliedFilters = createSelector(
+  [selectFiltersReducer],
+  user => user.appliedFilters
+);
+export const selectPageNumber = createSelector(
+  [selectFiltersReducer],
+  user => user.pageNumber
+);

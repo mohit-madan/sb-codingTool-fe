@@ -6,10 +6,10 @@ function Form(props) {
   const [name, setName] = useState('');
 
   useEffect(() => {
-    socket.once('left-menu-form-box', ({values}) => {
-      console.log(values)
-      setName(values);
-    })
+    // socket.once('left-menu-form-box', ({values}) => {
+    //   console.log(values)
+    //   setName(values);
+    // })
     // socket.once('left-menu-add-code', ({values}) => {
     //   // console.log(values)
     //   // props.addTask(values);
@@ -30,7 +30,8 @@ function Form(props) {
 
   function handleChange(e) {
     let value=e.target.value 
-    socket.emit('left-menu-form-box',value)
+    setName(value)
+    // socket.emit('left-menu-form-box',value)
   }
 
 

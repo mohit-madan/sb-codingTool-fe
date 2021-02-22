@@ -20,7 +20,6 @@ export default function Todo(props) {
 
   useEffect(() => {
     socket.once('left-menu-submit-edited-code', ({id, newName}) => {
-      console.log({id, newName})
       props.editTask(id, newName);
       setNewName("");
       setEditing(false);
@@ -83,7 +82,8 @@ export default function Todo(props) {
             onChange={() => props.toggleTaskCompleted(props.id)}
           />
           <label className="todo-label" htmlFor={props.id}>
-            {props.id?.split(" ")[props.id?.split(" ").length -1]}.
+            {/* {props.id?.split(" ")[props.id?.split(" ").length -1]}. */}
+            {props.index +1}.
             {/* str.split(" ")[str.split(" ").length -1] */}
           </label>
           <label className="todo-label" htmlFor={props.id}>

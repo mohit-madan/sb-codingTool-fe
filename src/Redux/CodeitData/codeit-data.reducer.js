@@ -6,7 +6,8 @@ const INITIAL_STATE = {
     progresslength:0,
     numberOfInputsGreaterThan2:0,//numberOfInputsGreaterThan2
     selectedRows:null,
-    filteredData:null
+    filteredData:null,
+    questionNumber:0
 };
 
 const codeItDataReducer = (state = INITIAL_STATE, action) => {
@@ -21,35 +22,16 @@ const codeItDataReducer = (state = INITIAL_STATE, action) => {
         ...state,
         codes: action.payload
       };
-    case codeItDataActionTypes.SET_KEYWORDS:
-      return {
-        ...state,
-        keywords: action.payload
-      };
-    case codeItDataActionTypes.INCREASE_PROGRESS_LENGTH:
-      return {
-        ...state,
-        progresslength: state.progresslength+action.payload
-      };
-    case codeItDataActionTypes.DECREASE_PROGRESS_LENGTH:
-        return {
-          ...state,
-          progresslength: state.progresslength-action.payload
-      };
-    case codeItDataActionTypes.INCREASE_NUMBER_OF_INPUTS:
-      return {
-        ...state,
-        numberOfInputsGreaterThan2: state.numberOfInputsGreaterThan2+1
-    };
-    case codeItDataActionTypes.DECREASE_NUMBER_OF_INPUTS:
-      return {
-        ...state,
-        numberOfInputsGreaterThan2: state.numberOfInputsGreaterThan2-1
-    };
+    
     case codeItDataActionTypes.SET_SELECTED_ROWS:
       return {
         ...state,
         selectedRows: action.payload
+    };
+    case codeItDataActionTypes.SET_QUESTION_NUMBER:
+      return {
+        ...state,
+        questionNumber: action.payload
     };
     default:
       return state;
@@ -57,3 +39,29 @@ const codeItDataReducer = (state = INITIAL_STATE, action) => {
 };
 
 export default codeItDataReducer;
+
+// case codeItDataActionTypes.INCREASE_PROGRESS_LENGTH:
+//   return {
+//     ...state,
+//     progresslength: state.progresslength+action.payload
+//   };
+// case codeItDataActionTypes.DECREASE_PROGRESS_LENGTH:
+//     return {
+//       ...state,
+//       progresslength: state.progresslength-action.payload
+//   };
+// case codeItDataActionTypes.INCREASE_NUMBER_OF_INPUTS:
+//   return {
+//     ...state,
+//     numberOfInputsGreaterThan2: state.numberOfInputsGreaterThan2+1
+// };
+// case codeItDataActionTypes.DECREASE_NUMBER_OF_INPUTS:
+//   return {
+//     ...state,
+//     numberOfInputsGreaterThan2: state.numberOfInputsGreaterThan2-1
+// };
+// case codeItDataActionTypes.SET_KEYWORDS:
+// return {
+//   ...state,
+//   keywords: action.payload
+// };

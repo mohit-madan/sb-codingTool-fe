@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectCodes, selectFilteredData } from '../../../Redux/CodeitData/codeit-data.selectors';
+import { selectCodes, selectFilteredData, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
 import { setFilteredData } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
@@ -26,10 +26,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { selectFilters } from '../../../Redux/Filters/Filters.selectors';
+import { selectAppliedFilters, selectFilters, selectPageNumber } from '../../../Redux/Filters/Filters.selectors';
 import { userActions } from '../../../_actions';
 import { ContactSupportOutlined } from '@material-ui/icons';
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
+import { setPageNumber } from '../../../Redux/Filters/Filters.actions';
 
 const _useStyles = makeStyles((theme) => ({
     flexContainer: {
@@ -435,7 +436,7 @@ const rows = [
 
 
 
-function ReactVirtualizedTable({codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
+function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
     const rowHeight =48
@@ -449,8 +450,8 @@ function ReactVirtualizedTable({codes,filteredData,onRowClick,selectFiltersFromR
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [reachedEnd,setReachedEnd]=useState(false)
     let data=null
-    const [pageCount,setPageCount]=useState(2)
-    const [filteredPageCount,setFilteredPageCount]=useState(2)
+    // const [pageCount,setPageCount]=useState(2)
+    // const [filteredPageCount,setFilteredPageCount]=useState(2)
     const [ascending,setAscending]=useState(true)
     // const rows = filteredData;
 
@@ -567,53 +568,29 @@ function ReactVirtualizedTable({codes,filteredData,onRowClick,selectFiltersFromR
         }
       }
 
-      const getFiltersArray=(_string)=>{
-        let filters =[]
-        if(selectFiltersFromRedux?.match===`Exact Match`){
-            filters.push({"operator":6,"pattern":_string})
-        }else if(selectFiltersFromRedux?.match===`Contains In`){
-            filters.push({"operator":5,"pattern":_string})
-        }
-        if(selectFiltersFromRedux?.sort===`Sort by length Ascending`){
-          filters.push({"operator":1})
-        }else if(selectFiltersFromRedux?.sort===`Sort by length Descending`){
-          filters.push({"operator":2})
-        }else if(selectFiltersFromRedux?.sort===`Sort alphabetically Ascending`){
-          filters.push({"operator":3})
-        }else if(selectFiltersFromRedux?.sort===`Sort alphabetically Descending`){
-          filters.push({"operator":4})
-        }
-        console.log(filters)
-        return filters
-    }
-
-    console.log(selectFiltersFromRedux)
       useEffect(async () => {
-        if(reachedEnd &&  (typeof(selectFiltersFromRedux?.searchValue) ===`undefined` || selectFiltersFromRedux?.searchValue?.length==0) ){
-            console.log(`load Data end reached`)
-            data = await userActions.responsePagination({pageNumber:pageCount,limit:50,push:false})
+        if(reachedEnd && selectAppliedFilters==null ){
+            data = await userActions.responsePagination({pageNumber:pageNumber,limit:20,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
             data=JSON.parse(data)
             if(filteredData.length > 0 && data!==`undefined`){
                 setFilteredData([...filteredData,...data])
-                console.log(`data from useEffect`,filteredData)
             }
-            setPageCount(pageCount+1)
+            setPageNumber(pageNumber+1)
 
-        }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length > 0){
-            console.log(`load filtered Data end reached`)
-            data =await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
+        }else if(reachedEnd && selectAppliedFilters!=null ){
+            data =await userActions.filteredPagination({pageNumber:pageNumber,limit:20,filters:selectAppliedFilters,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
             data=JSON.parse(data)
-            console.log(`data from reached end filtered useEffect`,data)
+            console.log(`data from reached end filtered useEffect`,selectAppliedFilters)
             if(filteredData.length > 0 && data!==`undefined`  && data!==null){
                 setFilteredData([...filteredData,...data])
             }
-            setFilteredPageCount(filteredPageCount+1)
+            setPageNumber(pageNumber+1)
         }
     }, [reachedEnd])
 
     const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
-      }
+    }
 
   return (
     <Paper style={{ height: 400, width: '100%' }}>
@@ -621,7 +598,7 @@ function ReactVirtualizedTable({codes,filteredData,onRowClick,selectFiltersFromR
         {({ height, width }) => (
             <div>
 
-            <EnhancedTableToolbar numSelected={selected.length} />
+            {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
 
 
           <Table
@@ -797,9 +774,13 @@ const mapStateToProps=createStructuredSelector({
     codes:selectCodes,
     filteredData:selectFilteredData,
     selectFiltersFromRedux:selectFilters,
+    pageNumber:selectPageNumber,
+    selectAppliedFilters:selectAppliedFilters,
+    questionNumber:selectQuestionNumber,
+    // selectAppliedFilters
 })
 const mapDispatchToProps = dispatch => ({
   setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
-
+  setPageNumber: collectionsMap => dispatch(setPageNumber(collectionsMap)),
 });
 export default connect(mapStateToProps,mapDispatchToProps)(ReactVirtualizedTable)

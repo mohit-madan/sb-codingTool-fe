@@ -12,11 +12,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
-import { setFilters, setSubmitFilters } from '../../Redux/Filters/Filters.actions';
+import { setAppliedFilters, setFilters, setPageNumber, setSubmitFilters } from '../../Redux/Filters/Filters.actions';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
-import { setFilteredData } from '../../Redux/CodeitData/codeit-data.actions';
+import { setFilteredData, setQuestionNumber } from '../../Redux/CodeitData/codeit-data.actions';
 import { socket } from '../../config';
+import { createStructuredSelector } from 'reselect';
+import { selectPageNumber } from '../../Redux/Filters/Filters.selectors';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -52,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
+function FiltersBar({setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
     const [codes,setCodes]=useState([])
@@ -61,10 +63,11 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
         keywords:[],
         searchValue:"",
         sort:`Sort by length Ascending`,
-        question:10,
+        question:0,
         searchArray:[],
         filtersArray:[]
     })
+    
     
     useEffect(()=>{
       socket.once('left-menu-codes-object', (value) => {
@@ -121,7 +124,9 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
         }
 
         e?.preventDefault()
-        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:getFiltersArray(filterDetails)})
+        let temp3=getFiltersArray(filterDetails)
+        setAppliedFilters(temp3)
+        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp3,questionId:localStorage.listOfQuestion?.split(',')[0]})
         data=JSON.parse(data)
         // console.log(data)
         if(isIterable(data)){
@@ -130,6 +135,7 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
          if(data==null){
           setFilteredData([])
          }
+         setPageNumber(2)
           console.log(filterDetails?.filtersArray)
     }
     const removeSearchItem=async (e,item)=>{
@@ -160,7 +166,8 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
         temp2.push({"operator":4})
       }
 
-      data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2})
+      setAppliedFilters(temp2)
+      data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2,questionId:localStorage.listOfQuestion?.split(',')[0]})
         data=JSON.parse(data)
         // console.log(data)
         if(isIterable(data)){
@@ -169,7 +176,7 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
          if(data==null){
           setFilteredData([])
          }
-
+         setPageNumber(2)
     }
 
     const handleFilterDetails =(e)=>{
@@ -191,6 +198,12 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
     const resetSearchValue=()=>{
       setFilterDetails({...filterDetails,searchValue:""})
     }
+    const handleQuestionNumber =(e)=>{
+      console.log(e.target.value)
+      setQuestionNumber(e.target.value)
+      setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
+      setFiltersInRedux({...filterDetails,[e.target.name]:e.target.value})
+    }
     return (
         <div className="FiltersBar">
             <div className="question_dropdown">
@@ -202,15 +215,22 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
                      value={filterDetails?.question}
                      displayEmpty
                      name={`question`}
-                     onChange={handleFilterDetails}
+                     onChange={handleQuestionNumber}
                      className={classes.selectEmpty}
                      inputProps={{ 'aria-label': 'Without label' }}
-                     defaultValue={10}
+                     defaultValue={0}
                    >
                     <MenuItem value="" disabled>
                         Select Question
                     </MenuItem>
-                     <MenuItem value={10}>Q148 What, if anything, about Westworld draws ... </MenuItem>
+                    {
+                      localStorage.listOfQuestion?.split(',')?.map((item,index)=>{
+                        return(
+                          <MenuItem value={index}>{item}</MenuItem>
+                        )
+                      })
+                    }
+                     
                    </Select>
                 </FormControl>
             </div>
@@ -297,13 +317,16 @@ function FiltersBar({setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux})
         </div>
     )
 }
-// setFilters
+
 const mapDispatchToProps = dispatch => ({
     setFiltersInRedux: collectionsMap => dispatch(setFilters(collectionsMap)),
     setSubmitFiltersInRedux: collectionsMap => dispatch(setSubmitFilters(collectionsMap)),
-    // setSumitFilters
     setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
-
+    setPageNumber: collectionsMap => dispatch(setPageNumber(collectionsMap)),
+    setAppliedFilters: collectionsMap => dispatch(setAppliedFilters(collectionsMap)),
+    setQuestionNumber: collectionsMap => dispatch(setQuestionNumber(collectionsMap)),
 });
-
-export default connect(null,mapDispatchToProps)(FiltersBar)
+const mapStateToProps=createStructuredSelector({
+  pageNumber:selectPageNumber,
+})
+export default connect(mapStateToProps,mapDispatchToProps)(FiltersBar)

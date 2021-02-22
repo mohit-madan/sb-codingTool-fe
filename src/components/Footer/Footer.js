@@ -110,8 +110,8 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             localStorage.setItem('projectId',data?.data?.projectId)
             console.log(data)
 
-            await delay(200);
-            console.log(`waited 5 seconds`)
+            await delay(5000);
+            console.log(`waited 200 m seconds`)
             // setCreatingProject(false)
             if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
                 console.log(`getting project Details`)
