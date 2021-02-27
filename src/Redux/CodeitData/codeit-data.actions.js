@@ -35,3 +35,7 @@ export const setQuestionNumber = (user) => ({
   type: codeItDataActionTypes.SET_QUESTION_NUMBER,
   payload: user
 });
+export const setLeftMenuCodes = (user) => ({
+  type: codeItDataActionTypes.SET_LEFT_MENU_CODES,
+  payload: user
+});

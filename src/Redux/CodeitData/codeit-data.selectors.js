@@ -31,4 +31,8 @@ export const selectQuestionNumber = createSelector(
   [codeItDataReducer],
   user => user.questionNumber
 );
+export const selectLeftMenuCodes = createSelector(
+  [codeItDataReducer],
+  user => user.leftMenuCodes
+);
 // questionNumber

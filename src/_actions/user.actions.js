@@ -24,7 +24,8 @@ export const userActions = {
     responsePagination,
     filteredPagination,
     jwtTokenCheck,
-    questionCodebookId
+    questionCodebookId,
+    projectDetailsForUserProjectsDashboard
 };
  async function questionCodebookId(questionId){
     const _token=JSON.parse(localStorage.token).accessToken
@@ -37,7 +38,6 @@ export const userActions = {
     return await axios.post(`${config.apiUrl}/questionCodebook`,details,_RequestOptions)
     .then(data =>{
         localStorage.setItem(`questionCodebookId`,data?.data?.codebook?._id)
-        console.log(`<<<<<<<<<<-------`,data?.data?.codebook?.codewords)
         return (data?.data?.codebook?.codewords)
     })
 }
@@ -70,7 +70,7 @@ async function filteredPagination({pageNumber,limit,filters,questionId}) {
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    await axios.post(`${config.apiUrl}/operator/${pageNumber}/${limit}`,(details), requestOptions)
+    await axios.post(`${config.apiUrl}/operator`,(details), requestOptions)
     .then(data=>{
         if(data?.data?.length!==0){
             localStorage.setItem('filterdExcelData',JSON.stringify(data?.data))
@@ -92,7 +92,7 @@ async function responsePagination({pageNumber,limit,push,questionId}){
     const requestOptions = {
         headers: {'Authorization': `Bearer ${_token}`}
     };
-    return await axios.post(`${config.apiUrl}/response/${pageNumber}/${limit}`,(details), requestOptions).then(data=>{
+    return await axios.post(`${config.apiUrl}/response`,(details), requestOptions).then(data=>{
         console.log(`user actions response Pagination reached`,data)
 
         if(data?.data?.length!==0){
@@ -108,8 +108,7 @@ async function responsePagination({pageNumber,limit,push,questionId}){
 }
 
 async function projectDetails(){
-//  localStorage.clear()
-    const details={
+    let details={
         "id":localStorage.projectId,
     }
     const _token=JSON.parse(localStorage.token).accessToken
@@ -126,22 +125,20 @@ async function projectDetails(){
         history.push(`/tool`)
 
     },err=>console.log(err))
-    // const _requestOptions = {
-    //     method:"POST",
-    //     headers: {'Authorization': `Bearer ${_token}`},
-    //     body:details
-    // };
-    // await fetch(`${config.apiUrl}/projectDetails`, _requestOptions)
-    // .then( data=>{
-    //     console.log(`project details from user actions`,data)
-    //     localStorage.setItem('fileKey',data?.data?.project?.docKey)
-    //     localStorage.setItem('codebook',data?.data?.project?.codebooks)
-    //     localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
+}
 
-    //     history.push(`/tool`)
-
-    // },err=>console.log(err))
-
+async function projectDetailsForUserProjectsDashboard(projectId){
+    let details={
+        "id":projectId,
+    }
+    const _token=JSON.parse(localStorage.token).accessToken
+    const requestOptions = {
+        headers: {'Authorization': `Bearer ${_token}`}
+    };
+    return await axios.post(`${config.apiUrl}/projectDetails`,details, requestOptions)
+    .then( data=>{
+        return  (data?.data?.project)
+    },err=>console.log(err))
 }
 
 async function uploadFile(){

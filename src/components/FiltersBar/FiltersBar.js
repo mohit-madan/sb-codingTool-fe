@@ -19,6 +19,7 @@ import { setFilteredData, setQuestionNumber } from '../../Redux/CodeitData/codei
 import { socket } from '../../config';
 import { createStructuredSelector } from 'reselect';
 import { selectPageNumber } from '../../Redux/Filters/Filters.selectors';
+import { selectLeftMenuCodes } from '../../Redux/CodeitData/codeit-data.selectors';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function FiltersBar({setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
+function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
     const [codes,setCodes]=useState([])
@@ -69,12 +70,15 @@ function FiltersBar({setQuestionNumber,setAppliedFilters,setPageNumber,pageNumbe
     })
     
     
-    useEffect(()=>{
-      socket.once('left-menu-codes-object', (value) => {
-        console.log(value)
-        setCodes(value)
-      })
-    })
+    // useEffect(()=>{
+    //   socket.once('left-menu-codes-object', (value) => {
+    //     console.log(value)
+    //     setCodes(value)
+    //   })
+    // })
+    useEffect(() => {
+      setCodes(leftMenuCodes)
+    }, [leftMenuCodes])
   const getFiltersArray=()=>{
 
       let filters =JSON.parse(JSON.stringify(filterDetails?.filtersArray))
@@ -328,5 +332,7 @@ const mapDispatchToProps = dispatch => ({
 });
 const mapStateToProps=createStructuredSelector({
   pageNumber:selectPageNumber,
+  leftMenuCodes:selectLeftMenuCodes
+
 })
 export default connect(mapStateToProps,mapDispatchToProps)(FiltersBar)

@@ -47,6 +47,10 @@ const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColum
       }
     }, [])
 
+    useEffect(() => {
+      console.log(state)
+    }, [state])
+
     const handleChange = (event) => {
       setState({ ...state, [event.target.name]: event.target.checked });
       setColumn({ ...column, [event.target.name]: event.target.checked })

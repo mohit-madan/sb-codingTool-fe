@@ -35,7 +35,7 @@ const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCod
 
   const getData =async()=>{
     let data 
-    data = await userActions.responsePagination({pageNumber:1,limit:20,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
+    data = await userActions.responsePagination({pageNumber:1,limit:3000,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
     data = JSON.parse(data)
     console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
@@ -68,7 +68,7 @@ useEffect(() => {
                   <div className="flex">
                     Progress : <BorderLinearProgress variant="determinate" value={50} />
                   </div>
-                  <h5>{filteredData?.length} Responses Loaded Out Of {`3000`} </h5>
+                  {/* <h5>{filteredData?.length} Responses Loaded Out Of {`3000`} </h5> */}
               </div>
               {selectShowCodedAs && 
                 <div className='filteredOn flex'>

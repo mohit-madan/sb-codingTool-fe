@@ -14,6 +14,7 @@ import UploaderPage from "../pages/Uploader/UploaderPage.js"
 import CodeIt from '../pages/CodeIt/CodeIt';
 import {initialState} from '../Reducers/authentication.reducer'
 import ProjectsDashboard from '../pages/ProjectsDashboard/ProjectsDashboard';
+import UserProjectsDashboard from '../pages/UserProjectsDashboard/UserProjectsDashboard';
 
 function App() {
     
@@ -64,6 +65,7 @@ function App() {
                                   )
                                 }
                             /> */}
+                            <PrivateRoute  path="/userProjectsDashboard" component={UserProjectsDashboard} />
                             <PrivateRoute  path="/tool" component={CodeIt} />
                             <PrivateRoute  path="/" component={UploaderPage} />
                             <Route  path={`/resetPassword/:token`} component={ResetPassword} />

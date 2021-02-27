@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectCodes, selectFilteredData, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
+import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
 import { setFilteredData } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
@@ -19,7 +19,6 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -31,6 +30,16 @@ import { userActions } from '../../../_actions';
 import { ContactSupportOutlined } from '@material-ui/icons';
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
 import { setPageNumber } from '../../../Redux/Filters/Filters.actions';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import ListItemText from '@material-ui/core/ListItemText';
+import Select from '@material-ui/core/Select';
+import Checkbox from '@material-ui/core/Checkbox';
+import Chip from '@material-ui/core/Chip';
+import {MultipleSelectStyles,MultipleSelectExampleNames,MultipleSelectMenuProps} from "./MultipleSelectStyles"
+import { socket } from '../../../config';
 
 const _useStyles = makeStyles((theme) => ({
     flexContainer: {
@@ -305,12 +314,6 @@ const headCells = [
   }));
   
 
-
-
-
-
-
-
 const rows = [
     {
       "resNum": 1,
@@ -436,12 +439,14 @@ const rows = [
 
 
 
-function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
+function ReactVirtualizedTable({leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
     const rowHeight =48
     const classes=_useStyles()
+    const multipleSelectClasses=MultipleSelectStyles()
 
+    const [personName, setPersonName] = useState([]);
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
@@ -454,6 +459,97 @@ function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,s
     // const [filteredPageCount,setFilteredPageCount]=useState(2)
     const [ascending,setAscending]=useState(true)
     // const rows = filteredData;
+
+    let mapper={}
+    let i=0
+    for ( i=0 ; i<3000;i++){mapper[i]=[]}
+
+    const [keywords,setkeywords]=useState(mapper)
+
+    useEffect(() => {
+      // console.log(keywords)
+    socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[questionNumber], username: JSON.parse(localStorage.user).user.email }); //here {room: questionId, username: loginUser }
+
+    }, [])
+
+    useEffect(() => {
+      socket.once('single-operation', operation=> {
+        console.log('single-operation',operation)
+        let codewordIds=operation.codewordIds
+        let resNum=operation.resNum
+        let codewordsArray=[]
+        leftMenuCodes?.map((item,index)=>{
+          codewordIds?.map((_item,_index)=>{
+            if(item?.id == _item){
+              codewordsArray.push(item.name)
+            }
+          })
+        })
+        setkeywords({...keywords,[resNum] : codewordsArray})
+      });
+      socket.once('question-response-coded', operation=> {
+        console.log("% of question");
+        console.log('question-response-coded',operation)
+      });
+      socket.once('codeword-assigned-to-response', operation=> {
+        console.log("% of codeword");
+        console.log('codeword-assigned-to-response',operation)
+      });
+
+      socket.once('multiple-operation', operation=> {
+
+          console.log('multiple-operation',operation)
+          let codeword=operation.codewordIds
+          let resNumArray=operation.resNum
+          let tempkeywords=keywords
+
+          resNumArray?.map((item,index)=>{
+            let temp =tempkeywords[item]
+            if(typeof(temp)==`undefined`){
+              temp=Array()
+            }
+            if(!temp.includes(codeword)){
+              temp.push(codeword)
+              console.log(temp)
+              tempkeywords={...tempkeywords,[item]:temp}
+            }
+          })
+          setkeywords({...tempkeywords})
+      });
+
+    })
+
+    const handleChange= rowData => (event) => {
+      let value =event.target.value;
+      let num=rowData?.rowData?.resNum
+      if((selected?.length ==0 || selected?.length ==1 || !selected.includes(num))){
+
+        let codewordIdsArray=[]
+        let codewords=keywords[num]
+
+        leftMenuCodes?.map((item,index)=>{
+          // console.log(item)
+          value?.map((_item,_index)=>{
+            if(item?.name == _item){
+              codewordIdsArray.push(item.id)
+            }
+          })
+        })
+
+        let operation = {resNum:num, codewordIds:codewordIdsArray};
+        console.log(`operation--->`,operation)
+        socket.emit('single-response-operation', operation);
+
+      }else if(selected.includes(num)){
+        let operation = {resNum:selected, codewordIds:value[value?.length-1]};
+        console.log(operation)
+        socket.emit('multiple-response-operation', operation);
+      }
+        
+      // setkeywords({...keywords,[num] : value})
+
+    };
+  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -591,7 +687,14 @@ function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,s
     const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
     }
-
+    const handleCodes=rowData=>(event)=>{
+      let value =event.target.value;
+      // let num=rowData.tableData.id
+      let num=rowData?.resNum
+      // rowData?.resNum
+      // next=next+2
+      // socket.emit('input-box',{num,value})
+    }
   return (
     <Paper style={{ height: 400, width: '100%' }}>
       <AutoSizer>
@@ -602,6 +705,7 @@ function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,s
 
 
           <Table
+            virtualized
             height={height}
             width={width}
             rowHeight={rowHeight}
@@ -679,7 +783,7 @@ function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,s
                       className={classes.flexContainer}
                     //   cellRenderer={rowData => <ContextMenuSkin select={rowData?.rowData?.length} data={rowData.rowData} handleClick={_handleClick} />}
                       dataKey={"length"}
-                      width = "200"
+                      width = "50"
                       label= 'length'
                     />
                     <Column
@@ -691,12 +795,36 @@ function ReactVirtualizedTable({questionNumber,pageNumber,selectAppliedFilters,s
                         })
                       }
                       className={classes.flexContainer}
-                      cellRenderer={rowData => <input  type="text"/>}
+                      // cellRenderer={rowData => <input  type="text"/>}
+                      cellRenderer={rowData=>
+                        <FormControl className={multipleSelectClasses.formControl}>
+                        <InputLabel id="demo-mutiple-checkbox-label">Tag</InputLabel>
+                        <Select
+                          labelId="demo-mutiple-checkbox-label"
+                          id="demo-mutiple-checkbox"
+                          multiple
+                          value={keywords[rowData?.rowData?.resNum]}
+                          onChange={handleChange(rowData)}
+                          input={<Input />}
+                          renderValue={(selected) => selected.join(', ')}
+                          MenuProps={MultipleSelectMenuProps}
+                        >
+                          {leftMenuCodes.map((item) => (
+                            <MenuItem key={item?.id} value={item?.name}>
+                              <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
+                              <ListItemText primary={item?.name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {/* {console.log(leftMenuCodes)} */}
+                      </FormControl>
+                      }
+                      // rowData?.rowData?.resNum
+                      //  <input onChange={handleCodes(rowData)} value={codes[rowData?.resNum]} type="text"/>
                       dataKey={"resNum"}
-                      width = "200"
+                      width = "500"
                       label= 'Codes'
                     />
-                
           </Table>
           </div>
         )}
@@ -777,6 +905,8 @@ const mapStateToProps=createStructuredSelector({
     pageNumber:selectPageNumber,
     selectAppliedFilters:selectAppliedFilters,
     questionNumber:selectQuestionNumber,
+    leftMenuCodes:selectLeftMenuCodes
+
     // selectAppliedFilters
 })
 const mapDispatchToProps = dispatch => ({

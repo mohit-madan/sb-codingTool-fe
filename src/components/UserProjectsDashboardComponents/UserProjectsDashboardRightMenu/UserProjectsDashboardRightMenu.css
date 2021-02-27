@@ -1,0 +1,13 @@
+.UserProjectsDashboardRightMenu{
+    display: flex;
+    width: 100%;
+    flex: 0.9;
+    background-color: azure;
+    flex-direction: column;
+    margin-left: 100px;
+    min-width: -webkit-fill-available;
+}
+.UserProjectsDashboardRightMenu .body{
+    margin-top: 45px;
+    overflow-y: scroll;
+}

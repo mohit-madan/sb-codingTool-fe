@@ -7,7 +7,9 @@ const INITIAL_STATE = {
     numberOfInputsGreaterThan2:0,//numberOfInputsGreaterThan2
     selectedRows:null,
     filteredData:null,
-    questionNumber:0
+    questionNumber:0,
+    leftMenuCodes:[],
+
 };
 
 const codeItDataReducer = (state = INITIAL_STATE, action) => {
@@ -32,6 +34,11 @@ const codeItDataReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         questionNumber: action.payload
+    };
+    case codeItDataActionTypes.SET_LEFT_MENU_CODES:
+      return {
+        ...state,
+        leftMenuCodes: action.payload
     };
     default:
       return state;

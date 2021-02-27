@@ -1,9 +1,15 @@
 
-export const utilities={
-    getFiltersArray
+export const userUtilities={
+    isIterable
 }
-
-const getFiltersArray=(filterDetails)=>{
+function isIterable(obj) {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
+function getFiltersArray(filterDetails){
     let filters =[]
     let _string=filterDetails?.searchValue
     if(filterDetails?.match===`Exact Match`){

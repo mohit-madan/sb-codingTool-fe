@@ -26,14 +26,14 @@ import { setShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.actio
 import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.actions";
 
 import { withStyles } from '@material-ui/core/styles';
-import NEWUI from "./New UI/Coding";
+import Coding from "./Coding/Coding";
 
 const CodeIt_LeftMenu =()=>{
       return (
         <div className="codeit_leftmenu">
           <LeftMenuTop />
           <LeftMenu_EditOptions />
-          <NEWUI />
+          <Coding />
         </div>
       );
 }
