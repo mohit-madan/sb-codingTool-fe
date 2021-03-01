@@ -4,6 +4,7 @@
     width: 100%;
     justify-content: space-between;
     position: fixed;
+    z-index: 11;
 }
 .UserProjectsDashboardHeader  .left{
     margin-left: 20px;
@@ -11,6 +12,7 @@
 }
 .UserProjectsDashboardHeader .right  {
     color: grey;
+    margin-right: 100px;
 }
 .UserProjectsDashboardHeader .right .sort .MuiInputBase-root{
     margin-top: 0!important;  
@@ -62,39 +64,44 @@
 .flex{
     display: flex;
 }
-
-.UserProjectsDashboardHeader .right ul{
-    padding: 0;
-    list-style: none;
-    background: #f2f2f2;
-}
-.UserProjectsDashboardHeader .right ul li{
-    display: inline-block;
+.UserProjectsDashboardHeader .dropbtn {
+    background-color: #4d91ff;
+    color: white;
+    padding: 16px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    place-content: space-evenly;
+    margin-top: 2px;
+  }
+  
+  .UserProjectsDashboardHeader   .dropdown {
     position: relative;
-    line-height: 21px;
-    text-align: left;
-}
-.UserProjectsDashboardHeader .right ul li a{
-    display: block;
-    padding: 8px 25px;
-    color: #333;
-    text-decoration: none;
-}
-.UserProjectsDashboardHeader .right ul li a:hover{
-    color: #fff;
-    background: #939393;
-}
-.UserProjectsDashboardHeader .right ul li ul.dropdown{
-    min-width: 100%; /* Set width of the dropdown */
-    background: #f2f2f2;
+    display: inline-block;
+  }
+  
+  .UserProjectsDashboardHeader  .dropdown-content {
     display: none;
     position: absolute;
-    z-index: 999;
-    left: 0;
-}
-.UserProjectsDashboardHeader .right ul li:hover ul.dropdown{
-    display: block;	/* Display the dropdown */
-}
-.UserProjectsDashboardHeader .right ul li ul.dropdown li{
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1111;
+  }
+  
+  .UserProjectsDashboardHeader  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
     display: block;
-}
+  }
+  
+  .UserProjectsDashboardHeader  .dropdown-content a:hover {background-color: #f1f1f1;}
+  .UserProjectsDashboardHeader  .dropdown:hover .dropdown-content {display: block;}
+  .UserProjectsDashboardHeader  .dropdown:hover .dropbtn {background-color:#236efa;}

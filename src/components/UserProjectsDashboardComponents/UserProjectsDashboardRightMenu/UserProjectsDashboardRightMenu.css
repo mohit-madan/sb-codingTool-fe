@@ -10,4 +10,24 @@
 .UserProjectsDashboardRightMenu .body{
     margin-top: 45px;
     overflow-y: scroll;
+    margin-left: auto;
+    margin-right: auto;
 }
+.UserProjectsDashboardRightMenu .body .MuiPaper-root{
+    max-height: 90vh!important;
+    margin-top: 10px!important;
+}
+.UserProjectsDashboardRightMenu .body .MuiPaper-root::-webkit-scrollbar {
+    display:none;
+}
+.UserProjectsDashboardRightMenu .body .ongoing-due{
+    width: 100%;
+    justify-content: space-evenly;
+}
+.UserProjectsDashboardRightMenu .body .ongoing-due span{
+    color:#737373;
+font-size:12px;
+font-weight:400;
+
+}
+/* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */

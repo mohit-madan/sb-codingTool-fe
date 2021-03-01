@@ -8,6 +8,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import SearchIcon from '@material-ui/icons/Search';
 import NativeSelect from '@material-ui/core/NativeSelect';
+import { Link } from 'react-router-dom';
+import { history } from '../../../_helpers';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,6 +29,11 @@ function UserProjectsDashboardHeader() {
     const handleChange = (event) => {
       setAge(event.target.value);
     };
+
+    const logout=()=>{
+      localStorage.clear()
+      history.push('/login')
+    }
 
     return (
         <div className="UserProjectsDashboardHeader flex">
@@ -57,18 +64,14 @@ function UserProjectsDashboardHeader() {
 
                 </div>
 
-                <ul>
-                <li>
-                    <a href="#">User &#9662;</a>
-                    <ul className="dropdown">
-                        <li><a href="#">Profile</a></li>
-                        <li><a href="#">Settings</a></li>
-                        <li><a href="#">Invite</a></li>
-                        <li><a href="#">Admin</a></li>
-                        <li><a href="#">Log out</a></li>
-                    </ul>
-                </li>
-                </ul>
+                <div className="dropdown" style={{float:"right"}}>
+                  <button className="dropbtn">J</button>
+                  <div className="dropdown-content">
+                    <Link onClick={logout}>Log Out</Link>
+                    {/* <a href="#">Link 2</a> */}
+                    {/* <a href="#">Link 3</a> */}
+                  </div>
+                </div>
 
             </div>
         </div>
