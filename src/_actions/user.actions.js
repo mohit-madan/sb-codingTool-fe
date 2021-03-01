@@ -284,7 +284,7 @@ function login(username, password, from) {
                         clearInterval(interval);
                     }, 1000*60*30);
 
-                    history.push('/')
+                    history.push('/userProjectsDashboard')
                     return user;
                 },error => {
                     console.log("error-->actions",error)
