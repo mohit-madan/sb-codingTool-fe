@@ -34,7 +34,7 @@ function Coding(props) {
   const _tasks = [];
   useEffect(async () => {
     //  call api call 
-    socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[props.questionNumber], username: JSON.parse(localStorage.user).user.email }); //here {room: questionId, username: loginUser }
+    socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[props.questionNumber], username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId }); //here {room: questionId, username: loginUser }
 
     let codewords = await userActions.questionCodebookId(localStorage.listOfQuestion?.split(',')[props.questionNumber])
 
@@ -93,19 +93,38 @@ function Coding(props) {
         next=next+1
       // }
     });
+    socket.on('toggle-codeword-to-list', (value)=>{
+
+      console.log('toggle-codeword-to-list',value)
+      const id=value.codewordId
+      const status=value.status
+      
+      const updatedTasks = props.leftMenuCodes.map(task => {
+          // if this task has the same ID as the edited task
+          console.log(id === task.id)
+          if (id === task.id) {
+            // use object spread to make a new obkect
+            // whose `completed` prop has been inverted
+            return {...task, completed: !status}
+          }
+          return task;
+        });
+        
+        props.setLeftMenuCodes(updatedTasks)
+
+
+    });
   })
 
-  function toggleTaskCompleted(id) {
-    const updatedTasks = props.leftMenuCodes.map(task => {
-      // if this task has the same ID as the edited task
-      if (id === task.id) {
-        // use object spread to make a new obkect
-        // whose `completed` prop has been inverted
-        return {...task, completed: !task.completed}
-      }
-      return task;
-    });
-    socket.emit('left-menu-codes-object',updatedTasks)
+  useEffect(() => {
+    console.log(props.leftMenuCodes)
+  }, [props.leftMenuCodes])
+
+  function toggleTaskCompleted(id,status) {
+    let toggleCodeword={codewordId:id,status:status}
+    console.log(toggleCodeword)
+    // (codeword=>{codewordId})
+    socket.emit('toggleCodeword',toggleCodeword)
   }
 
 

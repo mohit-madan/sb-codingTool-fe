@@ -32,15 +32,34 @@ const BorderLinearProgress = withStyles((theme) => ({
 const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
 
   const [loadigData,setLoadingData]=useState(true)
+  
+  const [initialKeywords,setInitialKeywords]=useState({})
 
   const getData =async()=>{
+    let keywords={}
     let data 
     data = await userActions.responsePagination({pageNumber:1,limit:3000,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
     data = JSON.parse(data)
     console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
       console.log(`hello from rightmenu .js`,data)
+
+      data?.map((item)=>{
+        let temp=[]
+        if(item?.codewords?.length >0){
+          
+          item?.codewords?.map((_item)=>{
+            if(_item?.active==true){
+              return temp.push(_item?.tag)
+            }
+          })
+        }
+        let resNum=item?.resNum 
+        return keywords={...keywords,[resNum]:  temp }
+      })
+
       setFilteredData(data)
+      setInitialKeywords(keywords)
       console.log(filteredData)
       setLoadingData(false)
     }
@@ -91,7 +110,7 @@ useEffect(() => {
             {/* <div className="codeit_rightmenu" >
                <CodeItTable reachedEnd={reachedEnd}/>
             </div> */}
-            {filteredData && <ReactVirtualizedTable />}
+            {filteredData && <ReactVirtualizedTable initialKeywords={initialKeywords} />}
         </div>
         //
     )

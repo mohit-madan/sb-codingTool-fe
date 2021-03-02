@@ -130,6 +130,14 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
         e?.preventDefault()
         let temp3=getFiltersArray(filterDetails)
         setAppliedFilters(temp3)
+
+        
+      if(filterDetails?.keywords?.length>0){
+        filterDetails?.keywords?.map((item,index)=>{
+          temp3.push({"filter":7,"codeword":item})
+        })
+      }
+        console.log(temp3)
         data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp3,questionId:localStorage.listOfQuestion?.split(',')[0]})
         data=JSON.parse(data)
         // console.log(data)
@@ -171,6 +179,13 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
       }
 
       setAppliedFilters(temp2)
+
+      if(filterDetails?.keywords?.length>0){
+        filterDetails?.keywords?.map((item,index)=>{
+          temp2.push({"filter":7,"codeword":item})
+        })
+      }
+
       data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2,questionId:localStorage.listOfQuestion?.split(',')[0]})
         data=JSON.parse(data)
         // console.log(data)
@@ -182,7 +197,7 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
          }
          setPageNumber(2)
     }
-
+    console.log(filterDetails?.keywords)
     const handleFilterDetails =(e)=>{
         e.preventDefault()
         setFilterDetails({...filterDetails,[e.target.name]:e.target.value})

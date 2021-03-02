@@ -246,6 +246,13 @@ function forgotPass(user) {
 function login(username, password, from) {
     return dispatch => {
         dispatch(request({ username }));
+            const FETCH_TIMEOUT = 3000;
+            let didTimeOut = false;
+            const timeout = setTimeout(function() {
+                didTimeOut = true;
+                dispatch(failure((new Error('Request timed out'))));
+            }, FETCH_TIMEOUT);
+
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -256,14 +263,23 @@ function login(username, password, from) {
          fetch(`${config.apiUrl}/login`, requestOptions)
         .then(handleResponse)
         .then(data => {
-            console.log("_token -->",data.accessToken)
+            // console.log(data)
+            clearTimeout(timeout);
+            if(!didTimeOut) {
+            // console.log("_token -->",data.accessToken)
             localStorage.setItem('token', JSON.stringify(data));
             _token=data.accessToken
-            console.log("_token -->",_token)
+            // console.log("_token -->",_token)
             if(data?.message){
                 dispatch(failure(data?.message.toString()));
                 dispatch(alertActions.error(data?.message.toString()));
-            }else{
+                return
+            }else if(data?.err){
+                dispatch(failure(data?.err?.message.toString()));
+                dispatch(alertActions.error(data?.err?.messag.toString()));
+                return
+            }
+            else if(_token !== `undefined` ){
                 const _RequestOptions = {
                     method: 'GET',
                     headers: {"authorization":`surveybuddytoken ${_token}`}
@@ -272,27 +288,35 @@ function login(username, password, from) {
                  fetch(`${config.apiUrl}/`, _RequestOptions)
                 .then(handleResponse)
                 .then(user=>{
+                    // console.log("user -->",user,user.err);
+                    if(user?.err){
+                        // console.log(user.err?.message)
+                        dispatch(failure(user.err?.message.toString()));
+                        dispatch(alertActions.error(user.err?.message.toString()));
+                        return
+                    }
                     localStorage.setItem('user', JSON.stringify(user));
-                    console.log("user -->",user);
+                    
                     dispatch(success(user));
-                    // window.location.replace(`${config.redirecturl}/`);
-                    const interval = setInterval(() => {
-                        localStorage.removeItem('user')
-                        history.push('/login')
-                        dispatch(failure('Session Timed Out ! , Please Login Again'));
-                        dispatch(alertActions.error('Session Timed Out ! , Please Login Again'));
-                        clearInterval(interval);
-                    }, 1000*60*30);
-
-                    history.push('/userProjectsDashboard')
+                    // history.push(`/user/profile`);
+                    window.location.href = `${config.redirecturl}/userProjectsDashboard`;
                     return user;
                 },error => {
-                    console.log("error-->actions",error)
+                    // console.log("error-->actions",error)
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
                 );
+            }else{
+                dispatch(failure());
+                dispatch(alertActions.error());
+
             }
+            }
+        },
+        error => {
+            dispatch(failure(error.toString('Request timed out')));
+            dispatch(alertActions.error(error.toString('Request timed out')));
         })
 
     };

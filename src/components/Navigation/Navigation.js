@@ -21,7 +21,7 @@ const Navigation=()=>{
 
         <div className="right">
            <Button> <h2 onClick={logout}>Logout</h2></Button>
-           {url[url?.length-1]==="tool" && <Button><Link to="/dash"><h2 >Proceed to Project DashBoard</h2></Link></Button>  }
+           {url[url?.length-1]==="tool" && <Button><Link to="/userProjectsDashboard"><h2 >Proceed to Project DashBoard</h2></Link></Button>  }
            
         </div>
     </div>
