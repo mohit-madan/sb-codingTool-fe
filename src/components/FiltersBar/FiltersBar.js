@@ -134,7 +134,7 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
         
       if(filterDetails?.keywords?.length>0){
         filterDetails?.keywords?.map((item,index)=>{
-          temp3.push({"filter":7,"codeword":item})
+          temp3.push({"operator":7,"codeword":item})
         })
       }
         console.log(temp3)
@@ -182,7 +182,7 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
 
       if(filterDetails?.keywords?.length>0){
         filterDetails?.keywords?.map((item,index)=>{
-          temp2.push({"filter":7,"codeword":item})
+          temp2.push({"operator":7,"codeword":item})
         })
       }
 

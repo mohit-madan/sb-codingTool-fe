@@ -14,6 +14,7 @@ import { setContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeywo
 import { userActions } from "../../../_actions/index.js";
 import { setFilteredData } from "../../../Redux/CodeitData/codeit-data.actions.js";
 import ReactVirtualizedTable from "./material-ui-table.js";
+import { socket } from "../../../config.js";
 
 const BorderLinearProgress = withStyles((theme) => ({
     root: {
@@ -34,6 +35,7 @@ const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCod
   const [loadigData,setLoadingData]=useState(true)
   
   const [initialKeywords,setInitialKeywords]=useState({})
+  const [percentageBar,setPercentageBar]=useState(0)
 
   const getData =async()=>{
     let keywords={}
@@ -46,27 +48,36 @@ const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCod
 
       data?.map((item)=>{
         let temp=[]
+        let resNum=item?.resNum 
+
         if(item?.codewords?.length >0){
           
           item?.codewords?.map((_item)=>{
-            if(_item?.active==true){
+            if(_item?.active==true && _item?.resToAssigned?.includes(resNum)){
               return temp.push(_item?.tag)
             }
           })
         }
-        let resNum=item?.resNum 
         return keywords={...keywords,[resNum]:  temp }
       })
 
       setFilteredData(data)
       setInitialKeywords(keywords)
-      console.log(filteredData)
       setLoadingData(false)
     }
 }
 useEffect(() => {
   getData()
 },[questionNumber])
+
+useEffect(() => {
+  
+  socket.once('question-response-coded', operation=> {
+    const temp=operation?.resOfCoded
+    setPercentageBar(temp/filteredData?.length)
+  });
+  
+})
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -85,7 +96,7 @@ useEffect(() => {
             <div className='flex width_100'>
               <div className='flex width_100 spaceBetween'> 
                   <div className="flex">
-                    Progress : <BorderLinearProgress variant="determinate" value={50} />
+                    Progress : <BorderLinearProgress variant="determinate" value={percentageBar} />
                   </div>
                   {/* <h5>{filteredData?.length} Responses Loaded Out Of {`3000`} </h5> */}
               </div>

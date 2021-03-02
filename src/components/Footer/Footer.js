@@ -106,10 +106,8 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
         };
         await axios.post(`${config.apiUrl}/createProject`,(details), requestOptions)
         .then(async data=>{
-            console.log(data?.data?.message);
+            
             localStorage.setItem('projectId',data?.data?.projectId)
-            console.log(data)
-
             await delay(5000);
             console.log(`waited 200 m seconds`)
             // setCreatingProject(false)

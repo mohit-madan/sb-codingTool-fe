@@ -92,7 +92,7 @@ export default function Todo(props) {
         </div>
         <div className="btn-group right flex">
         <label className="todo-label" style={{marginRight:"10px"}} htmlFor={props.id}>
-          86.72%(73)
+          {props.percentage}
         </label>
         <button
           type="button"

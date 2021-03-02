@@ -15,24 +15,41 @@ import WhatshotIcon from '@material-ui/icons/Whatshot';
 import ErrorIcon from '@material-ui/icons/Error';
 
 const UserProjectsDashboardRightMenu=()=> {
+
     const user = useSelector(state=>state.authentication)
     const projects=user?.user?.user?.projects
+    const [tableData,setTableData]=useState([])
+    useEffect(async () => {
+        let temp = await userActions.projectList()
+        console.log(temp)
+        setTableData(temp)
+    },[])
 
-    const OngoingDueTemplate=()=>{
+    const OngoingDueTemplate=({currentDate,endDate})=>{
+        let text=""
+        if(endDate == undefined){
+            text="Ongoing"
+        }else if(endDate < currentDate){
+            text="Completed"
+        }else{
+            text="Ongoing"
+        }
         return (
             <div className="ongoing-due flex">
-                <span >Ongoing</span>
+                <span >{text}</span>
                 <DataUsageOutlinedIcon style={{ color: green[500] , fontSize: 23 }} size="large" />
             </div>
         )
     }
 
-    const ActivityTemplate=()=>{
+    const MembersTemplate=({tags})=>{
         return(
-            <div className="ongoing-due flex" >
-                {true ? <AvTimerOutlinedIcon style={{color: red[500] , fontSize: 23 }}/> : <AvTimerOutlinedIcon style={{color: grey[500] , fontSize: 23 }}/>}
-                {true ? <WhatshotIcon style={{color: red[500] , fontSize: 23 }}/> : <WhatshotIcon style={{color: grey[500] , fontSize: 23 }}/>}
-                {true ? <ErrorIcon style={{color: red[500] , fontSize: 23 }}/> : <ErrorIcon style={{color: grey[500] , fontSize: 23 }}/>}
+            <div className="flex">
+                {
+                    tags?.map((item,index)=>{
+                        return(<span >{item}</span>)
+                    })
+                }
             </div>
         )
     }
@@ -40,7 +57,7 @@ const UserProjectsDashboardRightMenu=()=> {
     let customCol=[
         {
             title:`Title`,
-            field:`title`,
+            field:`name`,
             cellStyle: {
                 width:"20%",
             },
@@ -56,14 +73,8 @@ const UserProjectsDashboardRightMenu=()=> {
             cellStyle: {
                 width:"7%",
             },
-        },{
-            title:"Activity",
-            field:"activity",cellStyle: {
-                textAlign: "-webkit-center",
-                width:"14%",
-            },
             render:rowData=>{
-                return (<ActivityTemplate/>)
+                return (<MembersTemplate tags={rowData?.tags}/>)
             }
         },{
             title:"Due",
@@ -73,10 +84,18 @@ const UserProjectsDashboardRightMenu=()=> {
             //     width:"23%",
             // },
             render:rowData=>{
-                return (<OngoingDueTemplate/>)
+                return (<OngoingDueTemplate currentData={rowData?.currentData} endData={rowData?.endData}/>)
             }
         },
     ]
+
+    const goToCodingTool=async(evt,selectedRow)=>{
+        console.log(selectedRow)
+        localStorage.setItem('projectId',selectedRow?._id)
+            if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
+                await userActions.projectDetails()
+           }
+    }
 
     return (
         <div className="UserProjectsDashboardRightMenu">
@@ -84,7 +103,7 @@ const UserProjectsDashboardRightMenu=()=> {
             <div className="body" >
              <MaterialTable
                         icons={tableIcons}
-                        data={data}
+                        data={tableData}
                         columns={customCol}
                         title="Coding Tool"
                         options={{ headerStyle: { position: 'sticky', top: "-20px"} }}
@@ -93,7 +112,7 @@ const UserProjectsDashboardRightMenu=()=> {
                                 console.log(rowData)
                             }
                         }}
-                        onRowClick={((evt, selectedRow) => console.log(evt,selectedRow))}
+                        onRowClick={((evt, selectedRow) => goToCodingTool(evt,selectedRow))}
                         options={{
                           selection: false,
                           exportButton: true,

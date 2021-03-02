@@ -7,7 +7,7 @@ import "./components/styles.css"
 import { socket } from "../../../../config"
 import { userActions } from "../../../../_actions";
 import { connect } from "react-redux";
-import { selectLeftMenuCodes, selectQuestionNumber } from "../../../../Redux/CodeitData/codeit-data.selectors";
+import { selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from "../../../../Redux/CodeitData/codeit-data.selectors";
 import { createStructuredSelector } from "reselect";
 import { setLeftMenuCodes } from "../../../../Redux/CodeitData/codeit-data.actions";
 import { userUtilities } from "../../../../_utilities/utilities";
@@ -32,6 +32,7 @@ function Coding(props) {
   let prev=0,next=0
   const  [ count,setCount]=useState(1)
   const _tasks = [];
+
   useEffect(async () => {
     //  call api call 
     socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[props.questionNumber], username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId }); //here {room: questionId, username: loginUser }
@@ -39,10 +40,14 @@ function Coding(props) {
     let codewords = await userActions.questionCodebookId(localStorage.listOfQuestion?.split(',')[props.questionNumber])
 
     let data=[]
+    // console.log(codewords)
     if(userUtilities.isIterable(codewords)){
       codewords?.map((item,index)=>{
-        data.push({id: `${item?._id}`, name: item?.tag, completed: true })
+        // let percentage= item?.resToAssigned?.length/props?.filteredData?.length
+        let percentage= item?.resToAssigned?.length
+        data.push({id: `${item?._id}`, name: item?.tag, completed: item?.active,percentage: percentage })
       })
+      // console.log(data)
       props.setLeftMenuCodes(data)
     }
   }, [props.questionNumber])
@@ -51,10 +56,6 @@ function Coding(props) {
   const [filter, setFilter] = useState('All');
 
   useEffect(()=>{
-    socket.once('left-menu-codes-object', (value) => {
-      console.log(value)
-      props.setLeftMenuCodes(value)
-    })
     socket.once('edit-codeword-to-list', editCodeword=>{
       console.log(`editCodeword --->`,editCodeword)
       // if(next<prev){
@@ -114,6 +115,25 @@ function Coding(props) {
 
 
     });
+
+    socket.once('codeword-assigned-to-response', operation=> {
+      const codewordId=operation?.codewordId
+      const percentage=operation?.resToAssigned
+
+      let temp = props.leftMenuCodes
+
+      temp?.map((item)=>{
+        if(codewordId == item?.id){
+          item={...item,percentage:percentage}
+        }
+      })
+
+      console.log(temp)
+
+      // props.setLeftMenuCodes(temp)
+
+    });
+
   })
 
   useEffect(() => {
@@ -148,11 +168,12 @@ function Coding(props) {
   .filter(FILTER_MAP[filter])
   .map((task,index) => (
     <Todo
-      id={task.id}
-      name={task.name}
-      completed={task.completed}
-      key={task.id}
+      id={task?.id}
+      name={task?.name}
+      completed={task?.completed}
+      key={task?.id}
       index={index}
+      percentage={task?.percentage}
       toggleTaskCompleted={toggleTaskCompleted}
       deleteTask={deleteTask}
       editTask={editTask}
@@ -201,7 +222,8 @@ function Coding(props) {
 }
 const mapStateToProps=createStructuredSelector({
   questionNumber:selectQuestionNumber,
-  leftMenuCodes:selectLeftMenuCodes
+  leftMenuCodes:selectLeftMenuCodes,
+  filteredData:selectFilteredData,
 })
 const mapDispatchToProps = dispatch => ({
   setLeftMenuCodes: collectionsMap => dispatch(setLeftMenuCodes(collectionsMap)),

@@ -474,13 +474,14 @@ function ReactVirtualizedTable({initialKeywords,leftMenuCodes,questionNumber,pag
 
     useEffect(() => {
       if(initialKeywords!==null && initialKeywords !=={} && Object.keys(initialKeywords)?.length >0){
-        console.log(initialKeywords)
         setkeywords(initialKeywords)
       }
     },[initialKeywords])
 
     useEffect(() => {
+
       socket.once('single-operation', operation=> {
+        // set
         console.log('single-operation',operation)
         let codewordIds=operation.codewordIds
         let resNum=operation.resNum
@@ -494,14 +495,7 @@ function ReactVirtualizedTable({initialKeywords,leftMenuCodes,questionNumber,pag
         })
         setkeywords({...keywords,[resNum] : codewordsArray})
       });
-      socket.once('question-response-coded', operation=> {
-        console.log("% of question");
-        console.log('question-response-coded',operation)
-      });
-      socket.once('codeword-assigned-to-response', operation=> {
-        console.log("% of codeword");
-        console.log('codeword-assigned-to-response',operation)
-      });
+
 
       socket.once('multiple-operation', operation=> {
 
@@ -531,10 +525,28 @@ function ReactVirtualizedTable({initialKeywords,leftMenuCodes,questionNumber,pag
     const handleChange= rowData => (event) => {
       let value =event.target.value;
       let num=rowData?.rowData?.resNum
+
+console.log(value?.length < keywords[num]?.length)
+
+      if(value?.length < keywords[num]?.length){
+        let codewordIdsArray=[]
+        leftMenuCodes?.map((item,index)=>{
+          value?.map((_item,_index)=>{
+            if(item?.name == _item){
+              codewordIdsArray.push(item.id)
+            }
+          })
+        })
+
+        let operation = {resNum:num, codewordIds:codewordIdsArray};
+        console.log(`operation--->`,operation,codewordIdsArray)
+        socket.emit('single-response-operation', operation);
+        return
+      }
+
       if((selected?.length ==0 || selected?.length ==1 || !selected.includes(num))){
 
         let codewordIdsArray=[]
-        let codewords=keywords[num]
 
         leftMenuCodes?.map((item,index)=>{
           // console.log(item)

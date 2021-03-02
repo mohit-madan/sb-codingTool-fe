@@ -25,8 +25,19 @@ export const userActions = {
     filteredPagination,
     jwtTokenCheck,
     questionCodebookId,
-    projectDetailsForUserProjectsDashboard
+    projectDetailsForUserProjectsDashboard,
+    projectList
 };
+async function projectList(){
+    const _token=JSON.parse(localStorage.token).accessToken
+    const _RequestOptions = {
+        headers: {"authorization":`surveybuddytoken ${_token}`},
+    };
+    return await axios.get(`${config.apiUrl}/projectList`,_RequestOptions)
+    .then(data => {
+      return (data?.data)
+    })
+}
  async function questionCodebookId(questionId){
     const _token=JSON.parse(localStorage.token).accessToken
     const details={
