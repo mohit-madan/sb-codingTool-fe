@@ -39,3 +39,17 @@ export const setLeftMenuCodes = (user) => ({
   type: codeItDataActionTypes.SET_LEFT_MENU_CODES,
   payload: user
 });
+export const setSortBy = (user) => ({
+  type: codeItDataActionTypes.SET_SORT_BY,
+  payload: user
+});
+
+
+
+
+
+
+
+
+
+

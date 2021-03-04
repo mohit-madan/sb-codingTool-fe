@@ -41,42 +41,57 @@ const UserProfile=({full,user})=>{
         <div id={full && `user_profile`} className="user_profile"  >
             <div className="user_profile_user_info_card">
                 {/* <Card title={`${user?.Mt?.Ed}`}/> */}
-                <Card title={!user?.Mt ? `${user?.user?.email}` : `${user?.Mt?.Ed}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                
             </div>
-            <div className="user_profile_survey_cards">
-                <div className="row">
-                    {showTwoInARow &&<div className="row_1">
-                        <Card className="user_profile_row_card" />
-                        <Card className="user_profile_row_card" />
-                    </div>}
-                    {!showTwoInARow && <Card className="user_profile_row_card" />}
-                    {!showTwoInARow && <Card className="user_profile_row_card" />}
-                    <Card className="user_profile_row_card" />
-                </div>
-            </div>
-            <div className="user_profile_survey_cards">
-                <div className="row">
-                    {showTwoInARow &&<div className="row_1">
-                        <Card className="user_profile_row_card" />
-                        <Card className="user_profile_row_card" />
-                    </div>}
-                    {!showTwoInARow && <Card className="user_profile_row_card" />}
-                    {!showTwoInARow && <Card className="user_profile_row_card" />}
-                    <Card className="user_profile_row_card" />
-                </div>
-            </div>
-            <div className="user_profile_survey_cards">
-                <div className="row">
-                    {showTwoInARow &&<div className="row_1">
-                        <Card className="user_profile_row_card" />
-                        <Card className="user_profile_row_card" />
-                    </div>}
-                    {!showTwoInARow && <Card className="user_profile_row_card" />}
-                    {!showTwoInARow && <Card className="user_profile_row_card" />}
-                    <Card className="user_profile_row_card" />
-                </div>
+            <div className="survey_cards">
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
+                <Card title={!user?.profileObj ? `${user?.user?.email}` : `${user?.profileObj?.name}`}/>
             </div>
         </div>
     )
 }
 export default UserProfile
+{/* <div className="user_profile_survey_cards">
+                <div className="row">
+                    {showTwoInARow &&<div className="row_1">
+                        <Card className="user_profile_row_card" />
+                        <Card className="user_profile_row_card" />
+                    </div>}
+                    {!showTwoInARow && <Card className="user_profile_row_card" />}
+                    {!showTwoInARow && <Card className="user_profile_row_card" />}
+                    <Card className="user_profile_row_card" />
+                </div>
+            </div>
+            <div className="user_profile_survey_cards">
+                <div className="row">
+                    {showTwoInARow &&<div className="row_1">
+                        <Card className="user_profile_row_card" />
+                        <Card className="user_profile_row_card" />
+                    </div>}
+                    {!showTwoInARow && <Card className="user_profile_row_card" />}
+                    {!showTwoInARow && <Card className="user_profile_row_card" />}
+                    <Card className="user_profile_row_card" />
+                </div>
+            </div>
+            <div className="user_profile_survey_cards">
+                <div className="row">
+                    {showTwoInARow &&<div className="row_1">
+                        <Card className="user_profile_row_card" />
+                        <Card className="user_profile_row_card" />
+                    </div>}
+                    {!showTwoInARow && <Card className="user_profile_row_card" />}
+                    {!showTwoInARow && <Card className="user_profile_row_card" />}
+                    <Card className="user_profile_row_card" />
+                </div>
+            </div> */}

@@ -9,7 +9,7 @@ const INITIAL_STATE = {
     filteredData:null,
     questionNumber:0,
     leftMenuCodes:[],
-
+    sortBy:null
 };
 
 const codeItDataReducer = (state = INITIAL_STATE, action) => {
@@ -39,6 +39,11 @@ const codeItDataReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         leftMenuCodes: action.payload
+    };
+    case codeItDataActionTypes.SET_SORT_BY:
+      return {
+        ...state,
+        sortBy: action.payload
     };
     default:
       return state;

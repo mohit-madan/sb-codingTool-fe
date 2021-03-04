@@ -7,7 +7,7 @@ function UserProjectsDashboardLeftMenu() {
     return (
         <div className="UserProjectsDashboardLeftMenu">
             <div className="innerLeftMenuDiv" style={{height: "maxContent"}} >
-                <img src='https://app.taskpigeon.co/assets/images/pigeon-logo.svg' />
+                <h1 style={{color:"white"}}>SB</h1>
                 <div >
                     <Link to="/uploader">
                         <IconButton aria-label="delete">

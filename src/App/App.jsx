@@ -15,6 +15,7 @@ import CodeIt from '../pages/CodeIt/CodeIt';
 import {initialState} from '../Reducers/authentication.reducer'
 import ProjectsDashboard from '../pages/ProjectsDashboard/ProjectsDashboard';
 import UserProjectsDashboard from '../pages/UserProjectsDashboard/UserProjectsDashboard';
+import Profile from '../pages/Profile/Profile';
 
 function App() {
     
@@ -54,6 +55,8 @@ function App() {
                             <Route  path="/register" component={RegisterPage} />
                             <Route  path="/forgot-password" component={ForgotPassword} />
                             <Route  path="/dash" component={ProjectsDashboard} />
+                            <PrivateRoute exact  path="/user/profile"  component={Profile}/>
+                            {/*  */}
                             {/* <Route
                                 exact
                                 path='/user'

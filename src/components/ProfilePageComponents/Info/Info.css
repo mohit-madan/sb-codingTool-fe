@@ -11,6 +11,7 @@
     flex-direction: column;
     /* place-content: center; */
     align-items: center;
+    margin-top: 60px;
   }
 .info_profile_pic{
   display: flex;
@@ -31,7 +32,7 @@
   ::-webkit-scrollbar {
     display: none;
   }
-.MuiTextField-root,.MuiFormControl-root{
+.info .MuiTextField-root,.info .MuiFormControl-root{
   width: 40rem!important;
 }
 

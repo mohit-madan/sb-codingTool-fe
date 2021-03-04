@@ -7,6 +7,7 @@
     flex: 0.8;
     overflow-y: hidden;
     width: -webkit-fill-available;
+    margin-top: 60px;
 }
 .user_profile_user_info_card{
     width: 100%;
@@ -31,4 +32,10 @@
     .user_profile_survey_cards .card{
         margin-top: 0px 20;
     }
+}
+/* New Styles */
+.survey_cards{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
 }

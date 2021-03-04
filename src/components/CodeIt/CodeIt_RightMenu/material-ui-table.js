@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
-import { setFilteredData } from '../../../Redux/CodeitData/codeit-data.actions';
+import { setFilteredData, setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -439,10 +439,10 @@ const rows = [
 
 
 
-function ReactVirtualizedTable({initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
+function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
-    const rowHeight =48
+    const rowHeight =100
     const classes=_useStyles()
     const multipleSelectClasses=MultipleSelectStyles()
 
@@ -454,6 +454,12 @@ function ReactVirtualizedTable({initialKeywords,leftMenuCodes,questionNumber,pag
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [reachedEnd,setReachedEnd]=useState(false)
+
+    const [sorting,setSorting]=useState({
+      desc:{label:"desc",sort:true,active:true},
+      length:{label:"length",sort:true,active:true}
+    })
+
     let data=null
     // const [pageCount,setPageCount]=useState(2)
     // const [filteredPageCount,setFilteredPageCount]=useState(2)
@@ -467,9 +473,16 @@ function ReactVirtualizedTable({initialKeywords,leftMenuCodes,questionNumber,pag
     const [keywords,setkeywords]=useState(mapper)
 
     useEffect(() => {
-      // console.log(keywords)
     socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[questionNumber], username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId }); //here {room: questionId, username: loginUser }
-    // setkeywords(initialKeywords)
+
+          // const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
+          //   setSorting({
+          //     desc:{label:"desc",sort:true,active:false},
+          //     length:{label:"length",sort:true,active:false}
+          //   })
+          // }, 2000)
+          // return () => clearInterval(intervalId); //This is important
+
     }, [])
 
     useEffect(() => {
@@ -655,7 +668,32 @@ console.log(value?.length < keywords[num]?.length)
         );
       };
     
-      const   headerRenderer = ({ label, columnIndex }) => {
+      useEffect(() => {
+        console.log(sorting)
+      }, [sorting])
+      const handleSorting=value=>{
+        console.log(value)
+        if(value?.label=="desc"){
+          setSorting({
+            length:{label:"length",sort:sorting?.length?.sort,active:false},
+            desc:{label:value.label,sort:!value.sort,active:true}
+          })
+
+          setSortBy({label:value.label,sort:!value.sort})
+          
+        }else if(value?.label=="length"){
+          setSorting({
+            desc:{label:"desc",sort:sorting?.desc?.sort,active:false},
+            length:{label:value.label,sort:!value.sort,active:true}
+          })
+
+          setSortBy({label:value.label,sort:!value.sort})
+
+        }
+
+      }
+
+      const   headerRenderer = ({value, label, columnIndex,headerHeight ,sort}) => {
     
         return (
           <TableCell
@@ -664,15 +702,15 @@ console.log(value?.length < keywords[num]?.length)
             variant="head"
             style={{ height: headerHeight }}
           >
-              {label===`dessadfc` && <TableSortLabel
-                active={true}
-                direction={ascending ? 'asc' : 'desc'}
-                onClick={()=>{setAscending(!ascending)}}
+              {sort && <TableSortLabel
+                active={value?.active}
+                direction={ value?.sort ? 'asc' : 'desc'}
+                onClick={()=>handleSorting(value)}
               >
                 <span>{label}</span>
               </TableSortLabel>}
 
-              {label!==`dessd` && <span>{label}</span>}
+              {!sort && <span>{label}</span>}
           </TableCell>
         );
       };
@@ -718,23 +756,13 @@ console.log(value?.length < keywords[num]?.length)
     const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
     }
-    const handleCodes=rowData=>(event)=>{
-      let value =event.target.value;
-      // let num=rowData.tableData.id
-      let num=rowData?.resNum
-      // rowData?.resNum
-      // next=next+2
-      // socket.emit('input-box',{num,value})
-    }
+
   return (
     <Paper style={{ height: 400, width: '100%' }}>
       <AutoSizer>
         {({ height, width }) => (
             <div>
-
             {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
-
-
           <Table
             virtualized
             height={height}
@@ -754,7 +782,9 @@ console.log(value?.length < keywords[num]?.length)
                     <Column
                       key={"resNum"}
                       headerRenderer={(headerProps) =>
-                        <TableCell padding="checkbox">
+                        <TableCell 
+                        style={{ height: headerHeight }}
+                        padding="checkbox">
                           <Checkbox
                             indeterminate={selected.length > 0 && selected.length < filteredData.length}
                             checked={filteredData.length > 0 && selected.length === filteredData.length}
@@ -795,10 +825,12 @@ console.log(value?.length < keywords[num]?.length)
                         headerRenderer({
                           ...headerProps,
                           columnIndex: 1,
+                          sort:true,
+                          value:sorting.desc
                         })
                       }
                       className={classes.flexContainer}
-                    //   cellRenderer={rowData => <ContextMenuSkin slice={true} select={rowData?.rowData?.desc} data={rowData.rowData} handleClick={_handleClick} />}
+                      cellRenderer={rowData => {return <Highlight indices={rowData?.rowData?.indices} select={rowData?.rowData?.desc} data={rowData.rowData} handleClick={_handleClick}  />}}
                       dataKey={"desc"}
                       width = "500"
                       label= 'desc'
@@ -809,6 +841,8 @@ console.log(value?.length < keywords[num]?.length)
                         headerRenderer({
                           ...headerProps,
                           columnIndex: 2,
+                          sort:true,
+                          value:sorting.length
                         })
                       }
                       className={classes.flexContainer}
@@ -871,6 +905,31 @@ const attributes = {
     // dividerClassName: 'custom-divider',
     // selectedClassName: 'custom-selected'
   }
+
+const Highlight=({select,indices})=>{
+  // console.log(indices)
+  let start=0
+  return(
+    <div className="webkitHeight" data-subtitle={`${select}`}>
+      {indices ? 
+      <div data-subtitle={`${select}`}>
+        {
+          indices?.map((item,index)=>{
+            return(
+              <span>
+              <span>{select?.slice(start,item.fIndex)}</span>
+              <span style={{color:"red"}}>{select?.slice(item.fIndex,item.lIndex+1)}</span>
+              <span style={{display:"none"}}>{start=item?.lIndex+1}</span>
+              </span>
+            )
+          })
+        }
+        <span>{select?.slice(start,select?.length+1)}</span>
+      </div>
+       : <span>{select}</span> }
+    </div>
+  )
+}
 const ContextMenuSkin=({slice,select,data,handleClick})=>{
     var __num= Math.floor(Math.random() * 101)  
     slice && console.log()
@@ -884,24 +943,6 @@ const ContextMenuSkin=({slice,select,data,handleClick})=>{
          <ContextMenuTrigger key={__num} id={`ids`}>
             {slice && temp1?.indices?.length >0  && temp1?.indices.map((item,index) =>
                     {
-                    // if(index !== temp1?.indices?.length-1){
-                    //     console.log(temp1.desc.slice(item.fIndex,item.lIndex+1))
-                    //  return(
-                    //     <p>
-                    //         {temp1.desc.slice(start,item.fIndex)}
-                        
-                    //         <span style={{color:"red"}}>{temp1.desc.slice(item.fIndex,item.lIndex+1)}</span>
-
-                    //          {start=item.lIndex+2}
-                    //     </p>
-                    // )
-                    // }else{
-                    //     return(
-                    //         <span>
-                    //             {temp1.desc.slice(start,temp1.desc?.length -1 )}
-                    //         </span>
-                    //     )
-                    // }
                     return(
                         <p>
                             {temp1.desc.slice(start,item.fIndex)}
@@ -943,5 +984,6 @@ const mapStateToProps=createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
   setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
   setPageNumber: collectionsMap => dispatch(setPageNumber(collectionsMap)),
+  setSortBy: collectionsMap => dispatch(setSortBy(collectionsMap)),
 });
 export default connect(mapStateToProps,mapDispatchToProps)(ReactVirtualizedTable)

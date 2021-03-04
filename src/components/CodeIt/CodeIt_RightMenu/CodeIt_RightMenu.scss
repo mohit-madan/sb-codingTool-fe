@@ -89,16 +89,73 @@
 .ReactVirtualized__Table__row{
     // height: 50px !important;
 }
-//     text-align: -webkit-center;
-// MuiTableCell-root MuiTableCell-body MuiTableCell-paddingNone
-// MuiTableRow-head th span 
-/* MuiFormControl-root makeStyles-formControl-8 */
-/* MuiTableCell-root MuiTableCell-body MuiTableCell-alignLeft */
-/* class="MuiLinearProgress-root WithStyles(ForwardRef(LinearProgress))-root-6 MuiLinearProgress-colorPrimary WithStyles(ForwardRef(LinearProgress))-colorPrimary-7 MuiLinearProgress-determinate" */
-/* MuiPaper-root MuiMenu-paper MuiPopover-paper MuiPaper-elevation8 MuiPaper-rounded */
-/* MuiTypography-root MuiTypography-caption */
-/* MuiSelect-root MuiSelect-select MuiTablePagination-select MuiSelect-selectMenu MuiInputBase-input */
-/* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */
-/* MuiListItemText-root */
-/* MuiList-root MuiMenu-list MuiList-padding */
-/* MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button */
+
+[data-subtitle] {
+    font-size: 12px !important;
+    position: relative !important;
+    cursor: help !important;
+    z-index: 99999999999999999;
+
+  }
+    
+//   [data-subtitle]:hover::before {
+//     content: attr(data-subtitle);
+//     position: absolute !important;
+//     bottom: -46px !important;
+//     padding: 10px !important;
+//     background: #000 !important;
+//     color: #fff !important;
+//     font-size: 14px !important;
+//     white-space: nowrap !important;
+//     z-index: 99999999999999999 !important;
+
+//   max-width: -webkit-fill-available;
+//   overflow-x: scroll;
+//   }
+//   [data-subtitle]:hover::after {
+//     content: '';
+//     position: absolute !important;
+//     bottom: -12px !important;
+//     left: 8px !important;
+//     border: 8px solid transparent !important;  
+//     border-bottom: 8px solid #000 !important;
+//     z-index: 99999999999999999;
+
+//   }
+  .ReactVirtualized__Grid {
+      overflow-y: scroll !important;
+  }
+  .webkitHeight{
+    height: -webkit-fill-available !important;
+  }
+
+  .ReactVirtualized__Grid::-webkit-scrollbar {
+    width: 15px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+  .codeit_rightmenu_ .MuiPaper-root{
+    overflow: hidden;
+  }
+  .codeit_rightmenu_ .ReactVirtualized__Table__row{
+    border-bottom: 1px solid rgb(201, 200, 200);
+  }
+  .codeit_rightmenu_ .ReactVirtualized__Table__headerRow{
+    border-bottom: 1px solid rgb(201, 200, 200);
+  }
+  .ReactVirtualized__Table__rowColumn .MuiTableCell-root{
+    border: none!important;
+  }

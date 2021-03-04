@@ -60,18 +60,21 @@ const UserProjectsDashboardRightMenu=()=> {
             field:`name`,
             cellStyle: {
                 width:"20%",
+                textAlign: "-webkit-center",
             },
         },
         {
             title:`Description`,
             field:`desc`,cellStyle: {
-                width:"40%",
+                width:"30%",
+                textAlign: "-webkit-center",
             },
         },{
             title:`Members`,
             field:`members`,
             cellStyle: {
-                width:"7%",
+                width:"30%",
+                textAlign: "-webkit-center",
             },
             render:rowData=>{
                 return (<MembersTemplate tags={rowData?.tags}/>)
@@ -79,10 +82,10 @@ const UserProjectsDashboardRightMenu=()=> {
         },{
             title:"Due",
             field:"due",
-            // cellStyle: {
-            //     textAlign: "-webkit-center",
-            //     width:"23%",
-            // },
+            cellStyle: {
+                textAlign: "-webkit-center",
+                width:"53%",
+            },
             render:rowData=>{
                 return (<OngoingDueTemplate currentData={rowData?.currentData} endData={rowData?.endData}/>)
             }
@@ -105,7 +108,7 @@ const UserProjectsDashboardRightMenu=()=> {
                         icons={tableIcons}
                         data={tableData}
                         columns={customCol}
-                        title="Coding Tool"
+                        title="Projects Dashboard"
                         options={{ headerStyle: { position: 'sticky', top: "-20px"} }}
                         options={{
                             rowStyle: rowData => {

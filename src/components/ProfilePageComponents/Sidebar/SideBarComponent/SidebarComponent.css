@@ -7,7 +7,7 @@
     padding-top: 10px;
     padding-bottom: 10px;
     width: 100%;
-    margin-top: 15px;
+    /* margin-top: 15px; */
 }
 @media only screen and (max-width: 600px) {
     .menuitem1{
@@ -30,17 +30,19 @@
 .sidebarcomponent{
     display: flex;
     cursor: pointer!important;
-    width: 100%;
+    width: 95%;
     align-items: center;
     transform: transform 100ms ease;
     border-radius: 10px;
 }
 .sidebarcomponent:hover{
-    background-color: #cbd2d8;
-    transform: scale(1.09);
+    color: #0e71eb;
+}
+.sidebarcomponent p:hover{
+    color: #0e71eb;
 }
 .sidebarcomponent ._icon{
-    margin-top: -5px;
+    margin-top: 4px;
 }
 .vertical_line{
     background: -webkit-linear-gradient(#fe562e, #f1931a);
@@ -48,3 +50,34 @@
     -webkit-text-fill-color: transparent;
     font-size: 40px;
 }
+
+/* New Design */
+.sidebarcomponentoption{
+    color:black;
+/* background-color:#0e71eb; */
+font-size:14px;
+line-height:20px;
+vertical-align:baseline;
+letter-spacing:normal;
+word-spacing:0px;
+margin:0px;
+padding:9px 16px 9px 22px;
+font-weight:600;
+font-style:normal;
+font-variant:normal;
+text-transform:none;
+text-decoration:none solid rgb(255, 255, 255);
+text-align:left;
+text-indent:0px;
+width: -webkit-fill-available;
+margin-top:10px;
+border-radius: 8px;
+font-family: 'Lato', sans-serif;
+}
+.sidebarcomponentoption:hover{
+    color: #0e71eb;
+}
+/* .sidebarcomponentoption:active{
+    background-color:#0e71eb;
+    color: white!important;
+} */

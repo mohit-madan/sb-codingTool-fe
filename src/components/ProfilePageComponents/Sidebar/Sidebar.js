@@ -7,39 +7,53 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import SidebarCard from "./SidebarCard/SidebarCard.js"
 
-const Sidebar =({full})=> {
-    // let option
-    // useEffect(() => {
-    //     option = window.location.href.split("/")
-    //     option = option[option.length-1]
-    //     console.log("option",option);
-    // }, [option])
-
-
-        return (
-        <div id={full && `leftmenu`} className={!full && `leftmenu`}>
-            <SidebarCard />
-            <h3 className="leftmenu_title"><Link to="/user/profile">User Profile</Link></h3>
-
-            <div className="_list">
-                <Link className="_list" to={`/user/info`}>
-                    <SidebarComponent 
-                    // onClick={()=>{this.setState({contact:false,info:true},console.log(this.state))}} 
-                    className="downloadText" Icon={PersonOutlineOutlinedIcon} 
-                    text={"User Info"} 
-                    // active={this.state.info}
-                    />
-                </Link>
-                <Link className="_list" to={`/user/contact`}>
-                    <SidebarComponent 
-                    // onClick={()=>{this.setState({info:false,contact:true})}} 
-                    className="downloadText" Icon={PermContactCalendarOutlinedIcon} 
-                    text={"Contact Info"} 
-                    // active={this.state.contact}
-                    />
-                </Link>
-            </div>
+const Sidebar =({full,user})=> {
+    const activeComponentStyle={backgroundColor:"#0e71eb!important",color:"white!important"}
+    const state={
+        profile:true,
+        surveys:false,
+        contact:false,
+    }
+    const [urlParam,setUrlParam]=useState({
+        profile:true,
+        surveys:false,
+        contact:false,
+    })
+    return (
+    <div id={full && `leftmenu`} className={!full && `leftmenu`}>
+        {/* <SidebarCard user/> */}
+        {/* <h3 className="leftmenu_title"><Link to="/user/profile">User Profile</Link></h3> */}
+        <h2>PERSONAL</h2>
+        <div className="_list">
+            
+            <Link className="_list" to={`/user/profile`}>
+                <div
+                onClick={()=>{setUrlParam({profile:true,
+                    surveys:false,})}}
+                className="sidebarcomponent">
+                    {urlParam.profile && <a style={{backgroundColor:"#0e71eb",color:"white"}} className="sidebarcomponentoption">
+                    {"User Profile"} 
+                    </a>}
+                    {!urlParam.profile && <a className="sidebarcomponentoption">
+                    {"User Profile"} 
+                    </a>}
+                </div>
+            </Link>
+            <Link className="_list" to={`/user/surveys`}>
+                <div
+                onClick={()=>{setUrlParam({profile:false,
+                    surveys:true,},)}}
+                className="sidebarcomponent">
+                    {urlParam.surveys && <a style={{backgroundColor:"#0e71eb",color:"white"}} className="sidebarcomponentoption">
+                        {"Surveys"}
+                    </a>}
+                    {!urlParam.surveys && <a className="sidebarcomponentoption">
+                        {"Surveys"}
+                    </a>}
+                </div>
+            </Link>
         </div>
+    </div>
     )}
 
 

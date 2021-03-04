@@ -1,0 +1,84 @@
+.dropbtn {
+    background-color: white;
+    color: #9b9b9b;
+    padding: 16px;
+    font-size: 16px;
+    border: 2px solid #9b9b9b    ;
+    border-radius: 73px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    outline: none;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: #9b9b9b    ;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {background-color: #f1f1f1}
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  .dropdown:hover .dropbtn {
+    background-color: white;
+    color: #9b9b9b;
+  }
+/* .profile a:hover{
+  color: rgb(56, 56, 56);
+} */
+.profile_nav{
+    display: flex;
+    place-content: space-between;
+    color: #9b9b9b;
+    border-bottom:3px solid  #f0eeee;
+    height: 3.3rem;
+    align-items: center;
+}
+.profile_nav_right{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 30px;
+}
+.profile_nav_right h5{
+  margin-left: -10px;
+  margin-top: -5px;
+}
+.profile_nav_icon{
+    font-size: 2.4rem!important;
+    margin-left: -20px!important;
+}
+._main{
+    display: flex;
+    margin: 0;
+    place-content: space-evenly;
+}
+.profile_notification_icon{
+  margin-right: 1rem;
+}
+.profile .profile_nav_pic{
+  height: 25px!important;
+  object-fit: contain;
+  width: 25px!important;
+}

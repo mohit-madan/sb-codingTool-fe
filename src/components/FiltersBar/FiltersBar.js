@@ -19,7 +19,7 @@ import { setFilteredData, setQuestionNumber } from '../../Redux/CodeitData/codei
 import { socket } from '../../config';
 import { createStructuredSelector } from 'reselect';
 import { selectPageNumber } from '../../Redux/Filters/Filters.selectors';
-import { selectLeftMenuCodes } from '../../Redux/CodeitData/codeit-data.selectors';
+import { selectLeftMenuCodes, selectSortBy } from '../../Redux/CodeitData/codeit-data.selectors';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
+function FiltersBar({selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
     const [codes,setCodes]=useState([])
@@ -76,6 +76,34 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
     //     setCodes(value)
     //   })
     // })
+
+    useEffect(() => {
+      handleSubmitSearch()
+    }, [filterDetails?.sort])
+
+    useEffect(() => {
+      console.log(selectSortBy)
+      const label=selectSortBy?.label
+      const sort=selectSortBy?.sort
+      let temp=""
+
+        if(label==`length` && !sort){
+          temp=`Sort by length Ascending`
+        }else if(label==`length` && sort){
+          temp=`Sort by length Descending`
+        }else if(label==`desc` && !sort){
+          temp=`Sort alphabetically Ascending`
+        }else if(label==`desc` && sort){
+          temp=`Sort alphabetically Descending`
+        }
+  
+        setFilterDetails({
+          ...filterDetails,
+          sort:temp
+        })
+
+    }, [selectSortBy])
+
     useEffect(() => {
       setCodes(leftMenuCodes)
     }, [leftMenuCodes])
@@ -300,7 +328,7 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
                         </Select>
                       </FormControl>
                      
-                      <FormControl variant="filled" className={classes.formControl}>
+                      {/* <FormControl variant="filled" className={classes.formControl}>
                        <InputLabel id="demo-simple-select-filled-label">Sort</InputLabel>
                        <Select
                          value={filterDetails?.sort}
@@ -317,7 +345,7 @@ function FiltersBar({leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNu
                          <option value={`Sort alphabetically Ascending`}>Sort alphabetically Ascending </option>
                          <option value={`Sort alphabetically Descending`}>Sort alphabetically Descending </option>
                        </Select>
-                     </FormControl>
+                     </FormControl> */}
                 </div>
                 <div className="filters_list">
 
@@ -347,7 +375,8 @@ const mapDispatchToProps = dispatch => ({
 });
 const mapStateToProps=createStructuredSelector({
   pageNumber:selectPageNumber,
-  leftMenuCodes:selectLeftMenuCodes
-
+  leftMenuCodes:selectLeftMenuCodes,
+  selectSortBy:selectSortBy
+  // selectSortBy
 })
 export default connect(mapStateToProps,mapDispatchToProps)(FiltersBar)

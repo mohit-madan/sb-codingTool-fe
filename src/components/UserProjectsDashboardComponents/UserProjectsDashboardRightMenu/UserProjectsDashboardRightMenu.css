@@ -17,9 +17,9 @@
     max-height: 90vh!important;
     margin-top: 10px!important;
 }
-.UserProjectsDashboardRightMenu .body .MuiPaper-root::-webkit-scrollbar {
+/* .UserProjectsDashboardRightMenu .body .MuiPaper-root::-webkit-scrollbar {
     display:none;
-}
+} */
 .UserProjectsDashboardRightMenu .body .ongoing-due{
     width: 100%;
     justify-content: space-evenly;
@@ -30,4 +30,15 @@ font-size:12px;
 font-weight:400;
 
 }
+.UserProjectsDashboardRightMenu .body .MuiPaper-root{
+    overflow-y: hidden !important;
+    width: 89vw;
+}
+.UserProjectsDashboardRightMenu .body {
+    overflow-y: hidden !important;
+    width: auto;
+    height: -webkit-fill-available;
+}
+
+/* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */
 /* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */

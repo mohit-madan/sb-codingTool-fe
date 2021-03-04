@@ -41,33 +41,12 @@ function UserProjectsDashboardHeader() {
                 <h4 className="flex">Group Tasks</h4>
             </div>
             <div className="right flex">
-                <div className='sort flex'>
-                    <span className='marginAuto' style={{ width: "-webkit-fill-available"}}>Sort By</span>
-                     <FormControl className={classes.formControl}>
-                       <NativeSelect
-                         value={age}
-                         onChange={handleChange}
-                         name="age"
-                         className={classes.selectEmpty}
-                         inputProps={{ 'aria-label': 'age' }}
-                       >
-                            <option value={10}>Date Created</option>
-                            <option value={20}>Date Created</option>
-                            <option value={30}>Date Created</option>
-                       </NativeSelect>
-                     </FormControl>
-                </div>
-            
-                <div className="search flex marginAuto">
-                    <SearchIcon className="marginAuto"/>
-                    <input type="text" />
-
-                </div>
 
                 <div className="dropdown" style={{float:"right"}}>
                   <button className="dropbtn">J</button>
                   <div className="dropdown-content">
-                    <Link onClick={logout}>Log Out</Link>
+                    <Link to="/user/profile">Profile</Link>
+                    <Link onClick={logout} >Log Out</Link>
                     {/* <a href="#">Link 2</a> */}
                     {/* <a href="#">Link 3</a> */}
                   </div>

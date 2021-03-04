@@ -6,9 +6,9 @@
     background-color: #cbd2d8;
 }
 .card{
-    width:300px;
+    width:500px;
     height: fit-content;
-    padding: 30px 20px;
+    padding: 50px 20px;
     border-radius: 20px;
     margin-top: 20px!important;
     transition: transform 200ms ease-in;
