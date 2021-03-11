@@ -189,6 +189,10 @@ text-indent:
 .MuiButtonBase-root,.MuiChip-label{
     font-size: 1.4rem!important;
 }
+.react-dropdown-select{
+    margin-top: 10px;
+}
+/* react-dropdown-select undefined css-wmw4vi-ReactDropdownSelect e1gzf2xs0 */
 /* MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button */
 /* MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMarginDense MuiOutlinedInput-inputMarginDense */
 /* MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl MuiInputBase-multiline MuiOutlinedInput-multiline MuiInputBase-marginDense MuiOutlinedInput-marginDense */

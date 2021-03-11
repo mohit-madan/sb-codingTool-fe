@@ -26,8 +26,20 @@ export const userActions = {
     jwtTokenCheck,
     questionCodebookId,
     projectDetailsForUserProjectsDashboard,
-    projectList
+    projectList,
+    userSearch
 };
+async function userSearch(name){
+    const body ={
+        "userQuery":name,
+        "limit":-1
+    }
+    return await axios.post(`${config.apiUrl}/userSearch`,body)
+    .then(data => {
+      return (data?.data)
+    })
+}
+
 async function projectList(){
     const _token=JSON.parse(localStorage.token).accessToken
     const _RequestOptions = {
@@ -48,7 +60,10 @@ async function projectList(){
     };
     return await axios.post(`${config.apiUrl}/questionCodebook`,details,_RequestOptions)
     .then(data =>{
+        console.log(`question codebook `,data)
         localStorage.setItem(`questionCodebookId`,data?.data?.codebook?._id)
+        localStorage.setItem(`rootId`,data?.data?.rootId)
+        
         return (data?.data?.codebook?.codewords)
     })
 }

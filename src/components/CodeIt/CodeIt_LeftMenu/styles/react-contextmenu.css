@@ -81,7 +81,7 @@
   display: block;
 }
 .react-contextmenu-wrapper:hover{
-    background-color: lightblue;
+    /* background-color: lightblue; */
 }
 .codeit_leftmenu .react-contextmenu-wrapper{
   padding-top: 15px!important;

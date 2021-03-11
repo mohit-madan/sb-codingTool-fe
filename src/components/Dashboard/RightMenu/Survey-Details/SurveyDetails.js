@@ -15,7 +15,36 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
+import {Select as DropDownSelect} from 'react-dropdown-select';
+import { userActions } from "../../../../_actions";
 
+const options=[
+  {
+    "id":"asdasd",
+    "label": "Gladysasdas17@gmail.com",
+    "value":"adsd",
+  },{
+    "id":"asdasdadas",
+    "value":"ads234d",
+    "label": "Gladyfds123s17@gmail.com",
+  },{
+    "value":"adsasdad",
+    "id":"asdas234d",
+    "label": "Gla5435dys17@gmail.com",
+  },{
+    "value":"ads0987d",
+    "id":"asdassdfsdfd",
+    "label": "Gladys15767@gmail.com",
+  },{
+    "value":"ads564ad",
+    "id":"asdas6546sdfd",
+    "label": "Glad680ys17@gmail.com",
+  },{
+    "value":"adssdf352sdfd",
+    "id":"asdaas65d46q4wsd",
+    "label": "Gladys17@gmail.com",
+  },
+]
 
 // import TagsInput from 'react-tagsinput'
 
@@ -537,7 +566,9 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
   const classes = useStyles();
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
-  
+  const [options,setOptions]=useState([])
+  const [searchValue,setSearchValue]=useState("")
+  const [loading,setLoading]=useState(false)
     const [surveyDetails,setSurveyDetails] = useState({
         name:surveyDetailsFromStore ? surveyDetailsFromStore?.name : "",
         description:surveyDetailsFromStore ? surveyDetailsFromStore?.description : "",
@@ -545,9 +576,17 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
         type:surveyDetailsFromStore ? surveyDetailsFromStore?.type : "",
         tags:surveyDetailsFromStore ? surveyDetailsFromStore?.tags : []
     })
-    useEffect(() => {
-      console.log(surveyDetailsFromStore)
-    })
+
+useEffect(async () => {
+  console.log(surveyDetails)
+}, [surveyDetails])
+
+    useEffect(async () => {
+          setLoading(true)
+          let data = await userActions.userSearch("xoc")
+          setOptions(data)
+          setLoading(false)
+    }, [])
 
   const handleChange = async (event) => {
     const {value,name}=event.target;
@@ -556,12 +595,33 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
     console.log(surveyDetails)
     
   };
-  const handleChangeTags=event=>{
-    var val = event.target.value
+  const handleChangeTags=val=>{
     setSurveyDetails({...surveyDetails,tags:val });
     updateSurveyDetails({...surveyDetails,tags:val })
     
   }
+
+  useEffect(async () => {
+    let value=searchValue
+    if(value?.length >=1){
+      setLoading(true)
+      let data = await userActions.userSearch(value)
+      console.log("datraal;fska;sdasd",data)
+      setOptions(data)
+      setLoading(false)
+    }
+  }, [searchValue])
+
+  const searchUsers=async (e)=>{
+    console.log(e)
+    let value= e.state.search
+    if(value?.length >3){
+      let data = await userActions.userSearch(value)
+      console.log("datraal;fska;sdasd",data)
+      setOptions(data)
+    }
+  }
+
     return(
         <div className="survey_details">
             <div className='survey_details_top'>
@@ -642,7 +702,7 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
                     ))}
                 </TextField>
 
-                <FormControl className={classes.formControl}>
+                {/* <FormControl className={classes.formControl}>
                   <InputLabel id="demo-mutiple-chip-label">Chip</InputLabel>
                   <Select
                     labelId="demo-mutiple-chip-label"
@@ -667,7 +727,19 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
+                <p>ASSIGN PROJECT</p>
+                      <DropDownSelect
+                        multi
+                        searchable
+                        loading={loading}
+                        options={options}
+                        valueField="email"
+                        labelField="email"
+                        placeholder="Tag People"
+                        searchFn={e=>setSearchValue(e.state.search)}
+                        onChange={(values) => handleChangeTags(values)}
+                      />
                 </div>
             </div>
         </div>

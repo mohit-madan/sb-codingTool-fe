@@ -86,6 +86,16 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             return col
     }
 
+    const handleTags=(tags)=>{
+        let temp=[]
+        if(tags?.length >0){
+            tags?.map(item=>{
+                temp.push(item.email)
+            })
+        }
+        return temp
+    }
+
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const onSubmit= async ()=>{
@@ -97,7 +107,7 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             "coloumns":handleColumns(column),
             "industry":surveyDetails?.industry ? surveyDetails?.industry : "test",
             "type":surveyDetails?.type ? surveyDetails?.type : "test",
-            "tags":surveyDetails?.tags ? surveyDetails?.tags : ["test"],
+            "tags":(surveyDetails?.tags) ? handleTags(surveyDetails?.tags) : ["test"],
         }
         console.log(details)
         const _token=JSON.parse(localStorage.token).accessToken

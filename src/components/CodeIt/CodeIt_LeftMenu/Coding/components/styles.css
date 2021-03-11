@@ -52,3 +52,50 @@
 .todo input[type="checkbox"]{
     margin: 0;
 }
+.MuiDialog-paper{
+    width: 500px !important;
+    height: 300px !important;
+}
+.MuiDialogTitle-root{
+    margin: auto !important;
+    margin-bottom: 0!important;
+    margin-top: 20px!important;
+}
+.coding {
+    overflow-y: scroll;
+}
+.coding .MuiFormControl-root{
+    width: 400px!important;
+    margin: auto!important;
+    margin-top: 0!important;
+}
+.coding .MuiDialog-paper .MuiButtonBase-root{
+    width: 300px !important;
+    align-self: center!important;
+    margin-top: 10px!important;
+}
+.coding .MuiTreeItem-label,.MuiTreeItem-root .MuiSvgIcon-root{
+    font-size: 20px !important;
+}
+.coding .MuiTreeView-root{
+    height: 47vh !important;
+    overflow-y: scroll !important;
+}
+.chooseCategoryOption .MuiButtonBase-root{
+    display: flex;
+    margin: auto !important;
+}
+.MuiDialogTitle-root .MuiTypography-root{
+    font-weight: 600;
+    font-size: 1.7rem;
+}
+.ctrlClickSelected {
+    background-color: #9fd1ff;
+}
+.ctrlClickSelected:hover{
+    background-color: #9fd1ff;
+}
+/* MuiDialogTitle-root */
+/* MuiTypography-root MuiTypography-h6 */
+/* MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary */
+/* MuiPaper-root MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiPaper-elevation24 MuiPaper-rounded */

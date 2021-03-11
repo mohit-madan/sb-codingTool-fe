@@ -9,6 +9,7 @@ function isIterable(obj) {
   }
   return typeof obj[Symbol.iterator] === 'function';
 }
+
 function getFiltersArray(filterDetails){
     let filters =[]
     let _string=filterDetails?.searchValue
