@@ -62,7 +62,6 @@ async function projectList(){
     .then(data =>{
         console.log(`question codebook `,data)
         localStorage.setItem(`questionCodebookId`,data?.data?.codebook?._id)
-        localStorage.setItem(`rootId`,data?.data?.rootId)
         
         return (data?.data?.codebook?.codewords)
     })
