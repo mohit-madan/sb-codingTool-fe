@@ -148,7 +148,7 @@ function Coding(props) {
 
   useEffect(async () => {
     //  call api call 
-    socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[props.questionNumber], username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,rootId:localStorage.rootId }); //here {room: questionId, username: loginUser }
+    socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[props.questionNumber], username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
 
     let codewords = await userActions.questionCodebookId(localStorage.listOfQuestion?.split(',')[props.questionNumber])
 
@@ -323,11 +323,9 @@ function Coding(props) {
       "projectCodebookId":localStorage.codebook, 
       "questionCodebookId":questionCodebookId, 
       "codeword":name, 
-      "codekey":count.toString(),
-      "rootId":localStorage.rootId
+      "codekey":count.toString()
     }
     socket.emit('addCodeword', newCodeword);
-    socket.emit("node-structure",localStorage.rootId)
   }
 
   const listHeadingRef = useRef(null);
@@ -418,8 +416,7 @@ function Coding(props) {
   
   const handleEmit=()=>{
     const body={
-      "category":"Category-name-2",
-      "parent":localStorage.rootId
+      "category":"Category-name-3"
     }
     socket.emit("createCategory",body)
   }
