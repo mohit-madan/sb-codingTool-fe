@@ -19,7 +19,7 @@ import { setFilteredData, setQuestionNumber } from '../../Redux/CodeitData/codei
 import { socket } from '../../config';
 import { createStructuredSelector } from 'reselect';
 import { selectPageNumber } from '../../Redux/Filters/Filters.selectors';
-import { selectLeftMenuCodes, selectSortBy } from '../../Redux/CodeitData/codeit-data.selectors';
+import { selectLeftMenuCodes, selectQuestionNumber, selectSortBy } from '../../Redux/CodeitData/codeit-data.selectors';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function FiltersBar({selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
+function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
     const [codes,setCodes]=useState([])
@@ -166,7 +166,8 @@ function FiltersBar({selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilt
         })
       }
         console.log(temp3)
-        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp3,questionId:localStorage.listOfQuestion?.split(',')[0]})
+        let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
+        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp3,questionId:questionId})
         data=JSON.parse(data)
         // console.log(data)
         if(isIterable(data)){
@@ -213,8 +214,8 @@ function FiltersBar({selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilt
           temp2.push({"operator":7,"codeword":item})
         })
       }
-
-      data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2,questionId:localStorage.listOfQuestion?.split(',')[0]})
+      let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
+      data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2,questionId:questionId})
         data=JSON.parse(data)
         // console.log(data)
         if(isIterable(data)){
@@ -271,9 +272,9 @@ function FiltersBar({selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilt
                         Select Question
                     </MenuItem>
                     {
-                      localStorage.listOfQuestion?.split(',')?.map((item,index)=>{
+                      JSON.parse(localStorage.listOfQuestion)?.map((item,index)=>{
                         return(
-                          <MenuItem value={index}>{item}</MenuItem>
+                          <MenuItem value={index}>{item?.desc}</MenuItem>
                         )
                       })
                     }
@@ -376,7 +377,8 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps=createStructuredSelector({
   pageNumber:selectPageNumber,
   leftMenuCodes:selectLeftMenuCodes,
-  selectSortBy:selectSortBy
+  selectSortBy:selectSortBy,
+  questionNumber:selectQuestionNumber,
   // selectSortBy
 })
 export default connect(mapStateToProps,mapDispatchToProps)(FiltersBar)

@@ -19,13 +19,21 @@ import Profile from '../pages/Profile/Profile';
 
 function App() {
     
+    useEffect(() => {
+        if(initialState?.loggedIn ==true){
+            console.log(`logged in`)
+            userActions.jwtTokenCheck()
+        }
+    },[])
     // useEffect(() => {
-    //     if(initialState?.loggedIn ==true){
-    //         console.log(`logged in`)
-    //         userActions.jwtTokenCheck()
-    //     }
-    // },[])
-
+    //     const intervalId = setInterval(() => { 
+    //         if(initialState?.loggedIn ==true){
+    //             console.log(`logged in`)
+    //             userActions.jwtTokenCheck()
+    //         }
+    //       }, 1000*60)
+    //       return () => clearInterval(intervalId);
+    // })
 
     function hasQuiet() {
         var cold = false,

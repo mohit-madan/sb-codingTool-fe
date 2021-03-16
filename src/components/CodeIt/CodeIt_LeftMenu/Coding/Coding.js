@@ -46,134 +46,28 @@ function Coding(props) {
   let prev=0,next=0
   const  [ count,setCount]=useState(1)
   const _tasks = [];
-  const [ nodes,setNodes]=useState([
-    {
-      id:"asdasd",
-      name:"asdasdasdasd",
-      active: true,
-      percentage: 2,
-      index:1,
-      ctrlClickActive:false
-    },
-    {
-      id:"gjhg",
-      name:"fruits",
-      children: [
-        {
-          name: "apples category",
-          children: [
-            {
-              id:"asde1qq123",
-              name: "apple  1  codeword",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-            {
-              id:"asde1qq12asd3",
-              name: "apple2 codeword",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name:"keywords",
-      children: [
-        {
-          name: "keywords category 1",
-          children:[
-            {
-              id:"asq34123dasd",
-              name:"keyword 1 cat 1 ",
-              children: [
-                {
-                  id:"asdesdf1qq123",
-                  name: "apple  1  codeword",
-                  active: true,
-                  percentage: 2,
-                  index:1,
-                  ctrlClickActive:false
-                },
-                {
-                  id:"asde1qqxcv12asd3",
-                  name: "apple2 codeword",
-                  active: true,
-                  percentage: 2,
-                  index:1,
-                  ctrlClickActive:false
-                }
-              ]
-            },
-            {
-              id:"asq34123dasdasfd56",
-              name:"keyword 2 cat 1 ",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-          ]
-        },
-        {
-          name: "keywords category 2",
-          children:[
-            {
-              id:"asdas2346789",
-              name:"keyword 1 cat 2",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-            {
-              id:"asdasd",
-              name:"keyword 2 cat 2 ",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-          ]
-        }
-      ]
-      
-    }
-  ])
+  const [ nodes,setNodes]=useState()
 
   useEffect(async () => {
     //  call api call 
-    socket.emit('joinRoom',{room: localStorage.listOfQuestion?.split(',')[props.questionNumber], username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
+    let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
+    socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
 
-    let codewords = await userActions.questionCodebookId(localStorage.listOfQuestion?.split(',')[props.questionNumber])
+    let {tree,codewords} = await userActions.questionCodebookId(room)
+
+    console.log("Tree---->",tree)
+    setNodes(tree)
 
     let data=[]
-    const _categories = ["fruits","apples","keywords","undefined"]
-    // console.log(codewords)
+
     if(userUtilities.isIterable(codewords)){
       codewords?.map((item,index)=>{
-        // let percentage= item?.resToAssigned?.length/props?.filteredData?.length
         let percentage= item?.resToAssigned?.length
-        var category = _categories[Math.floor(Math.random() * _categories.length)];
-        data.push({id: `${item?._id}`, name: item?.tag, active: item?.active,percentage: percentage,category:category})
+        data.push({id: `${item?._id}`, name: item?.tag, active: item?.active,percentage: percentage})
       })
-      // console.log(data)
       props.setLeftMenuCodes(data)
-      // props.setLeftMenuCodes([{id: `11323gfsdwe`, name: "fruits1", active: true,percentage: 2,category:"fruits",index:1,ctrlClickActive:false},
-      //   {id: `1135rwaf23we`, name: "apples1", active: true,percentage: 2,category:"apples",index:2,ctrlClickActive:false},
-      //   {id: `1132sdfswer133we`, name: "keywords1", active: true,percentage: 2,category:"keywords",index:3,ctrlClickActive:false},
-      //   {id: `11323xzawjk;.we`, name: "keywords2", active: true,percentage: 2,category:"keywords",index:4,ctrlClickActive:false},
-      //   {id: `113sdfg23we`, name: "apples2", active: true,percentage: 2,category:"apples",index:5,ctrlClickActive:false},
-      //   {id: `11323wxbsdfge`, name: "fruits2", active: true,percentage: 2,category:"fruits",index:6,ctrlClickActive:false},
-      //   {id: `11323wxsdfgbsdfge`, name: "fruits2", active: true,percentage: 2,category:"undefined",index:7,ctrlClickActive:false},
-      // ])
-      // props.setLeftMenuCodes(nodes)
     }
+
   }, [props.questionNumber])
   
   // const [leftMenuCodes, setLeftMenuCodes] = useState(_tasks);
@@ -263,6 +157,9 @@ function Coding(props) {
     socket.once("create-category-to-list",operation=>{
       console.log("create-category-to-list",operation)
     })
+    socket.once("root",operation=>{
+      console.log(operation)
+    })
   })
 
   useEffect(() => {
@@ -321,9 +218,8 @@ function Coding(props) {
     var questionCodebookId=localStorage.questionCodebookId
     let newCodeword={
       "projectCodebookId":localStorage.codebook, 
-      "questionCodebookId":questionCodebookId, 
       "codeword":name, 
-      "codekey":count.toString()
+      "codekey":count.toString(),
     }
     socket.emit('addCodeword', newCodeword);
   }
@@ -416,7 +312,7 @@ function Coding(props) {
   
   const handleEmit=()=>{
     const body={
-      "category":"Category-name-3"
+      "category":"Category-name-2",
     }
     socket.emit("createCategory",body)
   }

@@ -22,16 +22,7 @@ const UploaderPage=({progressNumber,loading,showUploaderAlerts,selectAlertMessag
 
     const alert = useSelector(state => state.alert);
 
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => { 
-    //         if(initialState?.loggedIn ==true){
-    //             console.log(`logged in`)
-    //             userActions.jwtTokenCheck()
-    //         }
-    //       }, 1000*60)
-    //       return () => clearInterval(intervalId);
-    // })
-
+    
     return(
         <div className="uploader_page">
             <Navigation />

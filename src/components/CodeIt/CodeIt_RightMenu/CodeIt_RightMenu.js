@@ -40,7 +40,8 @@ const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCod
   const getData =async()=>{
     let keywords={}
     let data 
-    data = await userActions.responsePagination({pageNumber:1,limit:3000,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
+    let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
+    data = await userActions.responsePagination({pageNumber:1,limit:3000,push:false,questionId:questionId})
     data = JSON.parse(data)
     console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){

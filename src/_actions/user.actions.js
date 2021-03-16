@@ -58,12 +58,12 @@ async function projectList(){
     const _RequestOptions = {
         headers: {"authorization":`surveybuddytoken ${_token}`},
     };
-    return await axios.post(`${config.apiUrl}/questionCodebook`,details,_RequestOptions)
+    return await axios.post(`${config.apiUrl}/leftMenu`,details,_RequestOptions)
     .then(data =>{
         console.log(`question codebook `,data)
-        localStorage.setItem(`questionCodebookId`,data?.data?.codebook?._id)
-        
-        return (data?.data?.codebook?.codewords)
+        localStorage.setItem(`questionCodebookId `,data?.data?.questionCodebookId )
+
+        return ({tree:data?.data?.tree,codewords:data?.data?.codewords})
     })
 }
 
@@ -145,8 +145,8 @@ async function projectDetails(){
         console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
         localStorage.setItem('codebook',data?.data?.project?.codebook)
-        localStorage.setItem('listOfQuestion',data?.data?.project?.listOfQuestion)
-
+        localStorage.setItem('listOfQuestion',JSON.stringify(data?.data?.project?.listOfQuestion))
+        console.log('listOfQuestion',JSON.stringify(data?.data?.project?.listOfQuestion))
         history.push(`/tool`)
 
     },err=>console.log(err))
