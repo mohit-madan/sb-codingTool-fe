@@ -17,6 +17,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
 import { makeStyles } from '@material-ui/core/styles';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
+import { map } from "jquery";
 const useStyles = makeStyles({
   root: {
     height: 240,
@@ -49,22 +50,25 @@ function Coding(props) {
   const [ nodes,setNodes]=useState()
 
   useEffect(async () => {
-    //  call api call 
+
     let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
-    socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
+    console.log("room---->",room)
 
     let {tree,codewords} = await userActions.questionCodebookId(room)
+    socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
 
     console.log("Tree---->",tree)
     setNodes(tree)
+    
+    console.log("Codewords---->",codewords)
 
     let data=[]
-
     if(userUtilities.isIterable(codewords)){
       codewords?.map((item,index)=>{
         let percentage= item?.resToAssigned?.length
         data.push({id: `${item?._id}`, name: item?.tag, active: item?.active,percentage: percentage})
       })
+      console.log("codewords--->",data)
       props.setLeftMenuCodes(data)
     }
 
@@ -105,13 +109,13 @@ function Coding(props) {
       
       // if(next<prev){
         console.log(value)
-        const {codeword,codewordId,category} = value
+        const {codeword,codewordId} = value
         // const newTask = { id: "todo-" + nanoid()+` ${count-1}`, name: codeword, completed: true };
-        const newTask = { id: `${codewordId}`, name: codeword, active: true ,category:category};
+        const newTask = { id: `${codewordId}`, name: codeword, active: true ,percentage: 0};
         props.setLeftMenuCodes([...props.leftMenuCodes, newTask]);
-        next=next+1
       // }
     });
+
     socket.on('toggle-codeword-to-list', (value)=>{
 
       console.log('toggle-codeword-to-list',value)
@@ -158,8 +162,11 @@ function Coding(props) {
       console.log("create-category-to-list",operation)
     })
     socket.once("root",operation=>{
-      console.log(operation)
+      if(typeof(operation)!="undefined" && operation!==nodes){
+        setNodes(operation)
+      }
     })
+
   })
 
   useEffect(() => {
@@ -173,33 +180,103 @@ function Coding(props) {
     socket.emit('toggleCodeword',toggleCodeword)
   }
 
-  function createNewCategory(id,category){
-    setCategories([...categories,category])
-    addToCategory(id,category)
+  function createNewCategory(categoryName,codewordId,categoryId){
+
+    let temp0=nodes
+    let temp1=0
+    let presentCategoryId=""
+
+    temp0?.map((item,index)=>{
+       if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){
+         item?.codewords?.map((_codeword,codeword_index)=>{
+          if(_codeword?._id==codewordId){
+           temp1=1
+          //  categoryName=item?.name
+            presentCategoryId=item._id
+           return
+          }
+         })
+       }
+       if(item?._id==codewordId){
+         temp1=0
+         return
+       }
+    })
+
+    if(temp1==0){
+
+      const body={
+        "category":categoryName,
+        "categoryName":categoryName,
+        "categoryId":categoryId,
+        "codewordId":codewordId
+      }
+      console.log(body)
+      socket.emit("assingedCodeword",body)
+
+    }else if(temp1==1){
+      const body={
+        "codewordId":codewordId,
+        "categoryId1":categoryId,
+        "categoryId2":undefined,
+        "categoryName":categoryName,
+      }
+      console.log(body)
+      socket.emit("moveCodeword",body)
+    }
+
   }
 
   function addToCategory(id,category){
-      const updatedTasks = props.leftMenuCodes.map(task => {
-          // if this task has the same ID as the edited task
-          console.log(id === task.id)
-          if (id === task.id) {
-            // use object spread to make a new obkect
-            // whose `completed` prop has been inverted
-            if(category!=""){
-              return {...task, category: category}
-            }
+    
+    let temp0=nodes
+    let temp1=0
+    let presentCategoryId=""
+
+    temp0?.map((item,index)=>{
+       if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){
+         item?.codewords?.map((_codeword,codeword_index)=>{
+          if(_codeword?._id==id){
+           temp1=1
+          //  categoryName=item?.name
+            presentCategoryId=item._id
+           return
           }
-          return task;
-        });
-        props.setLeftMenuCodes(updatedTasks)
+         })
+       }
+       if(item?._id==id){
+         temp1=0
+         return
+       }
+    })
+
+    if(temp1==0){
+
+      const body={
+        "codewordId":id,
+        "categoryId":category
+      }
+      console.log(body)
+      socket.emit("assingedCodeword",body)
+
+    }else if(temp1==1){
+
+      const body={
+        "codewordId":id,
+        "categoryId1":presentCategoryId,
+        "categoryId2":category,
+        "categoryName":undefined,
+      }
+      console.log(body)
+      socket.emit("moveCodeword",body)
+
+    }
   }
 
   function deleteTask(id) {
-    prev=prev+1
     let deleteCodeword = {"codewordId":id}
     socket.emit('deleteCodeword', deleteCodeword);
   }
-
 
   function editTask(id, newName) {
     prev=prev+1
@@ -210,12 +287,8 @@ function Coding(props) {
     socket.emit('editCodeword', editCodeword);
   }
 
-
-
   function addTask(name) {
-    prev=prev+1
     setCount(count+1)
-    var questionCodebookId=localStorage.questionCodebookId
     let newCodeword={
       "projectCodebookId":localStorage.codebook, 
       "codeword":name, 
@@ -233,107 +306,137 @@ function Coding(props) {
     }
   }, [props.leftMenuCodes.length, prevTaskLength]);
 
-  useEffect(() => {
-    console.log(`nodes changed`,nodes)
-  }, [nodes])
+  // useEffect(() => {
+  //   console.log(`nodes changed`,nodes)
+  // }, [nodes])
 
   function clickHandler(event, id){
-    // event.stopPropagation();
-    // In that case, event.ctrlKey does the trick.
+
     let temp0=nodes
+    console.log("crtlclcik changed nodes id",id)
+    console.log("crtlclcik changed nodes nodes",nodes)
 
     if (event.ctrlKey){
          console.log("Ctrl+click has just happened!");
 
-         const TreeTraversal = data => {
-          if (!Array.isArray(data.children) || !data.children.length) {
-            if(data?.id ==id){
-              // data={...data,ctrlClickActive:!data?.ctrlClickActive}  
-              data.ctrlClickActive=!data?.ctrlClickActive
-              console.log(data)
+         temp0?.map((item,index)=>{
+
+            if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){
+              item?.codewords?.map((_codeword,codeword_index)=>{
+                console.log("crtlclcik changed ids",_codeword._id)
+               if(_codeword?._id==id){
+                console.log("crtlclcik changed nodes","match",{_codeword})
+                _codeword["ctrlClickActive"]= _codeword["ctrlClickActive"] ?!_codeword["ctrlClickActive"] : true
+                console.log({_codeword})
+               }
+              })
             }
-            return
-          }
-          return data?.children?.map((node, idx) => TreeTraversal(node))
-        }
-          temp0?.map((item,index)=>{
-            return TreeTraversal(item)
-          })
-          console.log(temp0)
+
+            if(item?._id==id){
+              console.log("crtlclcik changed nodes","match")
+              item["ctrlClickActive"]= item["ctrlClickActive"] ?!item["ctrlClickActive"] : true
+            }
+
+         })
+         console.log("crtlclcik changed nodes",{temp0})
+        setNodes([...temp0])
     }
-    setNodes([...temp0])
  }
 
 
   const classes = useStyles();
-  const [categories,setCategories]=useState(["fruits","apples","keywords"])
-
-
-
-    // const classes = useStyles();
-
-    const TreeRender = data => {
-      if (!Array.isArray(data.children) || !data.children.length) {
-        return (
-          <CodeRow
-              id={data?.id}
-              name={data?.name}
-              completed={data?.active}
-              key={data?.id}
-              index={data.index}
-              percentage={data?.percentage}
-              toggleTaskCompleted={toggleTaskCompleted}
-              deleteTask={deleteTask}
-              editTask={editTask}
-              category={data?.category}
-              addToCategory={addToCategory}
-              nodes={props.leftMenuCodes}
-              createNewCategory={createNewCategory}
-              ctrlClick={clickHandler}
-              ctrlClickActive={data?.ctrlClickActive}
-          />
-          ) ;
-      }
-      return (
-        <div>
-          <ContextMenuTrigger id={`asf32`}>
-              <TreeItem key={data.name} nodeId={data.name} label={data.name} >
-                {data.children.map((node, idx) => TreeRender(node))}
-              </TreeItem>
-          </ContextMenuTrigger>
-          <ContextMenu data={{data:"asdasd"}} id={`asf32`}>
-            <MenuItem>
-                Details
-              </MenuItem>
-          </ContextMenu>
-        </div>
-      )
-    }
   
-  const handleEmit=()=>{
-    const body={
-      "category":"Category-name-2",
-    }
-    socket.emit("createCategory",body)
-  }
+  // const handleEmit=()=>{
+  //   const body={
+  //     "category":"Category-name-2",
+  //   }
+  //   socket.emit("createCategory",body)
+  // }
   
   return (
     <div className="coding">
       <Form addTask={addTask} />
-      <hr />
-      {/* <Func1 /> */}
-      {/* <TreeViewer nodes={nodes} / */}
-      <button onClick={handleEmit}>node-structure</button>
+      <hr style={{width:"auto"}}/>
+
+      {/* <button onClick={handleEmit}>node-structure</button> */}
+
       <TreeView
         className={classes.root}
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
-      >{
-        nodes?.map((item,index)=>{
-            return TreeRender(item)
+      >
+        {nodes?.map((data,index)=>{
+
+          if (typeof(data?.codewords)=="undefined" ) {
+            return (
+              <CodeRow
+                  id={data?._id}
+                  name={data?.tag}
+                  completed={data?.active}
+                  key={data?.id}
+                  index={index}
+                  percentage={data?.resToAssigned?.length}
+                  toggleTaskCompleted={toggleTaskCompleted}
+                  deleteTask={deleteTask}
+                  editTask={editTask}
+                  // category={data?.category}
+                  addToCategory={addToCategory}
+                  nodes={nodes}
+                  createNewCategory={createNewCategory}
+                  ctrlClick={clickHandler}
+                  ctrlClickActive={data?.ctrlClickActive ? data?.ctrlClickActive : false}
+              />
+              ) ;
+          }
+
+          return (
+            <div>
+              <ContextMenuTrigger id={`asf32`}>
+                  {data.codewords.length==0 ?
+                    <TreeItem key={data._id} nodeId={data._id} label={data.name} >
+                      <p>Empty Category</p>
+                    </TreeItem> 
+                    
+                    :
+                    <TreeItem key={data._id} nodeId={data._id} label={data.name} >
+                    {
+                    data.codewords.map((node, idx) => 
+                      {
+                        return (
+                        <CodeRow
+                            id={node?._id}
+                            name={node?.tag}
+                            completed={node?.active}
+                            key={node?.id}
+                            index={index+idx}
+                            percentage={node?.resToAssigned?.length}
+                            toggleTaskCompleted={toggleTaskCompleted}
+                            deleteTask={deleteTask}
+                            editTask={editTask}
+                            // category={data?.category}
+                            addToCategory={addToCategory}
+                            nodes={nodes}
+                            createNewCategory={createNewCategory}
+                            ctrlClick={clickHandler}
+                            ctrlClickActive={node?.ctrlClickActive ? node?.ctrlClickActive : false}
+                        />
+                      )})
+                    }
+                  </TreeItem>
+                }
+              </ContextMenuTrigger>
+              <ContextMenu data={{data:"asdasd"}} id={`asf32`}>
+                <MenuItem>
+                    Details
+                  </MenuItem>
+              </ContextMenu>
+            </div>
+          )
+            // return TreeRender(data)
         })
         }
       </TreeView>
+
       {/* <ul
         role="list"
         className="todo-list stack-large stack-exception"

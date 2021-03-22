@@ -64,3 +64,14 @@
   padding: 10px 0;
   padding-right: 5px;
 }
+.leftmenutop{
+  height: 3vh;
+  align-self: center;
+}
+.leftmenutop h1{
+  font-size: unset;
+  text-transform: uppercase;
+}
+.LeftMenu_EditOptions{
+  height: 4vh;
+}

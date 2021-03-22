@@ -38,115 +38,25 @@ const useStyles = makeStyles((theme) => ({
       },
     
   }));
-  const nodes = [
-    {
-      id:"gjhg",
-      name:"fruits",
-      children: [
-        {
-          name: "apples category",
-          children: [
-            {
-              id:"asde1qq123",
-              name: "apple  1  codeword",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-            {
-              id:"asde1qq12asd3",
-              name: "apple2 codeword",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name:"keywords",
-      children: [
-        {
-          name: "keywords category 1",
-          children:[
-            {
-              id:"asq34123dasd",
-              name:"keyword 1 cat 1 ",
-              children: [
-                {
-                  id:"asdesdf1qq123",
-                  name: "apple  1  codeword",
-                  active: true,
-                  percentage: 2,
-                  index:1,
-                  ctrlClickActive:false
-                },
-                {
-                  id:"asde1qqxcv12asd3",
-                  name: "apple2 codeword",
-                  active: true,
-                  percentage: 2,
-                  index:1,
-                  ctrlClickActive:false
-                }
-              ]
-            },
-            {
-              id:"asq34123dasdasfd56",
-              name:"keyword 2 cat 1 ",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-          ]
-        },
-        {
-          name: "keywords category 2",
-          children:[
-            {
-              id:"asdas2346789",
-              name:"keyword 1 cat 2",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-            {
-              id:"asdasd",
-              name:"keyword 2 cat 2 ",
-              active: true,
-              percentage: 2,
-              index:1,
-              ctrlClickActive:false
-            },
-          ]
-        }
-      ]
-    }
-  ];
+
 function ChooseCategory(props) {
 
     const classes = useStyles();
-    const { onClose, selectedValue, open ,addToCategory} = props;
+    const { onClose, selectedValue, open ,addToCategory,nodes} = props;
     const [name, setName] = React.useState();
     
 
    function OptionsGenerator() {
-
+    console.log({nodes})
     const TreeRender = data => {
-      if (!Array.isArray(data.children) || !data.children.length) {
-        return
-      }
+      if (typeof(data?.codewords)!=="undefined"){
       return (
         <div className="chooseCategoryOption">
-          <Button onClick={e=>handleListItemClick(data.name)}>{data.name}</Button>
-          {data.children.map((node, idx) => TreeRender(node))}
+          <Button onClick={e=>handleListItemClick(data._id)}>{data.name}</Button>
+          {data?.codewords?.map((node, idx) => TreeRender(node))}
         </div>
       )
+      }
     }
   
     return (
@@ -169,19 +79,11 @@ function ChooseCategory(props) {
   
     const handleListItemClick = (cat) => {
       onClose(cat);
-      // console.log(cat)
     };
   
     return (
       <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
         <DialogTitle id="simple-dialog-title">Add a Category</DialogTitle>
-        {/* {categoriesList?.map((item)=>{
-            return(
-                  <ListItem button onClick={() => handleListItemClick(item)} key={item}>
-                    <ListItemText className={classes.root} primary={item} />
-                  </ListItem>
-            )})} */}
-
         {OptionsGenerator(nodes)}
       </Dialog>
     );

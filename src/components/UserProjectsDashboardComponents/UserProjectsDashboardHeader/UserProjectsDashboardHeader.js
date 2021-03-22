@@ -43,7 +43,9 @@ function UserProjectsDashboardHeader() {
             <div className="right flex">
 
                 <div className="dropdown" style={{float:"right"}}>
-                  <button className="dropbtn">J</button>
+                  <button className="dropbtn">
+                    <img className="dropbtn" src="https://w7.pngwing.com/pngs/518/320/png-transparent-computer-icons-mobile-app-development-android-my-account-icon-blue-text-logo.png" />
+                  </button>
                   <div className="dropdown-content">
                     <Link to="/user/profile">Profile</Link>
                     <Link onClick={logout} >Log Out</Link>

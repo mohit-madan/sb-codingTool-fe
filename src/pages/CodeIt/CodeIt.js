@@ -9,9 +9,11 @@ import CodeIt_LeftMenu from "../../components/CodeIt/CodeIt_LeftMenu/CodeIt_Left
 import FiltersBar from "../../components/FiltersBar/FiltersBar.js"
 import { initialState } from "../../Reducers/authentication.reducer.js"
 import { userActions } from "../../_actions/index.js"
+import { selectQuestionNumber } from "../../Redux/CodeitData/codeit-data.selectors.js"
+import { socket } from "../../config.js"
 
 
-const CodeIt=({progressNumber})=>{
+const CodeIt=({progressNumber,questionNumber})=>{
     // useEffect(() => {
     //     const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
     //         if(initialState?.loggedIn ==true){
@@ -20,6 +22,12 @@ const CodeIt=({progressNumber})=>{
     //       }, 1000*60)
     //       return () => clearInterval(intervalId); //This is important
     // })
+    // useEffect(() => {
+    //     let room =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
+    //     console.log("room---->",room)
+    //     socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
+
+    // }, [questionNumber])
     return(
         <div className="uploader_page codeIt_page">
             <Navigation />
@@ -33,6 +41,7 @@ const CodeIt=({progressNumber})=>{
     )
 }
 const mapStateToProps=createStructuredSelector({
+  questionNumber:selectQuestionNumber,
     progressNumber:selectProgressNumber,
 })
 export default connect(mapStateToProps,null)(CodeIt)

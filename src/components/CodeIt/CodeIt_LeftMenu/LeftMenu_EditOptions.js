@@ -23,22 +23,23 @@ const CustomSwitch = withStyles({
   })(Switch);
 function LeftMenu_EditOptions() {
     return (
-        <div className="background-color flex">
-                    <div className="">
+        <div className="background-color flex LeftMenu_EditOptions">
+                    {/* <div className="">
                         Edit mode:
                         <CustomSwitch
                             defaultChecked
                             inputProps={{ 'aria-label': 'checkbox with default color' }}
                         />
-                    </div>
-                    <div >
+                    </div> */}
+                    {/* <div > */}
                         {/* <button> <ChevronRightIcon/></button>
                         <button> <ExpandMoreIcon/></button>
                         <button> +</button>
                         <button> <ChevronRightIcon/></button>
                         <button> <ExpandMoreIcon/></button>
                         <button> +</button> */}
-                    </div>
+                    {/* </div> */}
+
         </div>
     )
 }

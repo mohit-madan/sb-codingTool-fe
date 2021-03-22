@@ -61,7 +61,7 @@ async function projectList(){
     return await axios.post(`${config.apiUrl}/leftMenu`,details,_RequestOptions)
     .then(data =>{
         console.log(`question codebook `,data)
-        localStorage.setItem(`questionCodebookId `,data?.data?.questionCodebookId )
+        localStorage.setItem(`questionCodebookId`,data?.data?.questionCodebookId )
 
         return ({tree:data?.data?.tree,codewords:data?.data?.codewords})
     })
@@ -141,13 +141,19 @@ async function projectDetails(){
         headers: {'Authorization': `Bearer ${_token}`}
     };
     await axios.post(`${config.apiUrl}/projectDetails`,details, requestOptions)
-    .then( data=>{
+    .then( async data=>{
         console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
         localStorage.setItem('codebook',data?.data?.project?.codebook)
         localStorage.setItem('listOfQuestion',JSON.stringify(data?.data?.project?.listOfQuestion))
         console.log('listOfQuestion',JSON.stringify(data?.data?.project?.listOfQuestion))
-        history.push(`/tool`)
+        
+        // const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        // await delay(1000)
+
+        // history.push(`/tool`)
+        // window.location.href = `${config.redirecturl}/tool`;
 
     },err=>console.log(err))
 }

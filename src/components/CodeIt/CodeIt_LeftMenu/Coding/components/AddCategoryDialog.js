@@ -52,7 +52,7 @@ function AddCategoryDialog(props) {
     };
   
     const submitNewCategory=()=>{
-        createNewCategory(id,name)
+        createNewCategory(name,id,undefined)
         onClose()
     }
     

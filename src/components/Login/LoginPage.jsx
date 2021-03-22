@@ -69,9 +69,8 @@ function LoginPage() {
 					name="username"
 					value={username}
 					onChange={handleChange}
-					label="Username"
+					label="Email"
 					required
-					
 				/>
 				<div className="input_row">
 					<TextField

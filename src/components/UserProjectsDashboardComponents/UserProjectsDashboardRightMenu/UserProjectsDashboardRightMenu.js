@@ -13,6 +13,7 @@ import { green ,red,blue,grey} from '@material-ui/core/colors';
 import AvTimerOutlinedIcon from '@material-ui/icons/AvTimerOutlined';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import ErrorIcon from '@material-ui/icons/Error';
+import { history } from '../../../_helpers'
 
 const UserProjectsDashboardRightMenu=()=> {
 
@@ -97,8 +98,23 @@ const UserProjectsDashboardRightMenu=()=> {
         localStorage.setItem('projectId',selectedRow?._id)
             if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
                 await userActions.projectDetails()
+                if(localStorage.listOfQuestion!==undefined){
+                    history.push(`/tool`)
+                    // let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
+                    // await userActions.questionCodebookId(room)
+                }
            }
     }
+
+    useEffect(() => {
+        const intervalId = setInterval(() => { 
+            if(localStorage.questionCodebookId!==undefined && localStorage.listOfQuestion!==undefined && localStorage.codebook!==undefined && localStorage.fileKey!==undefined){
+                history.push(`/tool`)
+            }
+          })
+          return () => clearInterval(intervalId);
+        //   questionCodebookId
+    })
 
     return (
         <div className="UserProjectsDashboardRightMenu">

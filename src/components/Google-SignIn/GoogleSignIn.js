@@ -13,11 +13,11 @@ const basicCall=()=>{
 class GoogleSignIn extends React.Component{
     responseGoogle = async (response) => {
         // window.location.replace(`${config.redirecturl}/user/profile`);
-        history.push('/')
+        // history.push('/')
         console.log(response);
-        const { setGoogleUser } = this.props;
-        setGoogleUser(response)
-        localStorage.setItem('user', JSON.stringify(response));
+        // const { setGoogleUser } = this.props;
+        // setGoogleUser(response)
+        // localStorage.setItem('user', JSON.stringify(response));
     }
     componentDidMount(){
         basicCall()
@@ -35,7 +35,7 @@ class GoogleSignIn extends React.Component{
     render(){
     return(
         <>
-            {/* <GoogleLogin
+            <GoogleLogin
                 clientId="917745149092-168boso7l59uto2krblq8k1fur1rv2ah.apps.googleusercontent.com"
                 render={renderProps => (
                   <CustomButton isGoogleSignIn onClick={renderProps.onClick} disabled={renderProps.disabled}>This is my custom Google  sign in</CustomButton>
@@ -47,8 +47,8 @@ class GoogleSignIn extends React.Component{
                 onSuccess={this.responseGoogle}
                 onFailure={e=>console.log(e)}
                 // cookiePolicy={'single_host_origin'}
-            /> */}
-            <CustomButton isGoogleSignIn onClick={this.handleGoogleLogin} >This is my custom Google  sign in</CustomButton>
+            />
+            {/* <CustomButton isGoogleSignIn onClick={this.handleGoogleLogin} >This is my custom Google  sign in</CustomButton> */}
 
         </>
     )}

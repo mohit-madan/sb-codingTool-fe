@@ -11,7 +11,7 @@ import axios from "axios"
 import { useSelector } from 'react-redux';
 
 function RegisterPage() {
-	const alert = useSelector(state => state.alert);
+	const _alert = useSelector(state => state.alert);
 	const [ user, setUser ] = useState({
 		firstName: 'default',
 		lastName: 'default',
@@ -89,7 +89,7 @@ function RegisterPage() {
 					name="username"
 					value={user.username}
 					onChange={handleChange}
-					label="Username"
+					label="Email"
 					required
 					submitted
 					username
@@ -123,8 +123,8 @@ function RegisterPage() {
 					submitted
 				/>
 				<CustomButton onClick={handleSubmit} type="submit">Register</CustomButton>
-				{alert.message &&
-                        <div className="alert">{alert.message}</div>
+				{_alert.message &&
+                        <div className="alert">{_alert.message}</div>
             	}
 			</form>
 		</div>

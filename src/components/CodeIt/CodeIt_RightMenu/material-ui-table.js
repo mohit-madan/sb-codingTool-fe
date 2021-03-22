@@ -473,9 +473,10 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     const [keywords,setkeywords]=useState(mapper)
 
     useEffect(() => {
-        let room =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
+
+        // let room =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
         
-        socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId  }); //here {room: questionId, username: loginUser }
+        // socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId  }); //here {room: questionId, username: loginUser }
 
           // const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
           //   setSorting({
@@ -485,7 +486,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           // }, 2000)
           // return () => clearInterval(intervalId); //This is important
 
-    }, [])
+    }, [questionNumber])
 
     useEffect(() => {
       if(initialKeywords!==null && initialKeywords !=={} && Object.keys(initialKeywords)?.length >0){

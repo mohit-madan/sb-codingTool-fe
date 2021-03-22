@@ -90,7 +90,7 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
         let temp=[]
         if(tags?.length >0){
             tags?.map(item=>{
-                temp.push(item.email)
+                temp.push(item._id)
             })
         }
         return temp
@@ -109,7 +109,7 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             "type":surveyDetails?.type ? surveyDetails?.type : "test",
             "tags":(surveyDetails?.tags) ? handleTags(surveyDetails?.tags) : ["test"],
         }
-        console.log(details)
+        console.log({details})
         const _token=JSON.parse(localStorage.token).accessToken
         const requestOptions = {
             headers: {'Authorization': `Bearer ${_token}`}
@@ -124,6 +124,10 @@ const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,s
             if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
                 console.log(`getting project Details`)
                 await userActions.projectDetails()
+                history.push("/tool")
+                setLoading(false)
+                setProgressNumber(1)
+                setExcelData(null)
                 setGettingProjectDetails(false)
            }
         },err=>console.log(err))

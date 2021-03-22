@@ -596,6 +596,7 @@ useEffect(async () => {
     
   };
   const handleChangeTags=val=>{
+    console.log("val-->",{val})
     setSurveyDetails({...surveyDetails,tags:val });
     updateSurveyDetails({...surveyDetails,tags:val })
     
@@ -701,40 +702,13 @@ useEffect(async () => {
                       </MenuItem>
                     ))}
                 </TextField>
-
-                {/* <FormControl className={classes.formControl}>
-                  <InputLabel id="demo-mutiple-chip-label">Chip</InputLabel>
-                  <Select
-                    labelId="demo-mutiple-chip-label"
-                    id="demo-mutiple-chip"
-                    multiple
-                    size="large"
-                    value={surveyDetails?.tags}
-                    onChange={handleChangeTags}
-                    input={<Input id="select-multiple-chip" />}
-                    renderValue={(selected) => (
-                      <div className={classes.chips}>
-                        {selected.map((value) => (
-                          <Chip size="large" key={value} label={value} className={classes.chip} />
-                        ))}
-                      </div>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem size="large" key={name} value={name} style={getStyles(name, personName, theme)}>
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl> */}
                 <p>ASSIGN PROJECT</p>
                       <DropDownSelect
                         multi
                         searchable
                         loading={loading}
                         options={options}
-                        valueField="email"
+                        valueField="_id"
                         labelField="email"
                         placeholder="Tag People"
                         searchFn={e=>setSearchValue(e.state.search)}
