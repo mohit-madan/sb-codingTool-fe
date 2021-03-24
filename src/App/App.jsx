@@ -64,18 +64,6 @@ function App() {
                             <Route  path="/forgot-password" component={ForgotPassword} />
                             <Route  path="/dash" component={ProjectsDashboard} />
                             <PrivateRoute exact  path="/user/profile"  component={Profile}/>
-                            {/*  */}
-                            {/* <Route
-                                exact
-                                path='/user'
-                                render={() =>
-                                !user ? (
-                                <Redirect to='/' />
-                                  ) : (
-                                <Profile />
-                                  )
-                                }
-                            /> */}
                             <PrivateRoute  path="/userProjectsDashboard" component={UserProjectsDashboard} />
                             <PrivateRoute  path="/tool" component={CodeIt} />
                             <PrivateRoute  path="/" component={UploaderPage} />

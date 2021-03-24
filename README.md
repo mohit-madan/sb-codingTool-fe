@@ -1,5 +1,99 @@
+#Survey Buddy Coding interface 
 
--📦src
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
+
+##Actions
+- alert actions contains all the actions which are used in user authentication
+- user actions contain all the API calls Which are used in our app
+
+##Helpers
+- Store.js is the store for redux 
+- History.js has history variable declared which is used all over the app
+- Auth header contains the function which gives two jwt token of the user logged in
+
+##Utilities
+- contains the reusable function like isIterable which is used to check whether the data fetched from the backened is iterable or not
+
+##App
+- app.jsx contains two useEffects from react to which are used to check the validity of jwt token of the user logged in , one  initially when the app starts or reloads and the another to check for every 60 seconds. 
+- A function named hasQuite is also defined which solves the bug in the latest chrome version on scrolling.This contains the routes to all the Pages in the app
+
+##Components
+ ###CodeIt
+- It is divided into left and right menu, 
+- There is a folder called coding where there is a file Coding.js. In Coding.js which is the root for the CodeRow Component and the dialogue boxes Components which appear on clicking options in the context menu. 
+- All the props with transferred from the coding.js to the codeRow and thee dialogue boxes
+- In the right menu there is CodeIt RightMenu.js, Where the initial fetch of table data happens. As well as the progressbar fills up acc to “querstion-response-coded” socket
+- There is a conditional statement at the end o HTML in the right menu.JS where we render the react-virtualized table only when the filter data is valid
+- CodeIt_Table .js Is the previous version of table Implemented using material table
+- material-ui- table.js  contains the react-virtualized table code  as well as the code needed to highlight  the search elements
+- Tableicons.js contains the icons need to render the  react-virtualized table
+###Custom button
+- This is a custom made UI component used everywhere in the login register reset password and forgot password  pages,
+###Dashboard
+- This is divided into left and right menu , the left menu constitutes of showing text according to the progress number
+- The rightMenu.js file,  contains condition statements  which conditionally renders different right menus according to the progress number 
+- data contains the sample data which  which needs to be passed into a material tabe
+- Excel reader file contains all the code  that reads the input excel file and post it to the backend and sets the progress Number == 2 in Redux
+- Table.js contains the code for rendering progress Number==2 i.e., Code for rendering the table
+- Review and Submit and survey details folders contains the code  progress number is equals to 4 and progress number is equal to 3 respectively
+###FiltersBar
+- Here is where all the filters on the table data in the coding tool are handled.
+###Footer
+ - This component renders the bottom of the uploader page ( the previous and next buttons are situated )and the incrementation and decrementation of progress number
+- This component handles api call creating the project and getting the project details
+###Login, forgot password, register, reset password
+- The components are clones of each other using same reusable UI components
+###Google sign in
+- The code for hanging Google sign is placed here with the basic call for backend as well as integrated with the Google API dashboard
+###Home page components
+- we are using the navigation bar with created in the previous project here in the login register and forgot password pages
+###Navigation
+- the basic component in the uploaded page where the links to user projects dashboard and logout are situated
+###Private route
+- This component interest security to add by using a set of conditional statements which when passed the user can access the user projects dashboard page, uploaderer page ,coding page
+###Profile pic components
+- A card component to render the available surveys as cards
+Custom Navbar made for profile page
+- Each folder represents the respective UI components with the required functionality
+### Progress bar 
+-The progress bar component constitutes of showing the progress in the uploader page According to the changes in progress number
+###User projects dashboard components
+- The left menu contain the ui to show the Survey Buddy logo and Plus icon UI to redirect to a uploader page
+- The right menu contains  Material table which render the user projects, the future functionality for the table like pagination is also included
+ ###with Spinner
+ - reusable HOC component
+ 
+##Constants
+ - User authentication reducer constans were declared here
+
+##Data
+- All the data which is hard coded in the app can be changed here
+
+
+ ##Pages
+- All the components are assembled here to make single pages, which are imported into the pp.jd and given to the respective routes
+
+##Reducers
+- All the user authentication reducers the placed here
+
+##Redux
+- Each folder represents a single reducer. Each folder contains 4 files,  one for action functions,  second one is for the selection of variable from the redux reducer,third one is the reducer and 4th one is for constants for reducer
+
+##Services
+ - Contains basic fetch calls for user authentication
+
+##Config.js
+- This contains Backend url and frontend url and Socket Configuration
+
+#Structure of Files
+##📦src
 - ┣ 📂App
 - ┃ ┣ 📜app.css
 - ┃ ┣ 📜App.jsx
