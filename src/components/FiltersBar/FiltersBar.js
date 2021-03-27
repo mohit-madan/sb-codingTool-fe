@@ -274,7 +274,9 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                     {
                       JSON.parse(localStorage.listOfQuestion)?.map((item,index)=>{
                         return(
-                          <MenuItem value={index}>{item?.desc}</MenuItem>
+                          item?.desc?.length >10 ?
+                            <MenuItem value={index}>{item?.desc?.slice(0,50)}...</MenuItem>
+                            : <MenuItem value={index}>{item?.desc}</MenuItem>
                         )
                       })
                     }
