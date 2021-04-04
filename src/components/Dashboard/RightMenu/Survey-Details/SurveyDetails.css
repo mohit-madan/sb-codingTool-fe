@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 100%;
     margin-top: -4rem;
+    margin: auto;
 }
 .survey_details_top,.survey_details_title{
     display: flex;
@@ -191,6 +192,11 @@ text-indent:
 }
 .react-dropdown-select{
     margin-top: 10px;
+    height: max-content;
+}
+.react-dropdown-select-content{
+    display: flex;
+    flex-direction: column;
 }
 /* react-dropdown-select undefined css-wmw4vi-ReactDropdownSelect e1gzf2xs0 */
 /* MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button */

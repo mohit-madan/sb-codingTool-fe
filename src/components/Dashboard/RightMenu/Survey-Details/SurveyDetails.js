@@ -713,6 +713,10 @@ useEffect(async () => {
                         placeholder="Tag People"
                         searchFn={e=>setSearchValue(e.state.search)}
                         onChange={(values) => handleChangeTags(values)}
+                        clearable
+                        direction='rtl'
+                        dropdownPosition='auto'
+                        backspaceDelete
                       />
                 </div>
             </div>

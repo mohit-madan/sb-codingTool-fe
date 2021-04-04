@@ -335,16 +335,41 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     })
 
     let data=null
-    // const [pageCount,setPageCount]=useState(2)
-    // const [filteredPageCount,setFilteredPageCount]=useState(2)
-    const [ascending,setAscending]=useState(true)
-    // const rows = filteredData;
 
     let mapper={}
     let i=0
     for ( i=0 ; i<Object.keys(filteredData)?.length;i++){mapper[i]=[]}
 
     const [keywords,setkeywords]=useState(mapper)
+
+
+    socket.on('toggle-codeword-to-list', (value)=>{
+
+      console.log('toggle-codeword-to-list',value)
+      const id=value.codewordId
+      const responses=value.response
+      let codewordName=''
+      let temp=keywords
+
+      leftMenuCodes.map(task => {
+          console.log("task====>",task,id === task.id)
+
+          if (id === task.id) {
+            codewordName=task.name
+            console.log("codewordName",codewordName)
+            return
+          }
+          return ;
+        });
+      
+        responses.map((num=>{
+          if(temp[num].includes(codewordName)){
+            temp[num].splice(codewordName)
+          }
+        }))
+        setkeywords(temp)
+
+    });
 
     useEffect(() => {
 

@@ -16,6 +16,7 @@ import {initialState} from '../Reducers/authentication.reducer'
 import ProjectsDashboard from '../pages/ProjectsDashboard/ProjectsDashboard';
 import UserProjectsDashboard from '../pages/UserProjectsDashboard/UserProjectsDashboard';
 import Profile from '../pages/Profile/Profile';
+import { socket } from '../config';
 
 function App() {
     
@@ -33,6 +34,12 @@ function App() {
             }
           }, 1000*60)
           return () => clearInterval(intervalId);
+          
+    })
+    useEffect(() => {
+        socket.on("connection_status",op=>{
+            console.log("connection_status",op)
+        })
     })
 
     function hasQuiet() {

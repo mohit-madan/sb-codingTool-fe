@@ -17,7 +17,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
 import { makeStyles } from '@material-ui/core/styles';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
-import { map } from "jquery";
 const useStyles = makeStyles({
   root: {
     height: 240,
@@ -75,7 +74,6 @@ function Coding(props) {
   }, [props.questionNumber])
   
   // const [leftMenuCodes, setLeftMenuCodes] = useState(_tasks);
-  const [filter, setFilter] = useState('All');
 
   useEffect(()=>{
     socket.once('edit-codeword-to-list', editCodeword=>{
@@ -121,20 +119,15 @@ function Coding(props) {
       console.log('toggle-codeword-to-list',value)
       const id=value.codewordId
       const status=value.status
-      
       const updatedTasks = props.leftMenuCodes.map(task => {
-          // if this task has the same ID as the edited task
           console.log(id === task.id)
           if (id === task.id) {
-            // use object spread to make a new obkect
-            // whose `active` prop has been inverted
             return {...task, active: !status}
           }
           return task;
         });
-        
         props.setLeftMenuCodes(updatedTasks)
-
+      
 
     });
 
@@ -306,9 +299,6 @@ function Coding(props) {
     }
   }, [props.leftMenuCodes.length, prevTaskLength]);
 
-  // useEffect(() => {
-  //   console.log(`nodes changed`,nodes)
-  // }, [nodes])
 
   function clickHandler(event, id){
 
@@ -346,12 +336,6 @@ function Coding(props) {
 
   const classes = useStyles();
   
-  // const handleEmit=()=>{
-  //   const body={
-  //     "category":"Category-name-2",
-  //   }
-  //   socket.emit("createCategory",body)
-  // }
   
   return (
     <div className="coding">
