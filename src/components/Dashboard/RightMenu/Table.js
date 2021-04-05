@@ -28,26 +28,13 @@ const Tab =({excelData,setRow,setExcelDataColumns})=>{
         //     for(i in k){ col= [...col,{title:k[i],field:k[i]}]}
         //     console.log(col)
         // }, [])
-        const columns=[
-            {
-                Header:"User ID",
-                accessor:"ID",
-            },{
-              Header:"User",
-              accessor:"USER",
-          },{
-              Header:"Number",
-              accessor:"Number",
-          },{
-              Header:"Qwa",
-              accessor:"Qwa",
-          }
-        ]
-
          return(
             <MaterialTable
                 icons={tableIcons}
-                data={(Array.prototype.slice.call(tempData,tempData.length-30))}
+                // data={(Array.prototype.slice.call(tempData,tempData.length-30))}
+                // data={tempData}
+                data={Object.entries(tempData).slice(0,30).map(entry => entry[1])}
+
                 columns={col}
                 title="Demo"
                 // actions = {[
