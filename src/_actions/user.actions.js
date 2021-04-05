@@ -98,7 +98,7 @@ async function filteredPagination({pageNumber,limit,filters,questionId}) {
     await axios.post(`${config.apiUrl}/operator`,(details), requestOptions)
     .then(data=>{
         if(data?.data?.length!==0){
-            localStorage.setItem('filterdExcelData',JSON.stringify(data?.data))
+            // localStorage.setItem('filterdExcelData',JSON.stringify(data?.data))
             console.log(`Filtered Pagination DAta from user actions`,data?.data)
             temp3=data?.data?.result
         }

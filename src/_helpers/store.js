@@ -6,13 +6,13 @@ import { persistStore } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import { handler } from '../Redux/ApiCalls/ApiCalls.sagas';
 const sagaMiddleware = createSagaMiddleware();
-const loggerMiddleware = createLogger();
+// const loggerMiddleware = createLogger();
 
 export const store = createStore(
     rootReducer,
     applyMiddleware(
         thunk,
-        loggerMiddleware,
+        // loggerMiddleware,
         sagaMiddleware
     )
 );
