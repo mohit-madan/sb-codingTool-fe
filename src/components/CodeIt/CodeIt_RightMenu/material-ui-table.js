@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
-import { setFilteredData, setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
+import { setFilteredData, setKeywords, setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -348,26 +348,41 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       console.log('toggle-codeword-to-list',value)
       const id=value.codewordId
       const responses=value.response
-      let codewordName=''
+      const {active,codewordName}=value
+      let codeword_name=''
       let temp=keywords
+      console.log("active===>",active,codewordName)
 
-      leftMenuCodes.map(task => {
+      if(!active){
+        leftMenuCodes.map(task => {
           console.log("task====>",task,id === task.id)
 
           if (id === task.id) {
-            codewordName=task.name
-            console.log("codewordName",codewordName)
+            codeword_name=task.name
+            console.log("codeword_name",codeword_name)
             return
           }
           return ;
         });
       
         responses.map((num=>{
-          if(temp[num].includes(codewordName)){
-            temp[num].splice(codewordName)
+          if(temp[num].includes(codeword_name)){
+            temp[num].splice(codeword_name)
           }
         }))
-        setkeywords(temp)
+
+      }else{
+        console.log("else condition ==>",responses)
+        responses.map((num=>{
+          console.log("temp[num]==>",temp[num])
+          if(!temp[num].includes(codewordName)){
+            temp[num].push(codewordName)
+          }
+        }))
+
+      }
+      console.log("final setkeywords(temp)",temp)
+      setkeywords(temp)
 
     });
 
@@ -390,11 +405,35 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     useEffect(() => {
       if(initialKeywords!==null && initialKeywords !=={} && Object.keys(initialKeywords)?.length >0){
         setkeywords(initialKeywords)
+        console.log("initialKeywords==>",initialKeywords)
       }
     },[initialKeywords])
 
     
     useEffect(() => {
+
+    socket.once('edit-codeword-to-list', editCodeword=>{
+      const {codeword,codewordId,oldName}=editCodeword
+      var tempKeywords=keywords
+      Object.keys(tempKeywords).map((_key)=>{
+        if(tempKeywords[_key]?.length ==0){
+          return
+        }else if(typeof(tempKeywords[_key])!=="undefined"){
+          console.log("arr==>",tempKeywords[_key])
+          tempKeywords[_key]?.map(keywordName=>{
+              if(keywordName==oldName){
+
+                tempKeywords[_key] = tempKeywords[_key].filter(item => item !== oldName)
+
+                tempKeywords[_key].push(codeword)
+              }
+          })
+        }
+      })
+      console.log("tempKeywords==>",tempKeywords)
+      setKeywords(tempKeywords)
+
+    })
 
       socket.once('single-operation', operation=> {
         // set
@@ -414,9 +453,6 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
 
 
       socket.once('multiple-operation', operation=> {
-
-        //  {responses:selected, codewordId:code};
-
           console.log('multiple-operation',operation)
           let codeword=operation.codewordIds
           let resNumArray=operation.responses
@@ -442,7 +478,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       let value =event.target.value;
       let num=rowData?.rowData?.resNum
 
-console.log(value?.length < keywords[num]?.length)
+      console.log(value?.length < keywords[num]?.length)
 
       if(value?.length < keywords[num]?.length){
         let codewordIdsArray=[]
@@ -777,12 +813,16 @@ console.log(value?.length < keywords[num]?.length)
                           renderValue={(selected) => selected.join(', ')}
                           MenuProps={MultipleSelectMenuProps}
                         >
-                          {typeof(keywords)!=="undefined" && leftMenuCodes.map((item) => (
-                            <MenuItem key={item?.id} value={item?.name}>
-                              <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
-                              <ListItemText primary={item?.name} />
-                            </MenuItem>
-                          ))}
+                          {typeof(keywords)!=="undefined" && leftMenuCodes.map((item) => {
+                            if(item.active){
+                              return (
+                                <MenuItem key={item?.id} value={item?.name}>
+                                  <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
+                                  <ListItemText primary={item?.name} />
+                                </MenuItem>
+                              )
+                            }}
+                          )}
                         </Select>
                         {/* {console.log(leftMenuCodes)} */}
                       </FormControl>

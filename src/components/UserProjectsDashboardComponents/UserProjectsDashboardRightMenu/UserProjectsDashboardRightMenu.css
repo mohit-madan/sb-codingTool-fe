@@ -31,14 +31,20 @@ font-weight:400;
 
 }
 .UserProjectsDashboardRightMenu .body .MuiPaper-root{
-    overflow-y: hidden !important;
+    overflow-y: scroll !important;
     width: 89vw;
 }
 .UserProjectsDashboardRightMenu .body {
-    overflow-y: hidden !important;
+    overflow-y: scroll !important;
     width: auto;
     height: -webkit-fill-available;
 }
-
+.UserProjectsDashboardRightMenu .members_template{
+    display: flex;
+    flex-direction: column;   
+}
+.UserProjectsDashboardRightMenu .members_template p{
+    margin: 2px;
+}
 /* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */
 /* MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded */

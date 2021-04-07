@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import AddCategoryDialog from "./AddCategoryDialog";
 import ChooseCategory from "./ChooseCategory";
+import "./styles.css"
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 const useStyles = makeStyles({
@@ -134,7 +135,9 @@ export default function CodeRow(props) {
       return;
     }
     let id =props.id
-    socket.emit('left-menu-submit-edited-code',{id, newName})
+    let oldName=props.name
+    socket.emit('editCodeword',{codewordId:id, codeword:newName,oldName:oldName})
+    setEditing(false)
   }
   
   const [open, setOpen] = React.useState(false);
@@ -212,7 +215,7 @@ export default function CodeRow(props) {
             {props.index +1}.
             {/* str.split(" ")[str.split(" ").length -1] */}
           </label>
-          <label className="todo-label" htmlFor={props.id}>
+          <label  className={"todo-label " +  (props.completed ? `` : `disabledCodeStyle`)} htmlFor={props.id}>
             {props.name}
           </label>
         </div>
@@ -242,7 +245,7 @@ export default function CodeRow(props) {
     </ContextMenuTrigger>
     <ContextMenu id={props.id}>
       {/* props.completed */}
-        <MenuItem data={{category: props.category}} onClick={() => props.deleteTask(props.id)}>
+        <MenuItem data={{category: props.category}} onClick={() => setEditing(true)}>
           <p ref={editButtonRef} onClick={() => setEditing(true)}>Edit</p>
         </MenuItem>
 

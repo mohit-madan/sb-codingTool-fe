@@ -323,12 +323,17 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                           MenuProps={MenuProps}
                           name={`keywords`}
                         >
-                          {codes.map((item) => (
-                            <MenuItem key={item?.id} value={item?.name}>
-                              <Checkbox checked={filterDetails?.keywords.indexOf(item?.name) > -1} />
-                              <ListItemText primary={item?.name} />
-                            </MenuItem>
-                          ))}
+                          {codes.map((item) => {
+                            console.log("codes===>",codes)
+                            if(item?.active){
+                              return (
+                                <MenuItem key={item?.id} value={item?.name}>
+                                  <Checkbox checked={filterDetails?.keywords.indexOf(item?.name) > -1} />
+                                  <ListItemText primary={item?.name} />
+                                </MenuItem>
+                              )
+                            }
+                          })}
                         </Select>
                       </FormControl>
                      

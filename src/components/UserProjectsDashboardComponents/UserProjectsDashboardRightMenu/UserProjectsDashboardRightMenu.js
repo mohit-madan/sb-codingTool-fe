@@ -45,10 +45,10 @@ const UserProjectsDashboardRightMenu=()=> {
 
     const MembersTemplate=({tags})=>{
         return(
-            <div className="flex">
+            <div className="flex members_template">
                 {
                     tags?.map((item,index)=>{
-                        return(<span >{item}</span>)
+                        return(<p >{item?.email}</p>)
                     })
                 }
             </div>
@@ -78,7 +78,7 @@ const UserProjectsDashboardRightMenu=()=> {
                 textAlign: "-webkit-center",
             },
             render:rowData=>{
-                return (<MembersTemplate tags={rowData?.tags}/>)
+                return (<MembersTemplate tags={rowData?.assignedTo}/>)
             }
         },{
             title:"Due",

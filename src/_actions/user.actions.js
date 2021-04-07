@@ -83,7 +83,7 @@ function jwtTokenCheck(){
             console.log(data)
 
             history.push('/login')
-            return dispatch => dispatch(failure("Session Timed Out"))
+            return dispatch => dispatch(alertActions.error('Session Timed out'));
          }
     })
 

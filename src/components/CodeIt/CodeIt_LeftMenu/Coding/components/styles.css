@@ -95,6 +95,11 @@
 .ctrlClickSelected:hover{
     background-color: #9fd1ff;
 }
+.disabledCodeStyle{
+    text-decoration: line-through !important;
+    color: grey !important;
+}
+/* className={"todo " +  (props.ctrlClickActive ? `ctrlClickSelected` : ``)} */
 /* MuiDialogTitle-root */
 /* MuiTypography-root MuiTypography-h6 */
 /* MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary */

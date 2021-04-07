@@ -1,5 +1,8 @@
 import React, { useState,useEffect } from "react";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import { socket } from "../../../../../config"
+import { selectCodes } from "../../../../../Redux/CodeitData/codeit-data.selectors";
 
 function Form(props) {
 
@@ -21,6 +24,19 @@ function Form(props) {
     e.preventDefault();
     if (!name.trim()) {
       return;
+    }
+    let temp=false
+    console.log(props.codes)
+    props.codes?.map((item)=>{
+      console.log("comparision",item?.name==name,name,item?.name)
+      if(item?.name==name){
+        alert("Codeword with the same name exists")
+        temp=true
+        return
+      }
+    })
+    if(temp){
+      return
     }
     console.log(name)
       props.addTask(name);
@@ -60,4 +76,8 @@ function Form(props) {
   );
 }
 
-export default Form;
+const mapStateToProps=createStructuredSelector({
+  codes:selectCodes,
+})
+
+export default connect(mapStateToProps)(Form);

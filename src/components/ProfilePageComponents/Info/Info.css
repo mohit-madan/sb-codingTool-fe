@@ -29,9 +29,9 @@
   width: 120px!important;
   height: 120px!important;
 }
-  ::-webkit-scrollbar {
+::-webkit-scrollbar {
     display: none;
-  }
+}
 .info .MuiTextField-root,.info .MuiFormControl-root{
   width: 40rem!important;
 }

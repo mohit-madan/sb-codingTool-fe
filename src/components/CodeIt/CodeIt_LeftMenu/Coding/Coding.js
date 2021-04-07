@@ -79,23 +79,20 @@ function Coding(props) {
 
   useEffect(()=>{
     socket.once('edit-codeword-to-list', editCodeword=>{
-      console.log(`editCodeword --->`,editCodeword)
-      // if(next<prev){
+        console.log(`editCodeword --->`,editCodeword)
         const {codeword,codewordId}=editCodeword
         console.log(`editCodeword --->`,editCodeword)
         console.log(`editCodeword --->`)
         const editedTaskList = props.leftMenuCodes.map(task => {
-          // if this task has the same ID as the edited task
             if (codewordId === task.id) {
-              //
               return {...task, name: codeword}
             }
             return task;
           });
           props.setLeftMenuCodes(editedTaskList);
           next=next+0.5
-      // }
     });
+
     socket.once('delete-codeword-to-list', deleteCodeword=>{
       // if(next<prev){
         const {codewordId} = deleteCodeword
@@ -105,6 +102,7 @@ function Coding(props) {
         next=next+1
       // }
     });
+
     socket.once('add-new-codeword-to-list', (value)=>{
       
       // if(next<prev){
