@@ -50,6 +50,8 @@ function Coding(props) {
 
   useEffect(async () => {
 
+    socket.connect()
+
     let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
     console.log("room---->",room)
 

@@ -393,6 +393,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       }
     },[initialKeywords])
 
+    
     useEffect(() => {
 
       socket.once('single-operation', operation=> {
@@ -776,7 +777,7 @@ console.log(value?.length < keywords[num]?.length)
                           renderValue={(selected) => selected.join(', ')}
                           MenuProps={MultipleSelectMenuProps}
                         >
-                          {leftMenuCodes.map((item) => (
+                          {typeof(keywords)!=="undefined" && leftMenuCodes.map((item) => (
                             <MenuItem key={item?.id} value={item?.name}>
                               <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
                               <ListItemText primary={item?.name} />

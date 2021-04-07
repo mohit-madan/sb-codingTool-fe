@@ -68,6 +68,8 @@ async function projectList(){
 }
 
 function jwtTokenCheck(){
+    function failure(error) { return { type: userConstants.LOGIN_FAILURE, error } }
+    
     const _token=JSON.parse(localStorage.token).accessToken
     // const _token= `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5heW92ODgyMTlAYm90ZmVkLmNvbSIsImlhdCI6MTYxMjc4MjMwMCwiZXhwIjoxNjEyNzg0MTAwfQ.60498Yy5azPqcnfiuOUTYaIxdvNMW44R14F3MnISjq4`
     
@@ -79,9 +81,12 @@ function jwtTokenCheck(){
     .then(data =>{
          if(data?.ok == false){
             console.log(data)
+
             history.push('/login')
+            return dispatch => dispatch(failure("Session Timed Out"))
          }
     })
+
 }
 
 async function filteredPagination({pageNumber,limit,filters,questionId}) {

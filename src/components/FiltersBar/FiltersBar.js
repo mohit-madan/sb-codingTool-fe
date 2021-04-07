@@ -247,6 +247,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
       setFilterDetails({...filterDetails,searchValue:""})
     }
     const handleQuestionNumber =(e)=>{
+      socket.disconnect()
       console.log(e.target.value)
       setQuestionNumber(e.target.value)
       setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
