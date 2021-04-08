@@ -78,7 +78,9 @@ function Coding(props) {
   // const [leftMenuCodes, setLeftMenuCodes] = useState(_tasks);
 
   useEffect(()=>{
-    socket.on('edit-codeword-to-list', editCodeword=>{
+    socket.on()
+
+    socket.once('edit-codeword-to-list', editCodeword=>{
         console.log(`editCodeword --->`,editCodeword)
         const {codeword,codewordId}=editCodeword
         console.log(`editCodeword --->`,editCodeword)
@@ -93,7 +95,7 @@ function Coding(props) {
           next=next+0.5
     });
 
-    socket.on('delete-codeword-to-list', deleteCodeword=>{
+    socket.once('delete-codeword-to-list', deleteCodeword=>{
       // if(next<prev){
         const {codewordId} = deleteCodeword
         console.log(deleteCodeword)
@@ -103,7 +105,7 @@ function Coding(props) {
       // }
     });
 
-    socket.on('add-new-codeword-to-list', (value)=>{
+    socket.once('add-new-codeword-to-list', (value)=>{
       
       // if(next<prev){
         console.log(value)
@@ -114,7 +116,7 @@ function Coding(props) {
       // }
     });
 
-    socket.on('toggle-codeword-to-list', (value)=>{
+    socket.once('toggle-codeword-to-list', (value)=>{
 
       console.log('toggle-codeword-to-list',value)
       const id=value.codewordId
@@ -131,7 +133,7 @@ function Coding(props) {
 
     });
 
-    socket.on('codeword-assigned-to-response', operation=> {
+    socket.once('codeword-assigned-to-response', operation=> {
       const codewordId=operation?.codewordId
       const percentage=operation?.resToAssigned
 
@@ -148,19 +150,19 @@ function Coding(props) {
       // props.setLeftMenuCodes(temp)
 
     });
-    socket.on("node-structure-to-list",operation=>{
+    socket.once("node-structure-to-list",operation=>{
       console.log("node-structure-to-list",operation)
     })
-    socket.on("create-category-to-list",operation=>{
+    socket.once("create-category-to-list",operation=>{
       console.log("create-category-to-list",operation)
     })
-    socket.on("root",operation=>{
+    socket.once("root",operation=>{
       if(typeof(operation)!="undefined" && operation!==nodes){
         setNodes(operation)
       }
     })
-
-  },[])
+    return ()=> socket.off()
+  })
 
   useEffect(() => {
     console.log(props.leftMenuCodes)

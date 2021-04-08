@@ -343,48 +343,6 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     const [keywords,setkeywords]=useState(mapper)
 
 
-    socket.on('toggle-codeword-to-list', (value)=>{
-
-      console.log('toggle-codeword-to-list',value)
-      const id=value.codewordId
-      const responses=value.response
-      const {active,codewordName}=value
-      let codeword_name=''
-      let temp=keywords
-      console.log("active===>",active,codewordName)
-
-      if(!active){
-        leftMenuCodes.map(task => {
-          console.log("task====>",task,id === task.id)
-
-          if (id === task.id) {
-            codeword_name=task.name
-            console.log("codeword_name",codeword_name)
-            return
-          }
-          return ;
-        });
-      
-        responses.map((num=>{
-          if(temp[num].includes(codeword_name)){
-            temp[num].splice(codeword_name)
-          }
-        }))
-
-      }else{
-        console.log("else condition ==>",responses)
-        responses.map((num=>{
-          console.log("temp[num]==>",temp[num])
-          if(!temp[num].includes(codewordName)){
-            temp[num].push(codewordName)
-          }
-        }))
-
-      }
-      console.log("final setkeywords(temp)",temp)
-      setkeywords(temp)
-
-    });
 
     useEffect(() => {
 
@@ -411,8 +369,8 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
 
     
     useEffect(() => {
-
-    socket.once('edit-codeword-to-list', editCodeword=>{
+      socket.on()
+      socket.on('edit-codeword-to-list', editCodeword=>{
       const {codeword,codewordId,oldName}=editCodeword
       var tempKeywords=keywords
       Object.keys(tempKeywords).map((_key)=>{
@@ -433,14 +391,16 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       console.log("tempKeywords==>",tempKeywords)
       setKeywords(tempKeywords)
 
-    })
+      })
 
-      socket.once('single-operation', operation=> {
-        // set
+      socket.on('single-operation', operation=> {
+        socket.on()
         console.log('single-operation',operation)
+        let tempKeywords=keywords
         let codewordIds=operation.codewordIds
         let resNum=operation.resNum
         let codewordsArray=[]
+        
         leftMenuCodes?.map((item,index)=>{
           codewordIds?.map((_item,_index)=>{
             if(item?.id == _item){
@@ -448,11 +408,13 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
             }
           })
         })
-        setkeywords({...keywords,[resNum] : codewordsArray})
+        console.log({...tempKeywords,[resNum] : codewordsArray})
+        setkeywords({...tempKeywords,[resNum] : codewordsArray})
+
       });
 
 
-      socket.once('multiple-operation', operation=> {
+      socket.on('multiple-operation', operation=> {
           console.log('multiple-operation',operation)
           let codeword=operation.codewordIds
           let resNumArray=operation.responses
@@ -472,7 +434,52 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           setkeywords({...tempkeywords})
       });
 
-    },[])
+      socket.on('toggle-codeword-to-list', (value)=>{
+
+        console.log('toggle-codeword-to-list',value)
+        const id=value.codewordId
+        const responses=value.response
+        const {active,codewordName}=value
+        let codeword_name=''
+        let temp=keywords
+        console.log("active===>",active,codewordName)
+  
+        if(active){
+          leftMenuCodes.map(task => {
+            console.log("task====>",task,id === task.id)
+  
+            if (id === task.id) {
+              codeword_name=task.name
+              console.log("codeword_name",codeword_name)
+              return
+            }
+            return ;
+          });
+        
+          responses.map((num=>{
+            if(temp[num].includes(codeword_name)){
+              temp[num].splice(codeword_name)
+            }
+          }))
+  
+        }else{
+          console.log("else condition ==>",responses)
+          responses.map((num=>{
+            console.log("temp[num]==>",temp[num])
+            if(!temp[num].includes(codewordName)){
+              temp[num].push(codewordName)
+            }
+          }))
+  
+        }
+        console.log("final setkeywords(temp)",temp)
+        setkeywords(temp)
+  
+      })
+
+      return ()=> socket.off()
+
+    })
 
     const handleChange= rowData => (event) => {
       let value =event.target.value;
