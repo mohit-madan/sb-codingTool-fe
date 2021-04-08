@@ -350,9 +350,13 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     },[initialKeywords])
 
     
+  useEffect(()=>{
+    // socket.on()
+    // return ()=> socket.off()
+  })
     useEffect(() => {
       // socket.on()
-      socket.once('edit-codeword-to-list', editCodeword=>{
+      socket.on('edit-codeword-to-list', editCodeword=>{
 
       const {codeword,codewordId,oldName}=editCodeword
       var tempKeywords=keywords
@@ -376,7 +380,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
 
       })
 
-      socket.once('single-operation', operation=> {
+      socket.on('single-operation', operation=> {
         let tempKeywords=keywords
         console.log('single-operation',operation,tempKeywords)
         let codewordIds=operation.codewordIds
@@ -396,7 +400,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       });
 
 
-      socket.once('multiple-operation', operation=> {
+      socket.on('multiple-operation', operation=> {
 
           console.log('multiple-operation',operation)
           let codeword=operation.codewordIds
@@ -417,7 +421,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           setKeywords({...tempkeywords})
       });
 
-      socket.once('toggle-codeword-to-list', (value)=>{
+      socket.on('toggle-codeword-to-list', (value)=>{
 
         console.log('toggle-codeword-to-list',value)
         const id=value.codewordId
@@ -459,6 +463,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
         setKeywords(temp)
   
       })
+      // return ()=> socket.off()
 
     })
 

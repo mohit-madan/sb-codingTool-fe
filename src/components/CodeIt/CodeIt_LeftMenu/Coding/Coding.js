@@ -77,8 +77,13 @@ function Coding(props) {
   
   // const [leftMenuCodes, setLeftMenuCodes] = useState(_tasks);
 
+  // useEffect(()=>{
+  //   socket.on()
+  //   return ()=> socket.off()
+  // })
+
   useEffect(()=>{
-    socket.on()
+    // socket.on()
 
     socket.on('edit-codeword-to-list', editCodeword=>{
          
@@ -167,7 +172,7 @@ function Coding(props) {
         setNodes(operation)
       }
     })
-    return ()=> socket.off()
+    // return ()=> socket.off()
   })
 
 
