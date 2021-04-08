@@ -253,6 +253,26 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
       setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
       setFiltersInRedux({...filterDetails,[e.target.name]:e.target.value})
     }
+    useEffect(()=>{
+      setFilterDetails({
+        match:`Contains In`,
+        keywords:[],
+        searchValue:"",
+        sort:`Sort by length Ascending`,
+        question:0,
+        searchArray:[],
+        filtersArray:[]
+      })
+      setFiltersInRedux({
+        match:`Contains In`,
+        keywords:[],
+        searchValue:"",
+        sort:`Sort by length Ascending`,
+        question:0,
+        searchArray:[],
+        filtersArray:[]
+      })
+    },[questionNumber])
     return (
         <div className="FiltersBar">
             <div className="question_dropdown">
@@ -261,13 +281,13 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                    <Select
                       labelId="demo-simple-select-placeholder-label-label"
                       id="demo-simple-select-placeholder-label"
-                     value={filterDetails?.question}
+                     value={questionNumber}
                      displayEmpty
                      name={`question`}
                      onChange={handleQuestionNumber}
                      className={classes.selectEmpty}
                      inputProps={{ 'aria-label': 'Without label' }}
-                     defaultValue={0}
+                     defaultValue={questionNumber}
                    >
                     <MenuItem value="" disabled>
                         Select Question
@@ -275,7 +295,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                     {
                       JSON.parse(localStorage.listOfQuestion)?.map((item,index)=>{
                         return(
-                          item?.desc?.length >10 ?
+                          item?.desc?.length >50 ?
                             <MenuItem value={index}>{item?.desc?.slice(0,50)}...</MenuItem>
                             : <MenuItem value={index}>{item?.desc}</MenuItem>
                         )
@@ -324,7 +344,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                           name={`keywords`}
                         >
                           {codes.map((item) => {
-                            console.log("codes===>",codes)
                             if(item?.active){
                               return (
                                 <MenuItem key={item?.id} value={item?.name}>

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
-import { setFilteredData, setKeywords, setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
+import { setFilteredData, setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -340,37 +340,20 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     let i=0
     for ( i=0 ; i<Object.keys(filteredData)?.length;i++){mapper[i]=[]}
 
-    const [keywords,setkeywords]=useState(mapper)
-
-
-
-    useEffect(() => {
-
-        // let room =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
-        
-        // socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId  }); //here {room: questionId, username: loginUser }
-
-          // const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
-          //   setSorting({
-          //     desc:{label:"desc",sort:true,active:false},
-          //     length:{label:"length",sort:true,active:false}
-          //   })
-          // }, 2000)
-          // return () => clearInterval(intervalId); //This is important
-
-    }, [questionNumber])
+    const [keywords,setKeywords]=useState({})
 
     useEffect(() => {
       if(initialKeywords!==null && initialKeywords !=={} && Object.keys(initialKeywords)?.length >0){
-        setkeywords(initialKeywords)
+        setKeywords(initialKeywords)
         console.log("initialKeywords==>",initialKeywords)
       }
     },[initialKeywords])
 
     
     useEffect(() => {
-      socket.on()
-      socket.on('edit-codeword-to-list', editCodeword=>{
+      // socket.on()
+      socket.once('edit-codeword-to-list', editCodeword=>{
+
       const {codeword,codewordId,oldName}=editCodeword
       var tempKeywords=keywords
       Object.keys(tempKeywords).map((_key)=>{
@@ -393,10 +376,9 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
 
       })
 
-      socket.on('single-operation', operation=> {
-        socket.on()
-        console.log('single-operation',operation)
+      socket.once('single-operation', operation=> {
         let tempKeywords=keywords
+        console.log('single-operation',operation,tempKeywords)
         let codewordIds=operation.codewordIds
         let resNum=operation.resNum
         let codewordsArray=[]
@@ -409,12 +391,13 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           })
         })
         console.log({...tempKeywords,[resNum] : codewordsArray})
-        setkeywords({...tempKeywords,[resNum] : codewordsArray})
+        setKeywords({...tempKeywords,[resNum] : codewordsArray})
 
       });
 
 
-      socket.on('multiple-operation', operation=> {
+      socket.once('multiple-operation', operation=> {
+
           console.log('multiple-operation',operation)
           let codeword=operation.codewordIds
           let resNumArray=operation.responses
@@ -431,10 +414,10 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
               tempkeywords={...tempkeywords,[item]:temp}
             }
           })
-          setkeywords({...tempkeywords})
+          setKeywords({...tempkeywords})
       });
 
-      socket.on('toggle-codeword-to-list', (value)=>{
+      socket.once('toggle-codeword-to-list', (value)=>{
 
         console.log('toggle-codeword-to-list',value)
         const id=value.codewordId
@@ -472,12 +455,10 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           }))
   
         }
-        console.log("final setkeywords(temp)",temp)
-        setkeywords(temp)
+        console.log("final setKeywords(temp)",temp)
+        setKeywords(temp)
   
       })
-
-      return ()=> socket.off()
 
     })
 
@@ -485,7 +466,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       let value =event.target.value;
       let num=rowData?.rowData?.resNum
 
-      console.log(value?.length < keywords[num]?.length)
+      console.log(value?.length < keywords[num]?.length,"handlchange==>",keywords)
 
       if(value?.length < keywords[num]?.length){
         let codewordIdsArray=[]
@@ -535,8 +516,6 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
         socket.emit('multiple-response-operation', operation);
       
       }
-        
-      // setkeywords({...keywords,[num] : value})
 
     };
   
@@ -617,6 +596,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       useEffect(() => {
         console.log(sorting)
       }, [sorting])
+      
       const handleSorting=value=>{
         console.log(value)
         if(value?.label=="desc"){
@@ -702,6 +682,12 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
     const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
     }
+
+    const [codesCopy,setCodesCopy]=useState([])
+    useEffect(()=>{
+      setCodesCopy(leftMenuCodes)
+      console.log("leftMenuCodes==><==",leftMenuCodes)
+    },[leftMenuCodes])
 
   return (
     <Paper style={{ height: 400, width: '100%' }}>
@@ -798,7 +784,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
                       label= 'length'
                     />
                     <Column
-                      key={"Codes"}
+                      key={JSON.stringify(leftMenuCodes)}
                       headerRenderer={(headerProps) =>
                         headerRenderer({
                           ...headerProps,
@@ -814,28 +800,33 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
                           labelId="demo-mutiple-checkbox-label"
                           id="demo-mutiple-checkbox"
                           multiple
-                          value={keywords[rowData?.rowData?.resNum]}
+                          value={keywords[rowData?.rowData?.resNum] ? keywords[rowData?.rowData?.resNum] : []}
                           onChange={handleChange(rowData)}
                           input={<Input />}
                           renderValue={(selected) => selected.join(', ')}
                           MenuProps={MultipleSelectMenuProps}
+                          key={JSON.stringify(leftMenuCodes)}
                         >
-                          {typeof(keywords)!=="undefined" && leftMenuCodes.map((item) => {
-                            if(item.active){
+                          {leftMenuCodes?.map((item) => {
                               return (
-                                <MenuItem key={item?.id} value={item?.name}>
-                                  <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
+                                item?.active==true ?
+                                <MenuItem key={`${item?.id}${item?.active}`} value={item?.name}>
+                                  {
+                                    (keywords[rowData?.rowData?.resNum]?.indexOf(item?.name))!==undefined && 
+                                      <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
+
+                                  }
                                   <ListItemText primary={item?.name} />
                                 </MenuItem>
+                                :
+                                <div key={`${item?.id}${item?.active}`} style={{display:"none"}}>{item?.name}</div>
                               )
-                            }}
+                            }
                           )}
                         </Select>
                         {/* {console.log(leftMenuCodes)} */}
                       </FormControl>
                       }
-                      // rowData?.rowData?.resNum
-                      //  <input onChange={handleCodes(rowData)} value={codes[rowData?.resNum]} type="text"/>
                       dataKey={"resNum"}
                       width = "500"
                       label= 'Codes'

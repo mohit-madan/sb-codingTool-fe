@@ -22,6 +22,7 @@ const Navigation=()=>{
         localStorage.removeItem("questionCodebookId")
         localStorage.removeItem("listOfQuestion")
         localStorage.removeItem("codebook")
+        localStorage.removeItem("projectId")
         history.push("/userProjectsDashboard")
         socket.emit("_disconnect")
         socket.disconnect()

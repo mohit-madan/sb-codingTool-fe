@@ -53,7 +53,7 @@ function Coding(props) {
     socket.connect()
 
     let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
-    console.log("room---->",room)
+    console.log("room---->",room,props.questionNumber)
 
     let {tree,codewords} = await userActions.questionCodebookId(room)
     socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
@@ -80,7 +80,9 @@ function Coding(props) {
   useEffect(()=>{
     socket.on()
 
-    socket.once('edit-codeword-to-list', editCodeword=>{
+    socket.on('edit-codeword-to-list', editCodeword=>{
+         
+
         console.log(`editCodeword --->`,editCodeword)
         const {codeword,codewordId}=editCodeword
         console.log(`editCodeword --->`,editCodeword)
@@ -95,7 +97,9 @@ function Coding(props) {
           next=next+0.5
     });
 
-    socket.once('delete-codeword-to-list', deleteCodeword=>{
+    socket.on('delete-codeword-to-list', deleteCodeword=>{
+      
+
       // if(next<prev){
         const {codewordId} = deleteCodeword
         console.log(deleteCodeword)
@@ -105,19 +109,18 @@ function Coding(props) {
       // }
     });
 
-    socket.once('add-new-codeword-to-list', (value)=>{
-      
-      // if(next<prev){
-        console.log(value)
+    socket.on('add-new-codeword-to-list', (value)=>{
+
+       let temp=props.leftMenuCodes
+        console.log('add-new-codeword-to-list', value,temp)
         const {codeword,codewordId} = value
         // const newTask = { id: "todo-" + nanoid()+` ${count-1}`, name: codeword, completed: true };
         const newTask = { id: `${codewordId}`, name: codeword, active: true ,percentage: 0};
-        props.setLeftMenuCodes([...props.leftMenuCodes, newTask]);
-      // }
+        props.setLeftMenuCodes([...temp, newTask]);
     });
 
-    socket.once('toggle-codeword-to-list', (value)=>{
-
+    socket.on('toggle-codeword-to-list', (value)=>{
+      
       console.log('toggle-codeword-to-list',value)
       const id=value.codewordId
       const status=value.status
@@ -129,11 +132,11 @@ function Coding(props) {
           return task;
         });
         props.setLeftMenuCodes(updatedTasks)
-      
-
     });
 
-    socket.once('codeword-assigned-to-response', operation=> {
+    socket.on('codeword-assigned-to-response', operation=> {
+      
+
       const codewordId=operation?.codewordId
       const percentage=operation?.resToAssigned
 
@@ -150,13 +153,16 @@ function Coding(props) {
       // props.setLeftMenuCodes(temp)
 
     });
-    socket.once("node-structure-to-list",operation=>{
+    socket.on("node-structure-to-list",operation=>{
       console.log("node-structure-to-list",operation)
     })
-    socket.once("create-category-to-list",operation=>{
+    socket.on("create-category-to-list",operation=>{
+      
+
       console.log("create-category-to-list",operation)
     })
-    socket.once("root",operation=>{
+    socket.on("root",operation=>{
+      console.log("root",operation)
       if(typeof(operation)!="undefined" && operation!==nodes){
         setNodes(operation)
       }
@@ -164,9 +170,6 @@ function Coding(props) {
     return ()=> socket.off()
   })
 
-  useEffect(() => {
-    console.log(props.leftMenuCodes)
-  }, [props.leftMenuCodes])
 
   function toggleTaskCompleted(id,status) {
     let toggleCodeword={codewordId:id,status:status}

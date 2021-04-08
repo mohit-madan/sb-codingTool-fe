@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React,{useEffect,useState} from 'react'
-import { useSelector } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import config from '../../../config'
 import { userActions } from '../../../_actions'
 import UserProjectsDashboardHeader from '../UserProjectsDashboardHeader/UserProjectsDashboardHeader'
@@ -14,8 +14,9 @@ import AvTimerOutlinedIcon from '@material-ui/icons/AvTimerOutlined';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import ErrorIcon from '@material-ui/icons/Error';
 import { history } from '../../../_helpers'
+import { setQuestionNumber } from '../../../Redux/CodeitData/codeit-data.actions'
 
-const UserProjectsDashboardRightMenu=()=> {
+const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
 
     const user = useSelector(state=>state.authentication)
     const projects=user?.user?.user?.projects
@@ -94,6 +95,8 @@ const UserProjectsDashboardRightMenu=()=> {
     ]
 
     const goToCodingTool=async(evt,selectedRow)=>{
+        setQuestionNumber(0)
+
         console.log(selectedRow)
         localStorage.setItem('projectId',selectedRow?._id)
             if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
@@ -162,5 +165,7 @@ const UserProjectsDashboardRightMenu=()=> {
         </div>
     )
 }
-
-export default UserProjectsDashboardRightMenu
+const mapDispatchToProps = dispatch => ({
+    setQuestionNumber: collectionsMap => dispatch(setQuestionNumber(collectionsMap)),
+});
+export default connect(null,mapDispatchToProps)(UserProjectsDashboardRightMenu)
