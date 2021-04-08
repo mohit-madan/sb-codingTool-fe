@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { socket } from "../../../../../config"
-import { selectCodes } from "../../../../../Redux/CodeitData/codeit-data.selectors";
+import { selectCodes, selectLeftMenuCodes } from "../../../../../Redux/CodeitData/codeit-data.selectors";
 
 function Form(props) {
 
@@ -26,16 +26,16 @@ function Form(props) {
       return;
     }
     let temp=false
-    console.log(props.codes)
-    props.codes?.map((item)=>{
-      console.log("comparision",item?.name==name,name,item?.name)
+    console.log(props.leftMenuCodes)
+    props.leftMenuCodes?.map((item)=>{
+      console.log("comparision",item?.name==name,name,item)
       if(item?.name==name){
-        alert("Codeword with the same name exists")
         temp=true
         return
       }
     })
     if(temp){
+      alert("Codeword with the same name exists")
       return
     }
     console.log(name)
@@ -77,7 +77,7 @@ function Form(props) {
 }
 
 const mapStateToProps=createStructuredSelector({
-  codes:selectCodes,
+  leftMenuCodes:selectLeftMenuCodes,
 })
 
 export default connect(mapStateToProps)(Form);

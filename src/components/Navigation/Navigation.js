@@ -24,6 +24,7 @@ const Navigation=()=>{
         localStorage.removeItem("codebook")
         history.push("/userProjectsDashboard")
         socket.emit("_disconnect")
+        socket.disconnect()
     }
 
     return(
@@ -32,7 +33,7 @@ const Navigation=()=>{
 
         <div className="right">
            <Button> <h2 onClick={logout}>Logout</h2></Button>
-           {url[url?.length-1]==="tool" && <Button onClick={linkToUserDashboard}><Link ><h2 >Proceed to Project DashBoard</h2></Link></Button>  }
+           <Button onClick={linkToUserDashboard}><Link ><h2 >Proceed to Project DashBoard</h2></Link></Button>  
 
         </div>
     </div>

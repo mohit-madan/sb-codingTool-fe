@@ -78,7 +78,7 @@ function Coding(props) {
   // const [leftMenuCodes, setLeftMenuCodes] = useState(_tasks);
 
   useEffect(()=>{
-    socket.once('edit-codeword-to-list', editCodeword=>{
+    socket.on('edit-codeword-to-list', editCodeword=>{
         console.log(`editCodeword --->`,editCodeword)
         const {codeword,codewordId}=editCodeword
         console.log(`editCodeword --->`,editCodeword)
@@ -93,7 +93,7 @@ function Coding(props) {
           next=next+0.5
     });
 
-    socket.once('delete-codeword-to-list', deleteCodeword=>{
+    socket.on('delete-codeword-to-list', deleteCodeword=>{
       // if(next<prev){
         const {codewordId} = deleteCodeword
         console.log(deleteCodeword)
@@ -103,7 +103,7 @@ function Coding(props) {
       // }
     });
 
-    socket.once('add-new-codeword-to-list', (value)=>{
+    socket.on('add-new-codeword-to-list', (value)=>{
       
       // if(next<prev){
         console.log(value)
@@ -131,7 +131,7 @@ function Coding(props) {
 
     });
 
-    socket.once('codeword-assigned-to-response', operation=> {
+    socket.on('codeword-assigned-to-response', operation=> {
       const codewordId=operation?.codewordId
       const percentage=operation?.resToAssigned
 
@@ -148,19 +148,19 @@ function Coding(props) {
       // props.setLeftMenuCodes(temp)
 
     });
-    socket.once("node-structure-to-list",operation=>{
+    socket.on("node-structure-to-list",operation=>{
       console.log("node-structure-to-list",operation)
     })
-    socket.once("create-category-to-list",operation=>{
+    socket.on("create-category-to-list",operation=>{
       console.log("create-category-to-list",operation)
     })
-    socket.once("root",operation=>{
+    socket.on("root",operation=>{
       if(typeof(operation)!="undefined" && operation!==nodes){
         setNodes(operation)
       }
     })
 
-  })
+  },[])
 
   useEffect(() => {
     console.log(props.leftMenuCodes)
@@ -178,6 +178,30 @@ function Coding(props) {
     let temp0=nodes
     let temp1=0
     let presentCategoryId=""
+
+    let sameCategoryPresent=false
+
+    const TreeRender = data => {
+      if (typeof(data?.codewords)!=="undefined"){
+      if(data?.name==categoryName){
+        sameCategoryPresent=true
+      }
+      return (
+          data?.codewords?.map((node, idx) => TreeRender(node))
+      )
+      }
+    }
+
+    {
+      nodes?.map((item,index)=>{
+        return TreeRender(nodes[index])
+      })
+    }
+
+    if(sameCategoryPresent){
+      alert("Same Category already present")
+      return
+    }
 
     temp0?.map((item,index)=>{
        if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){

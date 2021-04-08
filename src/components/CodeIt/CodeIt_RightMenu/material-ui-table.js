@@ -472,7 +472,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           setkeywords({...tempkeywords})
       });
 
-    })
+    },[])
 
     const handleChange= rowData => (event) => {
       let value =event.target.value;

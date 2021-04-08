@@ -16,7 +16,7 @@ import io  from 'socket.io-client'
 //     redirecturl:"http://localhost:3000"
 // }
 
-export const socket = io.connect('http://localhost:5000', {
+export const socket = io('http://localhost:5000', {
   transports: ['websocket'], 
   upgrade: false
 })
