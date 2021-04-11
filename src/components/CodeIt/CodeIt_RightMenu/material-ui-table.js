@@ -313,7 +313,7 @@ const headCells = [
     },
   }));
   
-function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData,...props}) {
+function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
     const rowHeight =100
@@ -351,7 +351,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
 
     useEffect(()=>{
       if(keywords!==null && keywords !=={} && Object.keys(keywords)?.length >0){
-        // console.log("Keywords Changed ==>",keywords)
+        console.log("keywords changed",keywords)
         setKeywordsInRedux(keywords)
       }
     },[keywords])
@@ -383,19 +383,22 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
 
       socket.on('single-operation', operation=> {
         let tempKeywords=operation.keywords
-        console.log('single-operation',operation,tempKeywords)
+        console.log('single-operation',operation)
         let codewordIds=operation.codewordIds
         let resNum=operation.resNum
         let codewordsArray=[]
-        
-        leftMenuCodes?.map((item,index)=>{
+        let tempLeftMenuCodes=operation.leftMenuCodes
+
+        console.log("tempLeftMenuCodes--->",tempLeftMenuCodes,{codewordIds})
+        tempLeftMenuCodes?.map((item,index)=>{
           codewordIds?.map((_item,_index)=>{
+            console.log(item?.id ,_item)
             if(item?.id == _item){
               codewordsArray.push(item.name)
             }
           })
         })
-        console.log({...tempKeywords,[resNum] : codewordsArray})
+        console.log({codewordsArray})
         setKeywords({...tempKeywords,[resNum] : codewordsArray})
 
       });
@@ -407,6 +410,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           let codeword=operation.codewordIds
           let resNumArray=operation.responses
           let tempkeywords=operation.keywords
+          let tempLeftMenuCodes=operation.leftMenuCodes
 
           resNumArray?.map((item,index)=>{
             let temp =tempkeywords[item]
@@ -430,11 +434,11 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         const {active,codewordName}=value
         let codeword_name=''
         let temp=value.keywords
+
         console.log("active===>",active,codewordName)
   
         if(!active){
-          leftMenuCodes.map(task => {
-  
+          value.leftMenuCodes.map(task => {
             if (id === task.id) {
               codeword_name=task.name
               console.log("codeword_name",codeword_name)
@@ -444,7 +448,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           responses.map((num=>{
             console.log("temp[num]==>",temp[num])
             if(typeof(temp[num])=="object" && temp[num].includes(codeword_name)){
-              temp[num]=temp[num].filter(item=>item!==codeword_name)
+              temp[num]=temp[num].splice(codeword_name)
             }
           }))
   
@@ -458,11 +462,11 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           }))
   
         }
-        // console.log("final setKeywords(temp)",temp)
-        // if(temp!=={}){
+
         if(temp!==null && Object.keys(temp)?.length >0 && temp !=={} ){
           setKeywords(temp)
         }
+
       })
 
     },[])
@@ -483,7 +487,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           })
         })
 
-        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords};
+        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords,leftMenuCodes:leftMenuCodes};
         console.log(`operation--->`,operation,codewordIdsArray)
         socket.emit('single-response-operation', operation);
         return
@@ -502,7 +506,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           })
         })
 
-        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords};
+        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords,leftMenuCodes:leftMenuCodes};
         console.log(`operation--->`,operation)
         socket.emit('single-response-operation', operation);
 
@@ -516,7 +520,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           }
         })
 
-        let operation = {responses:selected, codewordId:code,codewordIds:value[value?.length-1],keywords:keywords};
+        let operation = {responses:selected, codewordId:code,codewordIds:value[value?.length-1],keywords:keywords,leftMenuCodes:leftMenuCodes};
         console.log(operation)
         socket.emit('multiple-response-operation', operation);
       
@@ -664,35 +668,13 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         }
       }
 
-    //   useEffect(async () => {
-    //     if(reachedEnd && selectAppliedFilters==null ){
-    //         data = await userActions.responsePagination({pageNumber:pageNumber,limit:20,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
-    //         data=JSON.parse(data)
-    //         if(filteredData.length > 0 && data!==`undefined`){
-    //             setFilteredData([...filteredData,...data])
-    //         }
-    //         setPageNumber(pageNumber+1)
-
-    //     }else if(reachedEnd && selectAppliedFilters!=null ){
-    //         data =await userActions.filteredPagination({pageNumber:pageNumber,limit:20,filters:selectAppliedFilters,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
-    //         data=JSON.parse(data)
-    //         console.log(`data from reached end filtered useEffect`,selectAppliedFilters)
-    //         if(filteredData.length > 0 && data!==`undefined`  && data!==null){
-    //             setFilteredData([...filteredData,...data])
-    //         }
-    //         setPageNumber(pageNumber+1)
-    //     }
-    // }, [reachedEnd])
-
     const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
     }
 
-    const [codesCopy,setCodesCopy]=useState([])
     useEffect(()=>{
-      setCodesCopy(leftMenuCodes)
-      console.log("leftMenuCodes==><==",props.selectLeftMenuCodes)
-    },[props.selectLeftMenuCodes])
+      console.log('leftMenuCodes==>',leftMenuCodes)
+    },[leftMenuCodes])
 
   return (
     <Paper style={{ height: 400, width: '100%' }}>
@@ -926,10 +908,6 @@ const mapStateToProps=createStructuredSelector({
     selectAppliedFilters:selectAppliedFilters,
     questionNumber:selectQuestionNumber,
     leftMenuCodes:selectLeftMenuCodes,
-    selectLeftMenuCodes:selectLeftMenuCodes,
-
-
-    // selectAppliedFilters
 })
 const mapDispatchToProps = dispatch => ({
   setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),

@@ -77,14 +77,30 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
 
 
     const handleColumns=(temp1)=>{
+        console.log(selectExcelDataColumns)
+        const getIndex=(name)=>{
+            let i=100
+            selectExcelDataColumns?.map((item,index)=>{
+                console.log(item?.title,name)
+                if(item?.title==name){
+                    i=index
+                }
+            })
+            return i
+        }
         let col =[]
         Object.keys(temp1).map((item,index)=>{
             if(temp1[item]==true){
-                col= [...col,{"coloumn":index,"question":item}]
+                col= [...col,{"coloumn":getIndex(item),"question":item}]
             }})
-            console.log(`modified coolumns`,col)
+            console.log(`modified coloumns`,col)
             return col
     }
+
+// const testFunc=()=>{
+//     let temp=handleColumns(column)
+//     console.log(column)
+// }
 
     const handleTags=(tags)=>{
         let temp=[]
@@ -143,7 +159,7 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
                 <Button color="primary" onClick={previous}>Prev</Button>
                 {progressNumber<=3 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
                 {progressNumber===4 && <Button variant="contained"  color="primary" onClick={onSubmit}>Submit</Button>}
-            
+                {/* <Button onClick={testFunc}>Testing</Button> */}
             </div>
         </div>
     )
