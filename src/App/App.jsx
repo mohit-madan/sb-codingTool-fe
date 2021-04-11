@@ -20,27 +20,22 @@ import { socket } from '../config';
 
 function App() {
     
-    useEffect(() => {
-        if(initialState?.loggedIn ==true){
-            console.log(`logged in`)
-            userActions.jwtTokenCheck()
-        }
-    },[])
-    useEffect(() => {
-        const intervalId = setInterval(() => { 
-            if(initialState?.loggedIn ==true){
-                console.log(`logged in`)
-                userActions.jwtTokenCheck()
-            }
-          }, 1000*60)
-          return () => clearInterval(intervalId);
+    // useEffect(() => {
+    //     if(initialState?.loggedIn ==true){
+    //         console.log(`logged in`)
+    //         userActions.jwtTokenCheck()
+    //     }
+    // },[])
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => { 
+    //         if(initialState?.loggedIn ==true){
+    //             console.log(`logged in`)
+    //             userActions.jwtTokenCheck()
+    //         }
+    //       }, 1000*60)
+    //       return () => clearInterval(intervalId);
           
-    })
-    useEffect(() => {
-        socket.on("connection_status",op=>{
-            console.log("connection_status",op)
-        })
-    })
+    // })
 
     function hasQuiet() {
         var cold = false,

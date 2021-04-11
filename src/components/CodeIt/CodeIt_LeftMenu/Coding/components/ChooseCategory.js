@@ -47,7 +47,6 @@ function ChooseCategory(props) {
     
 
    function OptionsGenerator() {
-    console.log({nodes})
     const TreeRender = data => {
       if (typeof(data?.codewords)!=="undefined"){
       return (

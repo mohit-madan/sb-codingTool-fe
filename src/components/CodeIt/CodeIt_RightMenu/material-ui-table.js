@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
-import { setFilteredData, setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
+import { setFilteredData, setKeywords,setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -313,7 +313,7 @@ const headCells = [
     },
   }));
   
-function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
+function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
     const rowHeight =100
@@ -334,13 +334,20 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       length:{label:"length",sort:true,active:true}
     })
 
-    let data=null
+    // let data=null
 
-    let mapper={}
-    let i=0
-    for ( i=0 ; i<Object.keys(filteredData)?.length;i++){mapper[i]=[]}
+    // let mapper={}
+    // let i=0
+    // for ( i=0 ; i<Object.keys(filteredData)?.length;i++){mapper[i]=[]}
 
     const [keywords,setKeywords]=useState({})
+
+    useEffect(()=>{
+      let mapper={}
+      let i=0
+      for ( i=0 ; i<Object.keys(filteredData)?.length;i++){mapper[i]=[]}
+      setKeywords(mapper)
+    },[])
 
     useEffect(() => {
       if(initialKeywords!==null && initialKeywords !=={} && Object.keys(initialKeywords)?.length >0){
@@ -349,13 +356,14 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       }
     },[initialKeywords])
 
-    
-  useEffect(()=>{
-    // socket.on()
-    // return ()=> socket.off()
-  })
+    useEffect(()=>{
+      if(keywords!==null && keywords !=={} && Object.keys(keywords)?.length >0){
+        console.log("Keywords Changed ==>",keywords)
+        setKeywordsInRedux(keywords)
+      }
+    },[keywords])
+
     useEffect(() => {
-      // socket.on()
       socket.on('edit-codeword-to-list', editCodeword=>{
 
       const {codeword,codewordId,oldName}=editCodeword
@@ -381,7 +389,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
       })
 
       socket.on('single-operation', operation=> {
-        let tempKeywords=keywords
+        let tempKeywords=operation.keywords
         console.log('single-operation',operation,tempKeywords)
         let codewordIds=operation.codewordIds
         let resNum=operation.resNum
@@ -405,7 +413,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           console.log('multiple-operation',operation)
           let codeword=operation.codewordIds
           let resNumArray=operation.responses
-          let tempkeywords=keywords
+          let tempkeywords=operation.keywords
 
           resNumArray?.map((item,index)=>{
             let temp =tempkeywords[item]
@@ -418,7 +426,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
               tempkeywords={...tempkeywords,[item]:temp}
             }
           })
-          setKeywords({...tempkeywords})
+          setKeywords(tempkeywords)
       });
 
       socket.on('toggle-codeword-to-list', (value)=>{
@@ -428,44 +436,43 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
         const responses=value.response
         const {active,codewordName}=value
         let codeword_name=''
-        let temp=keywords
+        let temp=value.keywords
         console.log("active===>",active,codewordName)
   
-        if(active){
+        if(!active){
           leftMenuCodes.map(task => {
-            console.log("task====>",task,id === task.id)
   
             if (id === task.id) {
               codeword_name=task.name
               console.log("codeword_name",codeword_name)
-              return
             }
-            return ;
           });
         
           responses.map((num=>{
-            if(temp[num].includes(codeword_name)){
-              temp[num].splice(codeword_name)
+            console.log("temp[num]==>",temp[num])
+            if(typeof(temp[num])=="object" && temp[num].includes(codeword_name)){
+              temp[num]=temp[num].filter(item=>item!==codeword_name)
             }
           }))
   
         }else{
           console.log("else condition ==>",responses)
           responses.map((num=>{
-            console.log("temp[num]==>",temp[num])
-            if(!temp[num].includes(codewordName)){
+            if(typeof(temp[num])=="object" && !temp[num].includes(codewordName)){
+              console.log("temp[num]==>",temp[num])
               temp[num].push(codewordName)
             }
           }))
   
         }
         console.log("final setKeywords(temp)",temp)
-        setKeywords(temp)
-  
+        // if(temp!=={}){
+        if(temp!==null && Object.keys(temp)?.length >0 && temp !=={} ){
+          setKeywords(temp)
+        }
       })
-      // return ()=> socket.off()
 
-    })
+    },[])
 
     const handleChange= rowData => (event) => {
       let value =event.target.value;
@@ -483,7 +490,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           })
         })
 
-        let operation = {resNum:num, codewordIds:codewordIdsArray};
+        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords};
         console.log(`operation--->`,operation,codewordIdsArray)
         socket.emit('single-response-operation', operation);
         return
@@ -502,7 +509,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           })
         })
 
-        let operation = {resNum:num, codewordIds:codewordIdsArray};
+        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords};
         console.log(`operation--->`,operation)
         socket.emit('single-response-operation', operation);
 
@@ -516,7 +523,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
           }
         })
 
-        let operation = {responses:selected, codewordId:code,codewordIds:value[value?.length-1]};
+        let operation = {responses:selected, codewordId:code,codewordIds:value[value?.length-1],keywords:keywords};
         console.log(operation)
         socket.emit('multiple-response-operation', operation);
       
@@ -664,35 +671,35 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
         }
       }
 
-      useEffect(async () => {
-        if(reachedEnd && selectAppliedFilters==null ){
-            data = await userActions.responsePagination({pageNumber:pageNumber,limit:20,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
-            data=JSON.parse(data)
-            if(filteredData.length > 0 && data!==`undefined`){
-                setFilteredData([...filteredData,...data])
-            }
-            setPageNumber(pageNumber+1)
+    //   useEffect(async () => {
+    //     if(reachedEnd && selectAppliedFilters==null ){
+    //         data = await userActions.responsePagination({pageNumber:pageNumber,limit:20,push:false,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
+    //         data=JSON.parse(data)
+    //         if(filteredData.length > 0 && data!==`undefined`){
+    //             setFilteredData([...filteredData,...data])
+    //         }
+    //         setPageNumber(pageNumber+1)
 
-        }else if(reachedEnd && selectAppliedFilters!=null ){
-            data =await userActions.filteredPagination({pageNumber:pageNumber,limit:20,filters:selectAppliedFilters,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
-            data=JSON.parse(data)
-            console.log(`data from reached end filtered useEffect`,selectAppliedFilters)
-            if(filteredData.length > 0 && data!==`undefined`  && data!==null){
-                setFilteredData([...filteredData,...data])
-            }
-            setPageNumber(pageNumber+1)
-        }
-    }, [reachedEnd])
+    //     }else if(reachedEnd && selectAppliedFilters!=null ){
+    //         data =await userActions.filteredPagination({pageNumber:pageNumber,limit:20,filters:selectAppliedFilters,questionId:localStorage.listOfQuestion?.split(',')[questionNumber]})
+    //         data=JSON.parse(data)
+    //         console.log(`data from reached end filtered useEffect`,selectAppliedFilters)
+    //         if(filteredData.length > 0 && data!==`undefined`  && data!==null){
+    //             setFilteredData([...filteredData,...data])
+    //         }
+    //         setPageNumber(pageNumber+1)
+    //     }
+    // }, [reachedEnd])
 
     const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
     }
 
     const [codesCopy,setCodesCopy]=useState([])
-    useEffect(()=>{
-      setCodesCopy(leftMenuCodes)
-      console.log("leftMenuCodes==><==",leftMenuCodes)
-    },[leftMenuCodes])
+    // useEffect(()=>{
+    //   setCodesCopy(leftMenuCodes)
+    //   console.log("leftMenuCodes==><==",leftMenuCodes)
+    // },[leftMenuCodes])
 
   return (
     <Paper style={{ height: 400, width: '100%' }}>
@@ -805,7 +812,7 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
                           labelId="demo-mutiple-checkbox-label"
                           id="demo-mutiple-checkbox"
                           multiple
-                          value={keywords[rowData?.rowData?.resNum] ? keywords[rowData?.rowData?.resNum] : []}
+                          value={keywords!==undefined ? keywords[rowData?.rowData?.resNum] : []}
                           onChange={handleChange(rowData)}
                           input={<Input />}
                           renderValue={(selected) => selected.join(', ')}
@@ -817,8 +824,8 @@ function ReactVirtualizedTable({setSortBy,initialKeywords,leftMenuCodes,question
                                 item?.active==true ?
                                 <MenuItem key={`${item?.id}${item?.active}`} value={item?.name}>
                                   {
-                                    (keywords[rowData?.rowData?.resNum]?.indexOf(item?.name))!==undefined && 
-                                      <Checkbox checked={keywords[rowData?.rowData?.resNum].indexOf(item?.name) > -1} />
+                                    (keywords)!==undefined && 
+                                      <Checkbox checked={keywords[rowData?.rowData?.resNum]?.indexOf(item?.name) > -1} />
 
                                   }
                                   <ListItemText primary={item?.name} />
@@ -931,5 +938,7 @@ const mapDispatchToProps = dispatch => ({
   setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
   setPageNumber: collectionsMap => dispatch(setPageNumber(collectionsMap)),
   setSortBy: collectionsMap => dispatch(setSortBy(collectionsMap)),
+  setKeywordsInRedux: collectionsMap => dispatch(setKeywords(collectionsMap)),
+  // setKeywords
 });
 export default connect(mapStateToProps,mapDispatchToProps)(ReactVirtualizedTable)

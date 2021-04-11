@@ -7,7 +7,7 @@ import "./components/styles.css"
 import { socket } from "../../../../config"
 import { userActions } from "../../../../_actions";
 import { connect } from "react-redux";
-import { selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from "../../../../Redux/CodeitData/codeit-data.selectors";
+import { selectFilteredData, selectKeywords, selectLeftMenuCodes, selectQuestionNumber } from "../../../../Redux/CodeitData/codeit-data.selectors";
 import { createStructuredSelector } from "reselect";
 import { setLeftMenuCodes } from "../../../../Redux/CodeitData/codeit-data.actions";
 import { userUtilities } from "../../../../_utilities/utilities";
@@ -34,18 +34,8 @@ function usePrevious(value) {
   return ref.current;
 }
 
-const FILTER_MAP = {
-  All: () => true,
-  Active: task => !task.active,
-  Completed: task => task.active
-};
-
-const FILTER_NAMES = Object.keys(FILTER_MAP);
-
 function Coding(props) {
-  let prev=0,next=0
   const  [ count,setCount]=useState(1)
-  const _tasks = [];
   const [ nodes,setNodes]=useState()
 
   useEffect(async () => {
@@ -75,19 +65,11 @@ function Coding(props) {
 
   }, [props.questionNumber])
   
-  // const [leftMenuCodes, setLeftMenuCodes] = useState(_tasks);
-
-  // useEffect(()=>{
-  //   socket.on()
-  //   return ()=> socket.off()
-  // })
 
   useEffect(()=>{
     // socket.on()
 
     socket.on('edit-codeword-to-list', editCodeword=>{
-         
-
         console.log(`editCodeword --->`,editCodeword)
         const {codeword,codewordId}=editCodeword
         console.log(`editCodeword --->`,editCodeword)
@@ -98,30 +80,34 @@ function Coding(props) {
             }
             return task;
           });
-          props.setLeftMenuCodes(editedTaskList);
-          next=next+0.5
+          if(editedTaskList?.length !==0){
+            props.setLeftMenuCodes(editedTaskList);
+          }
+          // next=next+0.5
     });
 
     socket.on('delete-codeword-to-list', deleteCodeword=>{
       
-
-      // if(next<prev){
         const {codewordId} = deleteCodeword
         console.log(deleteCodeword)
         const remainingTasks = props.leftMenuCodes.filter(task => codewordId !== task.id);
-        props.setLeftMenuCodes(remainingTasks);
-        next=next+1
-      // }
+        if(remainingTasks?.length !==0){
+          props.setLeftMenuCodes(remainingTasks);
+        }
     });
 
     socket.on('add-new-codeword-to-list', (value)=>{
 
-       let temp=props.leftMenuCodes
+       let temp=value.leftMenuCodes
         console.log('add-new-codeword-to-list', value,temp)
         const {codeword,codewordId} = value
         // const newTask = { id: "todo-" + nanoid()+` ${count-1}`, name: codeword, completed: true };
         const newTask = { id: `${codewordId}`, name: codeword, active: true ,percentage: 0};
-        props.setLeftMenuCodes([...temp, newTask]);
+        // if(editedTaskList?.length !==0){
+          temp.push(newTask)
+          console.log('add-new-codeword-to-list-final',temp)
+          props.setLeftMenuCodes(temp)
+        // }
     });
 
     socket.on('toggle-codeword-to-list', (value)=>{
@@ -136,7 +122,10 @@ function Coding(props) {
           }
           return task;
         });
-        props.setLeftMenuCodes(updatedTasks)
+        if(updatedTasks?.length !==0){
+          props.setLeftMenuCodes(updatedTasks)
+        }
+
     });
 
     socket.on('codeword-assigned-to-response', operation=> {
@@ -158,14 +147,7 @@ function Coding(props) {
       // props.setLeftMenuCodes(temp)
 
     });
-    socket.on("node-structure-to-list",operation=>{
-      console.log("node-structure-to-list",operation)
-    })
-    socket.on("create-category-to-list",operation=>{
-      
 
-      console.log("create-category-to-list",operation)
-    })
     socket.on("root",operation=>{
       console.log("root",operation)
       if(typeof(operation)!="undefined" && operation!==nodes){
@@ -173,11 +155,11 @@ function Coding(props) {
       }
     })
     // return ()=> socket.off()
-  })
+  },[])
 
 
   function toggleTaskCompleted(id,status) {
-    let toggleCodeword={codewordId:id,status:status}
+    let toggleCodeword={codewordId:id,status:status,keywords:props.selectKeywordsFromRedux}
     console.log(toggleCodeword)
     // (codeword=>{codewordId})
     socket.emit('toggleCodeword',toggleCodeword)
@@ -306,7 +288,6 @@ function Coding(props) {
   }
 
   function editTask(id, newName) {
-    prev=prev+1
     const editCodeword={
       "codeword":newName,
       "codewordId":id
@@ -316,10 +297,12 @@ function Coding(props) {
 
   function addTask(name) {
     setCount(count+1)
+    const codes=props.leftMenuCodes
     let newCodeword={
       "projectCodebookId":localStorage.codebook, 
       "codeword":name, 
       "codekey":count.toString(),
+      "leftMenuCodes":codes,
     }
     socket.emit('addCodeword', newCodeword);
   }
@@ -336,35 +319,35 @@ function Coding(props) {
 
   function clickHandler(event, id){
 
-    let temp0=nodes
-    console.log("crtlclcik changed nodes id",id)
-    console.log("crtlclcik changed nodes nodes",nodes)
+    // let temp0=nodes
+    // console.log("crtlclcik changed nodes id",id)
+    // console.log("crtlclcik changed nodes nodes",nodes)
 
-    if (event.ctrlKey){
-         console.log("Ctrl+click has just happened!");
+    // if (event.ctrlKey){
+    //      console.log("Ctrl+click has just happened!");
 
-         temp0?.map((item,index)=>{
+    //      temp0?.map((item,index)=>{
 
-            if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){
-              item?.codewords?.map((_codeword,codeword_index)=>{
-                console.log("crtlclcik changed ids",_codeword._id)
-               if(_codeword?._id==id){
-                console.log("crtlclcik changed nodes","match",{_codeword})
-                _codeword["ctrlClickActive"]= _codeword["ctrlClickActive"] ?!_codeword["ctrlClickActive"] : true
-                console.log({_codeword})
-               }
-              })
-            }
+    //         if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){
+    //           item?.codewords?.map((_codeword,codeword_index)=>{
+    //             console.log("crtlclcik changed ids",_codeword._id)
+    //            if(_codeword?._id==id){
+    //             console.log("crtlclcik changed nodes","match",{_codeword})
+    //             _codeword["ctrlClickActive"]= _codeword["ctrlClickActive"] ?!_codeword["ctrlClickActive"] : true
+    //             console.log({_codeword})
+    //            }
+    //           })
+    //         }
 
-            if(item?._id==id){
-              console.log("crtlclcik changed nodes","match")
-              item["ctrlClickActive"]= item["ctrlClickActive"] ?!item["ctrlClickActive"] : true
-            }
+    //         if(item?._id==id){
+    //           console.log("crtlclcik changed nodes","match")
+    //           item["ctrlClickActive"]= item["ctrlClickActive"] ?!item["ctrlClickActive"] : true
+    //         }
 
-         })
-         console.log("crtlclcik changed nodes",{temp0})
-        setNodes([...temp0])
-    }
+    //      })
+    //      console.log("crtlclcik changed nodes",{temp0})
+    //     setNodes([...temp0])
+    // }
  }
 
 
@@ -532,6 +515,8 @@ const mapStateToProps=createStructuredSelector({
   questionNumber:selectQuestionNumber,
   leftMenuCodes:selectLeftMenuCodes,
   filteredData:selectFilteredData,
+  selectKeywordsFromRedux:selectKeywords,
+  // selectKeywords
 })
 const mapDispatchToProps = dispatch => ({
   setLeftMenuCodes: collectionsMap => dispatch(setLeftMenuCodes(collectionsMap)),

@@ -14,6 +14,11 @@ const INITIAL_STATE = {
 
 const codeItDataReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case codeItDataActionTypes.SET_KEYWORDS:
+      return {
+        ...state,
+        keywords: action.payload
+      };
     case codeItDataActionTypes.SET_FILTERED_DATA:
       return {
         ...state,

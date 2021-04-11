@@ -202,8 +202,6 @@ export default function CodeRow(props) {
     <ContextMenuTrigger id={props.id}>
 
     <div className={"flex width_100 "} >
-      {console.log(props.ctrlClickActive)}
-      {console.log(props.nodes)}
       <div className="flex align_start space_between left " >
           {/* <input
             id={props.id}
