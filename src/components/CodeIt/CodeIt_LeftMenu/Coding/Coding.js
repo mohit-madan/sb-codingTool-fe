@@ -112,21 +112,21 @@ function Coding(props) {
 
     socket.on('toggle-codeword-to-list', (value)=>{
       
-      console.log('toggle-codeword-to-list',value)
       const id=value.codewordId
-      const status=value.status
-      const updatedTasks = props.leftMenuCodes.map(task => {
-          console.log(id === task.id)
+      const status=value.active
+      console.log('toggle-codeword-to-list-status',status)
+      const updatedTasks = value.leftMenuCodes?.map(task => {
           if (id === task.id) {
-            return {...task, active: !status}
+            return {...task, active: status}
           }
           return task;
-        });
+        })
+        console.log("updatedTasks==>",updatedTasks)
         if(updatedTasks?.length !==0){
           props.setLeftMenuCodes(updatedTasks)
         }
 
-    });
+    })
 
     socket.on('codeword-assigned-to-response', operation=> {
       
@@ -159,9 +159,8 @@ function Coding(props) {
 
 
   function toggleTaskCompleted(id,status) {
-    let toggleCodeword={codewordId:id,status:status,keywords:props.selectKeywordsFromRedux}
-    console.log(toggleCodeword)
-    // (codeword=>{codewordId})
+    let toggleCodeword={codewordId:id,status:status,keywords:props.selectKeywordsFromRedux,leftMenuCodes:props.leftMenuCodes}
+    console.log("status",status)
     socket.emit('toggleCodeword',toggleCodeword)
   }
 

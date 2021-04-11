@@ -313,14 +313,13 @@ const headCells = [
     },
   }));
   
-function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
+function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData,...props}) {
 
     const headerHeight=48
     const rowHeight =100
     const classes=_useStyles()
     const multipleSelectClasses=MultipleSelectStyles()
 
-    const [personName, setPersonName] = useState([]);
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
@@ -333,12 +332,6 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
       desc:{label:"desc",sort:true,active:true},
       length:{label:"length",sort:true,active:true}
     })
-
-    // let data=null
-
-    // let mapper={}
-    // let i=0
-    // for ( i=0 ; i<Object.keys(filteredData)?.length;i++){mapper[i]=[]}
 
     const [keywords,setKeywords]=useState({})
 
@@ -358,7 +351,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
 
     useEffect(()=>{
       if(keywords!==null && keywords !=={} && Object.keys(keywords)?.length >0){
-        console.log("Keywords Changed ==>",keywords)
+        // console.log("Keywords Changed ==>",keywords)
         setKeywordsInRedux(keywords)
       }
     },[keywords])
@@ -465,7 +458,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           }))
   
         }
-        console.log("final setKeywords(temp)",temp)
+        // console.log("final setKeywords(temp)",temp)
         // if(temp!=={}){
         if(temp!==null && Object.keys(temp)?.length >0 && temp !=={} ){
           setKeywords(temp)
@@ -696,10 +689,10 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
     }
 
     const [codesCopy,setCodesCopy]=useState([])
-    // useEffect(()=>{
-    //   setCodesCopy(leftMenuCodes)
-    //   console.log("leftMenuCodes==><==",leftMenuCodes)
-    // },[leftMenuCodes])
+    useEffect(()=>{
+      setCodesCopy(leftMenuCodes)
+      console.log("leftMenuCodes==><==",props.selectLeftMenuCodes)
+    },[props.selectLeftMenuCodes])
 
   return (
     <Paper style={{ height: 400, width: '100%' }}>
@@ -724,7 +717,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           > 
                 
                     <Column
-                      key={"resNum"}
+                      key={"checkbox"}
                       headerRenderer={(headerProps) =>
                         <TableCell 
                         style={{ height: headerHeight }}
@@ -807,31 +800,33 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
                       // cellRenderer={rowData => <input  type="text"/>}
                       cellRenderer={rowData=>
                         <FormControl className={multipleSelectClasses.formControl}>
-                        <InputLabel id="demo-mutiple-checkbox-label">Tag</InputLabel>
+                        <InputLabel id={`demo-mutiple-checkbox-label`}>Tag</InputLabel>
                         <Select
+                          // key={JSON.stringify(codesCopy)}
                           labelId="demo-mutiple-checkbox-label"
-                          id="demo-mutiple-checkbox"
+                          id={`${JSON.stringify(leftMenuCodes)} demo-mutiple-checkbox`}
                           multiple
                           value={keywords!==undefined ? keywords[rowData?.rowData?.resNum] : []}
                           onChange={handleChange(rowData)}
                           input={<Input />}
                           renderValue={(selected) => selected.join(', ')}
                           MenuProps={MultipleSelectMenuProps}
-                          key={JSON.stringify(leftMenuCodes)}
                         >
+                          {console.log("re renderring")}
+
                           {leftMenuCodes?.map((item) => {
                               return (
-                                item?.active==true ?
-                                <MenuItem key={`${item?.id}${item?.active}`} value={item?.name}>
+                                item?.active ?
+                                <MenuItem id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} key={`${item?.id}${item?.active}`} value={item?.name}>
                                   {
                                     (keywords)!==undefined && 
-                                      <Checkbox checked={keywords[rowData?.rowData?.resNum]?.indexOf(item?.name) > -1} />
+                                      <Checkbox id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} checked={keywords[rowData?.rowData?.resNum]?.indexOf(item?.name) > -1} />
 
                                   }
-                                  <ListItemText primary={item?.name} />
+                                  <ListItemText id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`}  primary={item?.name} />
                                 </MenuItem>
                                 :
-                                <div key={`${item?.id}${item?.active}`} style={{display:"none"}}>{item?.name}</div>
+                                <ListItemText key={`${item?.id}${item?.active}`} id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} style={{display:"none"}} primary={item?.name} />
                               )
                             }
                           )}
@@ -930,7 +925,9 @@ const mapStateToProps=createStructuredSelector({
     pageNumber:selectPageNumber,
     selectAppliedFilters:selectAppliedFilters,
     questionNumber:selectQuestionNumber,
-    leftMenuCodes:selectLeftMenuCodes
+    leftMenuCodes:selectLeftMenuCodes,
+    selectLeftMenuCodes:selectLeftMenuCodes,
+
 
     // selectAppliedFilters
 })

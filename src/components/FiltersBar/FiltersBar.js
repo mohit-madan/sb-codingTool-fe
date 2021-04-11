@@ -104,6 +104,10 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
 
     }, [selectSortBy])
 
+    useEffect(()=>{
+      console.log("Codes from Filterbar.js ==> ",codes)
+    },[codes])
+
     useEffect(() => {
       setCodes(leftMenuCodes)
     }, [leftMenuCodes])

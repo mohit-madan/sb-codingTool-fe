@@ -4,7 +4,7 @@ const INITIAL_STATE = {
     codes:null,
     keywords:null,
     progresslength:0,
-    numberOfInputsGreaterThan2:0,//numberOfInputsGreaterThan2
+    numberOfInputsGreaterThan2:0,
     selectedRows:null,
     filteredData:null,
     questionNumber:0,
