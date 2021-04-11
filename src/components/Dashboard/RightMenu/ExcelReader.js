@@ -84,15 +84,16 @@ class ExcelReader extends Component {
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       /* Convert array of arrays */
-      const data = XLSX.utils.sheet_to_json(ws);
+      let data = XLSX.utils.sheet_to_json(ws);
       /* Update state */
       const {updateExcelData,setProgressNumber,setShowUploaderAlerts }=this.props
+      if(data?.length>30){
+        data=Object.entries(data).slice(0,30).map(entry => entry[1])
+      }
       this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
-        // console.log(JSON.stringify(this.state.data, null, 2));
         updateExcelData(JSON.stringify(this.state.data, null, 2))
         localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2))
-        // {this.state.moveNext && setProgressNumber(2)}
-
+        
         setProgressNumber(2)
         setShowUploaderAlerts(false)
         this.setState({loading:false})

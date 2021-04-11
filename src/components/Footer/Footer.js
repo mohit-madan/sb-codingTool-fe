@@ -6,7 +6,7 @@ import {setProgressNumber} from "../../Redux/Progress-number/progress.actions.js
 import { selectColumn, selectRow } from '../../Redux/SelectedRowandColumn/tableSelections.selectors';
 import { createStructuredSelector } from 'reselect';
 import { selectSurveyDetails } from '../../Redux/SurveyDetails/survey-details.selectors';
-import { selectExcelData } from '../../Redux/ExcelData/excel-data.selectors';
+import { selectExcelData, selectExcelDataColumns } from '../../Redux/ExcelData/excel-data.selectors';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../config';
@@ -19,7 +19,7 @@ import { bindActionCreators } from "redux";
 import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
 import { setAlertMessage, setShowUploaderAlerts } from '../../Redux/UploaderAlerts/UploaderAlerts.actions';
 
-const Footer=({setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
+const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
 
     const dispatch = useDispatch();
     Object.size = function(obj) {
@@ -163,5 +163,7 @@ const mapStateToProps=createStructuredSelector({
     row:selectRow,
     column:selectColumn,
     excelData:selectExcelData,
+    selectExcelDataColumns:selectExcelDataColumns,
+
 })
 export default connect(mapStateToProps,mapDispatchToProps)(Footer)

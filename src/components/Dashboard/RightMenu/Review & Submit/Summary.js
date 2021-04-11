@@ -25,13 +25,6 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                 <h5>{surveyDetails?.description}</h5>
             </div>
             <div className="summary_selections">
-                {/* <div className="summary_selection">
-                    <div className="summary_selection_heading">
-                        <p>HEADER ROW</p>
-                        <p className="edit" onClick={()=>setProgressNumber(2)}>Edit</p>
-                    </div>
-                    <h5>Row {row?.tableData?.id}</h5>
-                </div> */}
                 <div className="summary_selection">
                     <div className="summary_selection_heading">
                         <p>HEADER COLUMN</p>
@@ -44,7 +37,6 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                                 )
                             }
                     })}
-                    {/* <h5>Row {column}</h5> */}
                 </div>
             </div>
         </div>
