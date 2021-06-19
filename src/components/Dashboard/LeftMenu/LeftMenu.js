@@ -81,15 +81,15 @@ const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColum
             <div className="title">{leftmenu_data[`_${progressNumber}`].title_1}</div>
             <div className="title">{leftmenu_data[`_${progressNumber}`].title_2}</div>
             <p>{leftmenu_data[`_${progressNumber}`].p}</p>
-            <span>{leftmenu_data[`_${progressNumber}`].span_1}</span>
-            <span>{leftmenu_data[`_${progressNumber}`].span_2}</span>
+            {/* <span>{leftmenu_data[`_${progressNumber}`].span_1}</span>
+            <span>{leftmenu_data[`_${progressNumber}`].span_2}</span> */}
 
             {/* <h5>Selections :</h5>
             {rowNumber && <h6>Row Nuber : {rowNumber.tableData.id} Selected</h6>} */}
             {progressNumber==2 && 
             <div className="selections">
               <h5>Selections :</h5>
-              {rowNumber && <h6>Row Nuber : {rowNumber.tableData.id} Selected</h6>}
+              {rowNumber && <h6>Row Number : {rowNumber.tableData.id} Selected</h6>}
               <div className={classes.root}>
               <FormControl component="fieldset" className={classes.formControl}>
                 
