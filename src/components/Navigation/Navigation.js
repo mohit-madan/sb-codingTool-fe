@@ -30,7 +30,7 @@ const Navigation=()=>{
 
     return(
     <div className="navigation">
-        <h2>Coding Tool</h2>
+        <Button onClick={linkToUserDashboard}><h2>Coding Tool</h2></Button>
 
         <div className="right">
            <Button> <h2 onClick={logout}>Logout</h2></Button>
