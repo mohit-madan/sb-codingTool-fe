@@ -316,54 +316,6 @@ const handleClick=(event, data) => {
         let data=null
         const [pageCount,setPageCount]=useState(2)
         const [filteredPageCount,setFilteredPageCount]=useState(2)
-
-        const handleScroll = async (e) => {
-            e.preventDefault()
-            var temp1=(Math.round((e.target.scrollHeight - e.target.scrollTop)/100)*100)
-            console.log(temp1)
-            const bottom = temp1 ===  (Math.round(((e.target.clientHeight)+100)/100)*100 )
-            bottom && console.log(`bottom from handleScroll`,bottom)
-            //       console.log(temp1)
-            //       console.log(Math.round((e.target.clientHeight * 2)/100)*100)
-            // console.log(Math.round(e.target.scrollHeight - e.target.scrollTop)+10 === e.target.clientHeight)
-            
-            if (bottom) {
-              setReachedEnd(true)
-              
-              return
-            }
-            else{
-              setReachedEnd(false)
-              return
-            }
-          }
-
-        useEffect(async () => {
-            console.log(`reached end useEfext`)
-            if(reachedEnd &&  (typeof(selectFiltersFromRedux?.searchValue) ===`undefined` || selectFiltersFromRedux?.searchValue?.length==0) ){
-                console.log(`load Data end reached`)
-                data = ( await userActions.responsePagination({pageNumber:pageCount,limit:20,push:false}))
-                data=JSON.parse(data)
-                if(filteredData.length > 0 && data!==`undefined`){
-                    setFilteredData([...filteredData,...data])
-                }else{
-                    data!==`undefined` && setFilteredData([...transformedData,...data])
-                }
-                setPageCount(pageCount+1)
-
-            }else if(reachedEnd && selectFiltersFromRedux?.searchValue?.length > 0){
-                console.log(`load filtered Data end reached`)
-                data =await userActions.filteredPagination({pageNumber:filteredPageCount,limit:20,filters:getFiltersArray(selectFiltersFromRedux?.searchValue)})
-                data=JSON.parse(data)
-                console.log(`data from reached end filtered useEffect`,data)
-                setSubmitFiltersInRedux(false);
-                if(filteredData.length > 0 && data!==`undefined`  && data!==null){
-                    setFilteredData([...filteredData,...data])
-                }
-                setFilteredPageCount(filteredPageCount+1)
-            }
-        }, [reachedEnd])
-        
       
 
         const getFiltersArray=(_string)=>{
@@ -388,7 +340,7 @@ const handleClick=(event, data) => {
         })
 
         // useEffect(() => {
-            $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div").scroll(handleScroll)
+            // $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.Component-horizontalScrollContainer-27 > div > div").scroll(handleScroll)
             
         // })
         hotkeys('ctrl+f, command+f', function(e) {
@@ -406,7 +358,7 @@ const handleClick=(event, data) => {
             5: '#FFFFCC'
           };
          return(
-            <div className="table-container"   onScroll={handleScroll}>
+            <div className="table-container">
                     {filteredData!==null && <MaterialTable
                         // style={{"maxHeight":"480px","overflowY":"auto"}}
                         icons={tableIcons}

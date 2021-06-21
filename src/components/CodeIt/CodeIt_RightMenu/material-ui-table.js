@@ -7,13 +7,9 @@ import { AutoSizer, Column, Table } from 'react-virtualized';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
-import { setShowCodedAs } from '../../../Redux/Show_Coded_As/Show_Coded_As.actions';
 import { setFilteredData, setKeywords,setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
-import TableBody from '@material-ui/core/TableBody';
-import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -21,13 +17,9 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { selectAppliedFilters, selectFilters, selectPageNumber } from '../../../Redux/Filters/Filters.selectors';
-import { userActions } from '../../../_actions';
-import { ContactSupportOutlined } from '@material-ui/icons';
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
 import { setPageNumber } from '../../../Redux/Filters/Filters.actions';
 import Input from '@material-ui/core/Input';
@@ -37,8 +29,7 @@ import FormControl from '@material-ui/core/FormControl';
 import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
-import Chip from '@material-ui/core/Chip';
-import {MultipleSelectStyles,MultipleSelectExampleNames,MultipleSelectMenuProps} from "./MultipleSelectStyles"
+import {MultipleSelectStyles, MultipleSelectMenuProps} from "./MultipleSelectStyles"
 import { socket } from '../../../config';
 
 const _useStyles = makeStyles((theme) => ({
@@ -345,13 +336,13 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
     useEffect(() => {
       if(initialKeywords!==null && initialKeywords !=={} && Object.keys(initialKeywords)?.length >0){
         setKeywords(initialKeywords)
-        console.log("initialKeywords==>",initialKeywords)
+        // console.log("initialKeywords==>",initialKeywords)
       }
     },[initialKeywords])
 
     useEffect(()=>{
       if(keywords!==null && keywords !=={} && Object.keys(keywords)?.length >0){
-        console.log("keywords changed",keywords)
+        // console.log("keywords changed",keywords)
         setKeywordsInRedux(keywords)
       }
     },[keywords])
@@ -365,7 +356,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         if(tempKeywords[_key]?.length ==0){
           return
         }else if(typeof(tempKeywords[_key])!=="undefined"){
-          console.log("arr==>",tempKeywords[_key])
+          // console.log("arr==>",tempKeywords[_key])
           tempKeywords[_key]?.map(keywordName=>{
               if(keywordName==oldName){
 
@@ -376,20 +367,20 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           })
         }
       })
-      console.log("tempKeywords==>",tempKeywords)
+      // console.log("tempKeywords==>",tempKeywords)
       setKeywords(tempKeywords)
 
       })
 
       socket.on('single-operation', operation=> {
         let tempKeywords=operation.keywords
-        console.log('single-operation',operation)
+        // console.log('single-operation',operation)
         let codewordIds=operation.codewordIds
         let resNum=operation.resNum
         let codewordsArray=[]
         let tempLeftMenuCodes=operation.leftMenuCodes
 
-        console.log("tempLeftMenuCodes--->",tempLeftMenuCodes,{codewordIds})
+        // console.log("tempLeftMenuCodes--->",tempLeftMenuCodes,{codewordIds})
         tempLeftMenuCodes?.map((item,index)=>{
           codewordIds?.map((_item,_index)=>{
             console.log(item?.id ,_item)
@@ -398,7 +389,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
             }
           })
         })
-        console.log({codewordsArray})
+        // console.log({codewordsArray})
         setKeywords({...tempKeywords,[resNum] : codewordsArray})
 
       });
@@ -406,7 +397,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
 
       socket.on('multiple-operation', operation=> {
 
-          console.log('multiple-operation',operation)
+          // console.log('multiple-operation',operation)
           let codeword=operation.codewordIds
           let resNumArray=operation.responses
           let tempkeywords=operation.keywords
@@ -419,7 +410,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
             }
             if(!temp.includes(codeword)){
               temp.push(codeword)
-              console.log(temp)
+              // console.log(temp)
               tempkeywords={...tempkeywords,[item]:temp}
             }
           })
@@ -428,35 +419,35 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
 
       socket.on('toggle-codeword-to-list', (value)=>{
 
-        console.log('toggle-codeword-to-list',value)
+        // console.log('toggle-codeword-to-list',value)
         const id=value.codewordId
         const responses=value.response
         const {active,codewordName}=value
         let codeword_name=''
         let temp=value.keywords
 
-        console.log("active===>",active,codewordName)
+        // console.log("active===>",active,codewordName)
   
         if(!active){
           value.leftMenuCodes.map(task => {
             if (id === task.id) {
               codeword_name=task.name
-              console.log("codeword_name",codeword_name)
+              // console.log("codeword_name",codeword_name)
             }
           });
         
           responses.map((num=>{
-            console.log("temp[num]==>",temp[num])
+            // console.log("temp[num]==>",temp[num])
             if(typeof(temp[num])=="object" && temp[num].includes(codeword_name)){
               temp[num]=temp[num].splice(codeword_name)
             }
           }))
   
         }else{
-          console.log("else condition ==>",responses)
+          // console.log("else condition ==>",responses)
           responses.map((num=>{
             if(typeof(temp[num])=="object" && !temp[num].includes(codewordName)){
-              console.log("temp[num]==>",temp[num])
+              // console.log("temp[num]==>",temp[num])
               temp[num].push(codewordName)
             }
           }))
@@ -475,7 +466,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
       let value =event.target.value;
       let num=rowData?.rowData?.resNum
 
-      console.log(value?.length < keywords[num]?.length,"handlchange==>",keywords)
+      // console.log(value?.length < keywords[num]?.length,"handlchange==>",keywords)
 
       if(value?.length < keywords[num]?.length){
         let codewordIdsArray=[]
@@ -488,7 +479,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         })
 
         let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords,leftMenuCodes:leftMenuCodes};
-        console.log(`operation--->`,operation,codewordIdsArray)
+        // console.log(`operation--->`,operation,codewordIdsArray)
         socket.emit('single-response-operation', operation);
         return
       }
@@ -507,7 +498,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         })
 
         let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords,leftMenuCodes:leftMenuCodes};
-        console.log(`operation--->`,operation)
+        // console.log(`operation--->`,operation)
         socket.emit('single-response-operation', operation);
 
       }else if(selected.includes(num)){
@@ -521,7 +512,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         })
 
         let operation = {responses:selected, codewordId:code,codewordIds:value[value?.length-1],keywords:keywords,leftMenuCodes:leftMenuCodes};
-        console.log(operation)
+        // console.log(operation)
         socket.emit('multiple-response-operation', operation);
       
       }
@@ -538,7 +529,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = filteredData.map((n) =>n.resNum);
-      console.log(newSelecteds)
+      // console.log(newSelecteds)
       setSelected(newSelecteds);
       return;
     }
@@ -561,22 +552,10 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         selected.slice(selectedIndex + 1),
       );
     }
-    console.log(newSelected)
+    // console.log(newSelected)
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -602,12 +581,12 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
         );
       };
     
-      useEffect(() => {
-        console.log(sorting)
-      }, [sorting])
+      // useEffect(() => {
+        // console.log(sorting)
+      // }, [sorting])
       
       const handleSorting=value=>{
-        console.log(value)
+        // console.log(value)
         if(value?.label=="desc"){
           setSorting({
             length:{label:"length",sort:sorting?.length?.sort,active:false},
@@ -649,32 +628,14 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           </TableCell>
         );
       };
-      const handleScroll =  (e) => {
-        var temp1=(Math.round((e.scrollHeight - e.scrollTop)/100)*100)
-        const bottom = temp1 ===  (Math.round(((e.clientHeight)+100)/100)*100 )
-        bottom && console.log(`bottom from handleScroll`,bottom)
-        //       console.log(temp1)
-        //       console.log(Math.round((e.clientHeight * 2)/100)*100)
-        // console.log(Math.round(e.scrollHeight - e.scrollTop)+10 === e.clientHeight)
-        
-        if (bottom) {
-          setReachedEnd(true)
-          
-          return
-        }
-        else{
-          setReachedEnd(false)
-          return
-        }
-      }
 
-    const _handleClick=(event, data) => {
+      const _handleClick=(event, data) => {
         console.log(`clicked`, { event, data })
     }
 
-    useEffect(()=>{
-      console.log('leftMenuCodes==>',leftMenuCodes)
-    },[leftMenuCodes])
+    // useEffect(()=>{
+    //   console.log('leftMenuCodes==>',leftMenuCodes)
+    // },[leftMenuCodes])
 
   return (
     <Paper style={{ height: 400, width: '100%' }}>
@@ -690,7 +651,6 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
             gridStyle={{
               direction: 'inherit',
             }}
-            onScroll={handleScroll}
             headerHeight={headerHeight}
             className={classes?.table}
             rowCount={filteredData?.length}
@@ -794,8 +754,6 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
                           renderValue={(selected) => selected.join(', ')}
                           MenuProps={MultipleSelectMenuProps}
                         >
-                          {console.log("re renderring")}
-
                           {leftMenuCodes?.map((item) => {
                               return (
                                 item?.active ?
@@ -862,10 +820,10 @@ const Highlight=({select,indices})=>{
 }
 const ContextMenuSkin=({slice,select,data,handleClick})=>{
     var __num= Math.floor(Math.random() * 101)  
-    slice && console.log()
+    // slice && console.log()
     let temp1=data
     let start=0
-    console.log(select)
+    // console.log(select)
 
     return (
         // style={{height:"100px"}}
