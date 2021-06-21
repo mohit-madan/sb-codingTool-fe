@@ -3,10 +3,10 @@ import { userService } from '../services';
 import { alertActions } from '.';
 import { history } from '../_helpers';
 import config from "../config.js"
-import { authHeader } from '../_helpers';
+// import { authHeader } from '../_helpers';
 import axios from "axios"
-import { useParams } from "react-router-dom";
-import { data } from 'jquery';
+// import { useParams } from "react-router-dom";
+// import { data } from 'jquery';
 import RESPONSE_MESSAGE from "../responseMessage"
 
 // import {handleResponse} from "../services"

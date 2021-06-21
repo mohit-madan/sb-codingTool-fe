@@ -58,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
 function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
-    const [codes,setCodes]=useState([])
     const [filterDetails,setFilterDetails] =useState({
         match:`Contains In`,
         keywords:[],
@@ -69,14 +68,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         filtersArray:[]
     })
     
-    
-    // useEffect(()=>{
-    //   socket.once('left-menu-codes-object', (value) => {
-    //     console.log(value)
-    //     setCodes(value)
-    //   })
-    // })
-
     useEffect(() => {
       handleSubmitSearch()
     }, [filterDetails?.sort])
@@ -103,16 +94,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         })
 
     }, [selectSortBy])
-
-    useEffect(()=>{
-      console.log("Codes from Filterbar.js ==> ",codes)
-    },[codes])
-
-    useEffect(() => {
-      setCodes(leftMenuCodes)
-    }, [leftMenuCodes])
   const getFiltersArray=()=>{
-
       let filters =JSON.parse(JSON.stringify(filterDetails?.filtersArray))
 
       if(filterDetails?.sort===`Sort by length Ascending`){
@@ -235,7 +217,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         e.preventDefault()
         setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
         setFiltersInRedux({...filterDetails,[e.target.name]:e.target.value})
-        console.log(filterDetails)
     }
   
     const resetFilterDetails=()=>{
@@ -312,7 +293,13 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
              <div className="filters">
                 <div className="filters_settings">
                     <form className="search_form" style={{display : "flex",margin: 'auto 0', minWidth: '300px'}} >
-                      <input type="text" style={{margin: "auto"}} placeholder="Search.." name="searchValue" value={filterDetails?.searchValue} onChange={handleFilterDetails}/>
+                      <input 
+                        type="text" 
+                        style={{margin: "auto"}} 
+                        placeholder="Search.." 
+                        name="searchValue" 
+                        value={filterDetails?.searchValue} 
+                        onChange={handleFilterDetails}/>
                       <FormControl variant="filled" className={classes.formControl}>
                        <InputLabel id="demo-simple-select-filled-label">Match</InputLabel>
                        <Select
@@ -329,11 +316,10 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                          <option  value={`Exact Match`}>Exact Match</option >
                        </Select>
                      </FormControl>
-                     
-                      {/* <button style={{margin: "auto"}} type="submit"><i className="fa fa-search" /></button> */}
+                      <button type="submit" className="btn"  onClick={handleSubmitSearch}><i className="fa fa-filter"></i> Filter</button>
                     </form>
                     
-                     <button className="btn"  onClick={handleSubmitSearch}><i className="fa fa-filter"></i> Filter</button>
+                     
                      <FormControl className={classes.formControl}>
                         <InputLabel id="demo-simple-select-filled-label">Keywords</InputLabel>
                         <Select
@@ -347,7 +333,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                           MenuProps={MenuProps}
                           name={`keywords`}
                         >
-                          {codes.map((item) => {
+                          {leftMenuCodes.map((item) => {
                             if(item?.active){
                               return (
                                 <MenuItem key={item?.id} value={item?.name}>
