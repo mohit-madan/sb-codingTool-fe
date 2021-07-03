@@ -307,7 +307,7 @@ const headCells = [
 function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
-    const rowHeight =100
+    const rowHeight =48
     const classes=_useStyles()
     const multipleSelectClasses=MultipleSelectStyles()
 
@@ -638,7 +638,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
     // },[leftMenuCodes])
 
   return (
-    <Paper style={{ height: 400, width: '100%' }}>
+    <Paper style={{ height: '100%', width: '100%' }}>
       <AutoSizer>
         {({ height, width }) => (
             <div>
@@ -747,7 +747,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
                           // key={JSON.stringify(codesCopy)}
                           labelId="demo-mutiple-checkbox-label"
                           id={`${JSON.stringify(leftMenuCodes)} demo-mutiple-checkbox`}
-                          multiple
+                          // multiple
                           value={keywords!==undefined ? keywords[rowData?.rowData?.resNum] : []}
                           onChange={handleChange(rowData)}
                           input={<Input />}

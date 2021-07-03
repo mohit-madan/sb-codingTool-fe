@@ -68,7 +68,7 @@ function App() {
                             <PrivateRoute exact  path="/user/profile"  component={Profile}/>
                             <PrivateRoute  path="/userProjectsDashboard" component={UserProjectsDashboard} />
                             <PrivateRoute  path="/tool" component={CodeIt} />
-                            <PrivateRoute  path="/" component={UserProjectsDashboard} />
+                            <PrivateRoute  path="/" component={UploaderPage} />
                             <Route  path={`/resetPassword/:token`} component={ResetPassword} />
                             <Redirect from="*" to="/" />
                         </Switch>
