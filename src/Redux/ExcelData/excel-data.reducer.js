@@ -3,7 +3,8 @@ import { excelDataActionTypes } from './excel-data.types';
 const INITIAL_STATE = {
     excelData:null,
     excelDataColumns:null,
-    excelFileName:''
+    excelFileName:'',
+    excelDataHeaders:null,
 };
 
 const excelDataReducer = (state = INITIAL_STATE, action) => {
@@ -23,6 +24,12 @@ const excelDataReducer = (state = INITIAL_STATE, action) => {
           ...state,
           excelFileName: action.payload
         };
+      case excelDataActionTypes.SET_EXCEL_DATA_HEADERS:
+        return {
+          ...state,
+          excelDataHeaders: action.payload
+        };
+        
     default:
       return state;
   }

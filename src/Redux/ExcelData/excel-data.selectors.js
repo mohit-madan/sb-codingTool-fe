@@ -15,3 +15,8 @@ export const selectExcelFileName = createSelector(
   [selectExcelDataReducer],
   user => user.excelFileName
 );
+
+export const selectExcelDataHeaders = createSelector(
+  [selectExcelDataReducer],
+  user => user.excelDataHeaders
+);

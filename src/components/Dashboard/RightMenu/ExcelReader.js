@@ -1,9 +1,9 @@
 import React, { Component,useEffect } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import XLSX from 'xlsx';
-import { setExcelData, setExcelFileName } from '../../../Redux/ExcelData/excel-data.actions';
+import { setExcelData, setExcelFileName, setExcelDataHeaders } from '../../../Redux/ExcelData/excel-data.actions';
 import { setProgressNumber } from '../../../Redux/Progress-number/progress.actions';
-import { make_cols } from './MakeColumns';
+import { get_headers } from './GetHeaders';
 import { SheetJSFT } from './types';
 import Loader from 'react-loader-spinner'
 import { alertActions, userActions } from '../../../_actions';
@@ -46,7 +46,7 @@ class ExcelReader extends Component {
     this.state = {
       file: '',
       data: [],
-      cols: [],
+      header_list: [],
       loading:false,
       uploaded:false,
       fileName:this.props.excelFileName,
@@ -86,17 +86,18 @@ class ExcelReader extends Component {
       /* Convert array of arrays */
       let data = XLSX.utils.sheet_to_json(ws);
       /* Update state */
-      const {updateExcelData,setProgressNumber,setShowUploaderAlerts }=this.props
+      const {updateExcelData,setProgressNumber,setShowUploaderAlerts, updateHeaders }=this.props
       if(data?.length>30){
         data=Object.entries(data).slice(0,30).map(entry => entry[1])
       }
-      this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
-        updateExcelData(JSON.stringify(this.state.data, null, 2))
-        localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2))
+      this.setState({ data: data, header_list: get_headers(ws) }, () => {
+        updateExcelData(JSON.stringify(this.state.data, null, 2));
+        updateHeaders(this.state.header_list);
+        localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2));
         
-        setProgressNumber(2)
-        setShowUploaderAlerts(false)
-        this.setState({loading:false})
+        setProgressNumber(2);
+        setShowUploaderAlerts(false);
+        this.setState({loading:false});
 
       });
       
@@ -128,6 +129,7 @@ class ExcelReader extends Component {
 
 const mapDispatchToProps = dispatch => ({
     updateExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
+    updateHeaders: collectionsMap => dispatch(setExcelDataHeaders(collectionsMap)),
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),
     setExcelFileName: progressNumber =>dispatch(setExcelFileName(progressNumber)),
     setShowUploaderAlerts: collectionsMap => dispatch(setShowUploaderAlerts(collectionsMap)),
