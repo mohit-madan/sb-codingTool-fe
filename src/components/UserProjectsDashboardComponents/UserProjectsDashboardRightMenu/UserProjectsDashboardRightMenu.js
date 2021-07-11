@@ -1,18 +1,12 @@
-import axios from 'axios'
 import React,{useEffect,useState} from 'react'
 import { connect, useSelector } from 'react-redux'
-import config from '../../../config'
 import { userActions } from '../../../_actions'
 import UserProjectsDashboardHeader from '../UserProjectsDashboardHeader/UserProjectsDashboardHeader'
 import "./UserProjectsDashboardRightMenu.css"
-import {data} from "./data"
 import { tableIcons } from './TableIcons'
 import MaterialTable from 'material-table'
 import DataUsageOutlinedIcon from '@material-ui/icons/DataUsageOutlined';
-import { green ,red,blue,grey} from '@material-ui/core/colors';
-import AvTimerOutlinedIcon from '@material-ui/icons/AvTimerOutlined';
-import WhatshotIcon from '@material-ui/icons/Whatshot';
-import ErrorIcon from '@material-ui/icons/Error';
+import { green } from '@material-ui/core/colors';
 import { history } from '../../../_helpers'
 import { setQuestionNumber } from '../../../Redux/CodeitData/codeit-data.actions'
 
@@ -55,8 +49,28 @@ const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
             </div>
         )
     }
+    const DateTemplate=({date})=>{
+        return(
+            <div className="flex members_template">
+                {
+                    date.split("T")[0]
+                }
+            </div>
+        )
+    }
 
     let customCol=[
+        {
+            title:`Date Created`,
+            field:`CreationDate`,
+            cellStyle: {
+                width:"9%",
+                textAlign: "-webkit-center",
+            },
+            render:rowData=>{
+                return (<DateTemplate date={rowData.CreationDate}/>)
+            }
+        },
         {
             title:`Title`,
             field:`name`,
@@ -103,8 +117,6 @@ const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
                 await userActions.projectDetails()
                 if(localStorage.listOfQuestion!==undefined){
                     history.push(`/tool`)
-                    // let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
-                    // await userActions.questionCodebookId(room)
                 }
            }
     }
@@ -129,11 +141,6 @@ const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
                         columns={customCol}
                         title="Projects Dashboard"
                         options={{ headerStyle: { position: 'sticky', top: "-20px"} }}
-                        options={{
-                            rowStyle: rowData => {
-                                console.log(rowData)
-                            }
-                        }}
                         onRowClick={((evt, selectedRow) => goToCodingTool(evt,selectedRow))}
                         options={{
                           selection: false,
@@ -142,7 +149,10 @@ const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
                           grouping: false,
                           search: true,
                           sorting: true,
-                          paging:false
+                          paging:false,
+                          rowStyle: (row, index) => ({
+                            backgroundColor: (index % 2 == 0) ? '#EEE' : '#FFF'
+                          })
                         }}
                         localization={{
                           pagination: {
