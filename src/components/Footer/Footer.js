@@ -146,8 +146,13 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
                 setExcelData(null)
                 setGettingProjectDetails(false)
            }
-        },err=>console.log(err))
-
+        })
+        .catch(err=>{
+            if(err.response.status==400){
+                setLoading(false)
+                alert(err.response.data.message)
+            }
+        })
     }
     return (
         <div className="footer">
