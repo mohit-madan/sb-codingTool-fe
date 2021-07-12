@@ -39,41 +39,78 @@ const MenuProps = {
 const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColumn})=> {
     const classes = useStyles();
 
-    function basicMapper(){
+    const [state, setState] = React.useState((()=> {
       var mapper={}
       selectExcelDataColumns?.map((item,index)=>{
           let temp=item.title
           mapper={...mapper,[temp]: false}
       })
       return mapper
-    }
-
-    const [state, setState] = React.useState(basicMapper());
+    })());
+    useEffect(()=>{
+      var mapper={}
+        setState((()=>{
+          selectExcelDataColumns?.map((item,index)=>{
+            let temp=item.title
+            mapper={...mapper,[temp]: false}
+        })
+        return mapper
+      })())
+    }, [selectExcelDataColumns])
+    const [allChecked, setAllChecked] = React.useState(false);
+    
     useEffect(() => {
       if(!column){
         column={}
-        setColumn(basicMapper())
+        setColumn((()=>{
+          var mapper={}
+          selectExcelDataColumns?.map((item,index)=>{
+              let temp=item.title
+              mapper={...mapper,[temp]: false}
+          })
+          return mapper
+        })())
       }
     }, [])
-
-    useEffect(() => {
-      console.log("state",state)
-    }, [state])
 
     const handleChange = (event) => {
       const checked=event.target.checked
       const name=event.target.name
-      console.log("event.target",name, checked)
       var temp=state
-      Object.keys(temp)?.map((item,index)=>{
-        if(item==name){
-          temp[item]=checked
-        }
-      })
-      setState(temp)
-      setColumn({ ...column, [name]: checked })
+      if(name==="selectAll$Unique"){
+        const checked = event.target.checked
+        var temp = state
+        Object.keys(temp)?.map((item,index)=>{
+            temp[item]=checked
+        })
+        setState(temp)
+        setAllChecked(checked)
+        setColumn((()=>{
+          var mapper={}
+            selectExcelDataColumns?.map((item,index)=>{
+                let temp=item.title
+                mapper={...mapper,[temp]: checked}
+            })
+            return mapper
+        })())
+      }
+      else{
+        Object.keys(temp)?.map((item,index)=>{
+          if(item==name){
+            temp[item]=checked
+          }
+        })
+        setState(temp)
+        setAllChecked((()=>{
+          var countTrue =  Object.values(temp)?.filter(function(c) {
+            return c;
+            });
+            return countTrue.length ===  Object.keys(temp).length;
+          })()
+          )
+        setColumn({ ...column, [name]: checked })
+      }
     };
-
     
 
     return (
@@ -81,25 +118,24 @@ const LeftMenu=({progressNumber,rowNumber,column,selectExcelDataColumns,setColum
             <div className="title">{leftmenu_data[`_${progressNumber}`].title_1}</div>
             <div className="title">{leftmenu_data[`_${progressNumber}`].title_2}</div>
             <p>{leftmenu_data[`_${progressNumber}`].p}</p>
-            {/* <span>{leftmenu_data[`_${progressNumber}`].span_1}</span>
-            <span>{leftmenu_data[`_${progressNumber}`].span_2}</span> */}
-
-            {/* <h5>Selections :</h5>
-            {rowNumber && <h6>Row Nuber : {rowNumber.tableData.id} Selected</h6>} */}
             {progressNumber==2 && 
             <div className="selections">
               <h5>Selections :</h5>
               {rowNumber && <h6>Row Number : {rowNumber.tableData.id} Selected</h6>}
               <div className={classes.root}>
-              <FormControl component="fieldset" className={classes.formControl}>
-                
+              <FormControl component="div" className={classes.formControl}> 
               <FormGroup>
+                <FormControlLabel
+                    key="selectAll$Unique"
+                    control = {<Checkbox key="selectAll" checked={allChecked} onChange={handleChange} name="selectAll$Unique" indeterminate />}
+                    label="Select All"
+                  />
                 {selectExcelDataColumns?.map((item,index)=>{
                   // console.log("state[Object.keys(state)[index]]",state[Object.keys(state)[index]])
                   return(
                   <FormControlLabel
                     key={index}
-                    control={<Checkbox key={index} checked={state[Object.keys(state)[index]]} onChange={handleChange} name={item?.title} />}
+                    control= {<Checkbox key={index} checked={Object.values(state)[index] || false} onChange={handleChange} name={item?.title} />}
                     label={item?.title}
                   />
                   )

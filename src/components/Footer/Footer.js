@@ -38,8 +38,14 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
             return
         }
         if(progressNumber===2){
-            if(Object.size(column)==0  ){
-                // alert("Please Selelct a Column to Continue")
+            var result = true;
+            for(var i in column){
+                if(column[i]===true){
+                    result=false;
+                    break;
+                }
+            }
+            if(result){
                 setAlertMessage("Please Selelct a Column to Continue")
                 setShowUploaderAlerts(true)
                 return
