@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectCodes, selectFilteredData, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
+import { selectCodes, selectFilteredData, selectKeywords, selectLeftMenuCodes, selectQuestionNumber } from '../../../Redux/CodeitData/codeit-data.selectors';
 import { setFilteredData, setKeywords,setSortBy } from '../../../Redux/CodeitData/codeit-data.actions';
 import { lighten } from '@material-ui/core/styles';
 import TableHead from '@material-ui/core/TableHead';
@@ -29,8 +29,13 @@ import FormControl from '@material-ui/core/FormControl';
 import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import Chip from '@material-ui/core/Chip';
+
 import {MultipleSelectStyles, MultipleSelectMenuProps} from "./MultipleSelectStyles"
 import { socket } from '../../../config';
+import { eventChannel } from 'redux-saga';
 
 const _useStyles = makeStyles((theme) => ({
     flexContainer: {
@@ -462,47 +467,29 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
 
     },[])
 
-    const handleChange= rowData => (event) => {
-      let value =event.target.value;
-      let num=rowData?.rowData?.resNum
-
-      // console.log(value?.length < keywords[num]?.length,"handlchange==>",keywords)
-
-      if(value?.length < keywords[num]?.length){
-        let codewordIdsArray=[]
-        leftMenuCodes?.map((item,index)=>{
-          value?.map((_item,_index)=>{
-            if(item?.name == _item){
-              codewordIdsArray.push(item.id)
-            }
-          })
-        })
-
-        let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords,leftMenuCodes:leftMenuCodes};
-        // console.log(`operation--->`,operation,codewordIdsArray)
-        socket.emit('single-response-operation', operation);
-        return
-      }
-
+    const handleChange= (newValue, rowData) => {
+      let num=rowData?.rowData?.resNum;
       if((selected?.length ==0 || selected?.length ==1 || !selected.includes(num))){
 
         let codewordIdsArray=[]
+        leftMenuCodes.map((item, index)=>{
+            newValue.map((_item,index)=>{
+              if(item.name == _item){
+                codewordIdsArray.push(item.id);
+              }
 
-        leftMenuCodes?.map((item,index)=>{
-          // console.log(item)
-          value?.map((_item,_index)=>{
-            if(item?.name == _item){
-              codewordIdsArray.push(item.id)
-            }
-          })
+            })
         })
+        // newValue?.map((_item,_index)=>{
+        //   codewordIdsArray.push(_item.id)
+        // })
 
         let operation = {resNum:num, codewordIds:codewordIdsArray,keywords:keywords,leftMenuCodes:leftMenuCodes};
         // console.log(`operation--->`,operation)
         socket.emit('single-response-operation', operation);
 
       }else if(selected.includes(num)){
-        let temp =value[value?.length-1]
+        let temp =newValue[newValue?.length-1]
         let code=null
         leftMenuCodes?.map((item,index)=>{
           // console.log(item)
@@ -511,7 +498,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
           }
         })
 
-        let operation = {responses:selected, codewordId:code,codewordIds:value[value?.length-1],keywords:keywords,leftMenuCodes:leftMenuCodes};
+        let operation = {responses:selected, codewordId:code,codewordIds:newValue[newValue?.length-1],keywords:keywords,leftMenuCodes:leftMenuCodes};
         // console.log(operation)
         socket.emit('multiple-response-operation', operation);
       
@@ -712,7 +699,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
                       cellRenderer={rowData => {return <Highlight indices={rowData?.rowData?.indices} select={rowData?.rowData?.desc} data={rowData.rowData} handleClick={_handleClick}  />}}
                       dataKey={"desc"}
                       width = "500"
-                      label= 'desc'
+                      label= 'Response'
                     />
                     <Column
                       key={"length"}
@@ -728,7 +715,7 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
                     //   cellRenderer={rowData => <ContextMenuSkin select={rowData?.rowData?.length} data={rowData.rowData} handleClick={_handleClick} />}
                       dataKey={"length"}
                       width = "50"
-                      label= 'length'
+                      label= 'Length'
                     />
                     <Column
                       key={JSON.stringify(leftMenuCodes)}
@@ -740,40 +727,75 @@ function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,lef
                       }
                       className={classes.flexContainer}
                       // cellRenderer={rowData => <input  type="text"/>}
-                      cellRenderer={rowData=>
-                        <FormControl className={multipleSelectClasses.formControl}>
-                        <InputLabel id={`demo-mutiple-checkbox-label`}>Tag</InputLabel>
-                        <Select
-                          // key={JSON.stringify(codesCopy)}
-                          labelId="demo-mutiple-checkbox-label"
-                          id={`${JSON.stringify(leftMenuCodes)} demo-mutiple-checkbox`}
-                          // multiple
-                          value={keywords!==undefined ? keywords[rowData?.rowData?.resNum] : []}
-                          onChange={handleChange(rowData)}
-                          input={<Input />}
-                          renderValue={(selected) => selected.join(', ')}
-                          MenuProps={MultipleSelectMenuProps}
-                        >
-                          {leftMenuCodes?.map((item) => {
-                              return (
-                                item?.active ?
-                                <MenuItem id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} key={`${item?.id}${item?.active}`} value={item?.name}>
-                                  {
-                                    (keywords)!==undefined && 
-                                      <Checkbox id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} checked={keywords[rowData?.rowData?.resNum]?.indexOf(item?.name) > -1} />
-
-                                  }
-                                  <ListItemText id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`}  primary={item?.name} />
-                                </MenuItem>
-                                :
-                                <ListItemText key={`${item?.id}${item?.active}`} id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} style={{display:"none"}} primary={item?.name} />
-                              )
-                            }
-                          )}
-                        </Select>
-                        {/* {console.log(leftMenuCodes)} */}
-                      </FormControl>
+                      cellRenderer = {
+                        rowData => 
+                        <Autocomplete
+                          multiple
+                          id={`${JSON.stringify(leftMenuCodes)} tags-standard`}
+                          options={leftMenuCodes.map((item)=>item.name)}
+                          // keywords
+                          autoHighlight
+                          filterSelectedOptions
+                          autoComplete
+                          // defaultValue={keywords[rowData?.rowData?.resNum]}
+                          value={keywords[rowData?.rowData?.resNum]}
+                          // value={["code"]}
+                          // render
+                          renderTags={(tagValue, getTagProps) =>
+                            tagValue.map((option, index) => (
+                              <Chip
+                                label={option}
+                              />
+                            ))
+                          }
+                          renderInput = {
+                            (params)=> (
+                              <TextField
+                                {...params}
+                                variant="standard"
+                                label="keywords"
+                              />
+                            )
+                          }
+                          onChange={(event, newValue)=>{
+                            handleChange(newValue, rowData)
+                          }}
+                        />
                       }
+                      // cellRenderer={}
+                        // rowData=>
+                      //   <FormControl className={multipleSelectClasses.formControl}>
+                      //   <InputLabel id={`demo-mutiple-checkbox-label`}>Tag</InputLabel>
+                      //   <Select
+                      //     // key={JSON.stringify(codesCopy)}
+                      //     labelId="demo-mutiple-checkbox-label"
+                      //     id={`${JSON.stringify(leftMenuCodes)} demo-mutiple-checkbox`}
+                      //     // multiple
+                      //     value={keywords!==undefined ? keywords[rowData?.rowData?.resNum] : []}
+                      //     onChange={handleChange(rowData)}
+                      //     input={<Input />}
+                      //     renderValue={(selected) => selected.join(', ')}
+                      //     MenuProps={MultipleSelectMenuProps}
+                      //   >
+                      //     {leftMenuCodes?.map((item) => {
+                      //         return (
+                      //           item?.active ?
+                      //           <MenuItem id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} key={`${item?.id}${item?.active}`} value={item?.name}>
+                      //             {
+                      //               (keywords)!==undefined && 
+                      //                 <Checkbox id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} checked={keywords[rowData?.rowData?.resNum]?.indexOf(item?.name) > -1} />
+
+                      //             }
+                      //             <ListItemText id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`}  primary={item?.name} />
+                      //           </MenuItem>
+                      //           :
+                      //           <ListItemText key={`${item?.id}${item?.active}`} id={`${JSON.stringify(leftMenuCodes)} ${item?.id}`} style={{display:"none"}} primary={item?.name} />
+                      //         )
+                      //       }
+                      //     )}
+                      //   </Select>
+                      //   {/* {console.log(leftMenuCodes)} */}
+                      // </FormControl>
                       dataKey={"resNum"}
                       width = "500"
                       label= 'Codes'

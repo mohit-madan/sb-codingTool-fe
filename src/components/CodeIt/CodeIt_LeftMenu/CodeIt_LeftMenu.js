@@ -32,7 +32,8 @@ const CodeIt_LeftMenu =()=>{
       return (
         <div className="codeit_leftmenu">
           <LeftMenuTop />
-          <LeftMenu_EditOptions />
+          {/* <LeftMenu_EditOptions /> */}
+          <div className="background-color flex LeftMenu_EditOptions"></div>
           <Coding />
         </div>
       );

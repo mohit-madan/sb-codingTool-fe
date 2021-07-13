@@ -43,9 +43,9 @@ const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCod
     let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
     data = await userActions.responsePagination({pageNumber:1,limit:3000,push:false,questionId:questionId})
     data = JSON.parse(data)
-    console.log(`filtered data from right menu .js after parsing`)
+    // console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
-      console.log(`hello from rightmenu .js`,data)
+      // console.log(`hello from rightmenu .js`,data)
 
       data?.map((item)=>{
         let temp=[]
@@ -54,12 +54,12 @@ const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCod
         if(item?.codewords?.length >0){
           
           item?.codewords?.map((_item)=>{
-            if(_item?.active==true && _item?.resToAssigned?.includes(resNum)){
-              return temp.push(_item?.tag)
+            if(_item?.active==true ){
+              temp.push(_item?.tag)
             }
           })
         }
-        return keywords={...keywords,[resNum]:  temp }
+        keywords={...keywords,[resNum]:  temp }
       })
 
       setFilteredData(data)
