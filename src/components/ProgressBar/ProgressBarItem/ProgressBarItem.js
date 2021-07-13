@@ -5,7 +5,7 @@ function ProgressBarItem({index,progressNumber,text}){
             <div className="item">
                 <div  key={index} style={progressNumber>=index ? highlightStyle : null} className="number">{progressNumber>index ? `✔`: index}</div>
                 <h5  style={progressNumber>index ? textStyle : null}>{text}</h5>
-                {index!==4 && <hr/>}
+                {index!==5 && <hr/>}
             </div>
     )
 }

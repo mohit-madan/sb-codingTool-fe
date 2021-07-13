@@ -3,7 +3,7 @@ import "./Footer.css"
 import { Button } from '@material-ui/core';
 import { connect, useDispatch } from 'react-redux';
 import {setProgressNumber} from "../../Redux/Progress-number/progress.actions.js"
-import { selectColumn, selectRow } from '../../Redux/SelectedRowandColumn/tableSelections.selectors';
+import { selectColumn, selectFilterColumn, selectRow } from '../../Redux/SelectedRowandColumn/tableSelections.selectors';
 import { createStructuredSelector } from 'reselect';
 import { selectSurveyDetails } from '../../Redux/SurveyDetails/survey-details.selectors';
 import { selectExcelData, selectExcelDataColumns } from '../../Redux/ExcelData/excel-data.selectors';
@@ -19,7 +19,7 @@ import { bindActionCreators } from "redux";
 import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
 import { setAlertMessage, setShowUploaderAlerts } from '../../Redux/UploaderAlerts/UploaderAlerts.actions';
 
-const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column,surveyDetails,excelData})=> {
+const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column, filterColumn,surveyDetails,excelData})=> {
 
     const dispatch = useDispatch();
     Object.size = function(obj) {
@@ -51,7 +51,8 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
                 return
             }
         }
-        if(progressNumber===3 && (surveyDetails==null || surveyDetails?.name?.length==0)){
+        
+        if(progressNumber===4 && (surveyDetails==null || surveyDetails?.name?.length==0)){
             // alert("Survey Name Is Required to Continue")
 
             setAlertMessage("Survey Name Is Required to Continue")
@@ -59,7 +60,7 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
 
             return
         }
-        progressNumber<=3 && setProgressNumber(progressNumber+1)
+        progressNumber<=4 && setProgressNumber(progressNumber+1)
         setShowUploaderAlerts(false)
     }
 
@@ -97,9 +98,9 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
         let col =[]
         Object.keys(temp1).map((item,index)=>{
             if(temp1[item]==true){
-                col= [...col,{"coloumn":getIndex(item),"question":item}]
+                col= [...col,{"column":getIndex(item),"question":item}]
             }})
-            console.log(`modified coloumns`,col)
+            console.log(`modified columns`,col)
             return col
     }
 
@@ -126,7 +127,8 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
             "name":surveyDetails?.name ? surveyDetails?.name : "test",
             "desc":surveyDetails?.description ? surveyDetails?.description : "test",
             "key":localStorage?.fileKey,
-            "coloumns":handleColumns(column),
+            "columns":handleColumns(column),
+            "filterColumns":handleColumns(filterColumn),
             "industry":surveyDetails?.industry ? surveyDetails?.industry : "test",
             "type":surveyDetails?.type ? surveyDetails?.type : "test",
             "tags":(surveyDetails?.tags) ? handleTags(surveyDetails?.tags) : ["test"],
@@ -168,8 +170,8 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
             <div className="middle"></div>
             <div className="right">
                 <Button color="primary" onClick={previous}>Prev</Button>
-                {progressNumber<=3 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
-                {progressNumber===4 && <Button variant="contained"  color="primary" onClick={onSubmit}>Submit</Button>}
+                {progressNumber<=4 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
+                {progressNumber===5 && <Button variant="contained"  color="primary" onClick={onSubmit}>Submit</Button>}
                 {/* <Button onClick={testFunc}>Testing</Button> */}
             </div>
         </div>
@@ -189,6 +191,7 @@ const mapStateToProps=createStructuredSelector({
     surveyDetails:selectSurveyDetails,
     row:selectRow,
     column:selectColumn,
+    filterColumn:selectFilterColumn,
     excelData:selectExcelData,
     selectExcelDataColumns:selectExcelDataColumns,
 

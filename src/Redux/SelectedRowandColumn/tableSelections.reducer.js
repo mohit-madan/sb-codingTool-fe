@@ -2,7 +2,8 @@ import { tableSelectionActionTypes } from './tableSelections.types';
 
 const INITIAL_STATE = {
   row: null,
-  column:null
+  column:null,
+  filterColumn:null
 };
 
 const tableSelectionsReducer = (state = INITIAL_STATE, action) => {
@@ -17,6 +18,12 @@ const tableSelectionsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         column: action.payload
     };
+    case tableSelectionActionTypes.SET_FILTER_COLUMN:
+      return {
+        ...state,
+        filterColumn: action.payload
+    };
+    
     default:
       return state;
   }
