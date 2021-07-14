@@ -11,8 +11,9 @@ function RightMenu({progressNumber}) {
             
             {progressNumber==1 && <ExcelReader />}
             {progressNumber==2 && <Tab />}
-            {progressNumber==3 && <SurveyDetails />}
-            {progressNumber==4 && <Summary />}
+            {progressNumber==3 && <Tab />}
+            {progressNumber==4 && <SurveyDetails />}
+            {progressNumber==5 && <Summary />}
         </div>
     )
 }

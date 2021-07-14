@@ -1,2 +1,2 @@
-const HeaderData =[`Header`,`Open Ends`,`Details`,`Review & Submit`]
+const HeaderData =[`Header`,`Open Ends`, 'Filter Columns',`Details`,`Review & Submit`]
 export default HeaderData
