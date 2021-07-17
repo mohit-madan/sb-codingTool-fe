@@ -151,11 +151,9 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
           temp3.push({"operator":7,"codeword":item})
         })
       }
-        console.log(temp3)
         let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
         data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp3,questionId:questionId})
         data=JSON.parse(data)
-        // console.log(data)
         if(isIterable(data)){
           setFilteredData([...data])
          }
@@ -167,7 +165,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
     }
     const removeSearchItem=async (e,item)=>{
       e.preventDefault()
-      // console.log(item)
       let temp1=[]
       filterDetails?.searchArray?.map((x,index)=>{
         if(x!==item){

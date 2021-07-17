@@ -1,27 +1,24 @@
-import React,{useEffect,useState} from 'react'
+import React from 'react'
 import "./Footer.css"
 import { Button } from '@material-ui/core';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import {setProgressNumber} from "../../Redux/Progress-number/progress.actions.js"
 import { selectColumn, selectFilterColumn, selectRow } from '../../Redux/SelectedRowandColumn/tableSelections.selectors';
 import { createStructuredSelector } from 'reselect';
 import { selectSurveyDetails } from '../../Redux/SurveyDetails/survey-details.selectors';
 import { selectExcelData, selectExcelDataColumns } from '../../Redux/ExcelData/excel-data.selectors';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../config';
-import { handleResponse } from '../../services';
 import {history} from "../../_helpers"
-import { alertActions, userActions } from '../../_actions';
+import { userActions } from '../../_actions';
 import { setExcelData } from '../../Redux/ExcelData/excel-data.actions';
 import { setLoading } from '../../Redux/Loading/Loading.actions';
-import { bindActionCreators } from "redux";
 import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
 import { setAlertMessage, setShowUploaderAlerts } from '../../Redux/UploaderAlerts/UploaderAlerts.actions';
 
-const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,progressNumber,row,column, filterColumn,surveyDetails,excelData})=> {
+const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,
+    progressNumber,row,column, filterColumn,surveyDetails,excelData})=> {
 
-    const dispatch = useDispatch();
     Object.size = function(obj) {
         var size = 0,
           key;
@@ -32,7 +29,6 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
       };
     const next=()=>{
         if(progressNumber===1 && !excelData){
-            // alert("Please Uplaod a file")
             setAlertMessage("Please Upload a file")
             setShowUploaderAlerts(true)
             return
@@ -53,11 +49,8 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
         }
         
         if(progressNumber===4 && (surveyDetails==null || surveyDetails?.name?.length==0)){
-            // alert("Survey Name Is Required to Continue")
-
             setAlertMessage("Survey Name Is Required to Continue")
             setShowUploaderAlerts(true)
-
             return
         }
         progressNumber<=4 && setProgressNumber(progressNumber+1)
@@ -68,19 +61,6 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
         progressNumber>1 && setProgressNumber(progressNumber-1)
         setShowUploaderAlerts(false)
     }
-
-    const [creatingProject,setCreatingProject]=useState(true)
-    const [gettingProjectDetails,setGettingProjectDetails]=useState(true)
-    const [gettingPaginationData,setPaginationData]=useState(false)
-
-
-    useEffect(() => {
-        if(creatingProject===false && localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
-             console.log(`getting project Details`)
-               userActions.projectDetails()
-             setGettingProjectDetails(false)
-        }
-    }, [creatingProject])
 
 
     const handleColumns=(temp1)=>{
@@ -103,11 +83,6 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
             console.log(`modified columns`,col)
             return col
     }
-
-// const testFunc=()=>{
-//     let temp=handleColumns(column)
-//     console.log(column)
-// }
 
     const handleTags=(tags)=>{
         let temp=[]
@@ -144,15 +119,13 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
             localStorage.setItem('projectId',data?.data?.projectId)
             await delay(2000);
             console.log(`waited 200 m seconds`)
-            // setCreatingProject(false)
-            if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
+            if(localStorage.projectId!==undefined && localStorage.projectId?.length>0){
                 console.log(`getting project Details`)
                 await userActions.projectDetails()
                 history.push("/tool")
                 setLoading(false)
                 setProgressNumber(1)
                 setExcelData(null)
-                setGettingProjectDetails(false)
            }
         })
         .catch(err=>{
@@ -172,7 +145,6 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
                 <Button color="primary" onClick={previous}>Prev</Button>
                 {progressNumber<=4 && <Button variant="contained"  color="primary" onClick={next}>Next</Button>}
                 {progressNumber===5 && <Button variant="contained"  color="primary" onClick={onSubmit}>Submit</Button>}
-                {/* <Button onClick={testFunc}>Testing</Button> */}
             </div>
         </div>
     )
@@ -184,7 +156,6 @@ const mapDispatchToProps = dispatch => ({
     requestApiData: collectionsMap => dispatch(requestApiData(collectionsMap)),
     setShowUploaderAlerts: collectionsMap => dispatch(setShowUploaderAlerts(collectionsMap)),
     setAlertMessage: collectionsMap => dispatch(setAlertMessage(collectionsMap)),
-    
     // bindActionCreators({ requestApiData }, dispatch)
 });
 const mapStateToProps=createStructuredSelector({

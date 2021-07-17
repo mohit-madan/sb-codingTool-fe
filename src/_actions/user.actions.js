@@ -103,7 +103,7 @@ async function filteredPagination({pageNumber,limit,filters,questionId}) {
     await axios.post(`${config.apiUrl}/operator`,(details), requestOptions)
     .then(data=>{
         if(data?.data?.length!==0){
-            localStorage.setItem('filterdExcelData',JSON.stringify(data?.data))
+            localStorage.setItem('filteredExcelData',JSON.stringify(data?.data))
             console.log(`Filtered Pagination DAta from user actions`,data?.data)
             temp3=data?.data?.result
         }
@@ -147,20 +147,27 @@ async function projectDetails(){
     };
     await axios.post(`${config.apiUrl}/projectDetails`,details, requestOptions)
     .then( async data=>{
-        console.log(`project details from user actions`,data)
         localStorage.setItem('fileKey',data?.data?.project?.docKey)
         localStorage.setItem('codebook',data?.data?.project?.codebook)
-        localStorage.setItem('listOfQuestion',JSON.stringify(data?.data?.project?.listOfQuestion))
-        console.log('listOfQuestion',JSON.stringify(data?.data?.project?.listOfQuestion))
-        
-        // const delay = ms => new Promise(res => setTimeout(res, ms));
-
-        // await delay(1000)
-
-        // history.push(`/tool`)
-        // window.location.href = `${config.redirecturl}/tool`;
-
-    },err=>console.log(err))
+        let filterQuestions = [];
+        let questions = [];
+        let questionsList = data?.data?.project?.listOfQuestion;
+        if(questionsList){
+            for(let i=0; i<questionsList.length; i++){
+                if(questionsList[i].qType==="Q"){
+                    questions.push(questionsList[i]);
+                }
+                else if(questionsList[i].qType==="F"){
+                    filterQuestions.push(questionsList[i]);
+                }
+            }    
+        }
+        localStorage.setItem('listOfQuestion',JSON.stringify(questions))
+        if(filterQuestions.length>0){
+            localStorage.setItem('listOfFilterQuestion', JSON.stringify(filterQuestions))
+        }
+    })
+    .catch(err=>console.log(err))
 }
 
 async function projectDetailsForUserProjectsDashboard(projectId){
