@@ -69,11 +69,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const condition = {
-  CONTAINS: "Contains",
-  NOT_CONTAINS: "Not Contains",
-  MATCHES: "Matches",
-  NOT_MATCHES: "Not Matches",
-  CODED_WITH: "Coded With"
+  CONTAINS: "Contains Value",
+  NOT_CONTAINS: "Not Contains Value",
+  MATCHES: "Matches value",
+  NOT_MATCHES: "Not Matches Value",
+  CODED_WITH: "Coded With",
+  NOT_CODED: "Not Coded"
 }
 const condition_codes = {
   CODED_ANY: "Coded Any",
@@ -102,6 +103,11 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
           where[item.desc]=item.desc;
           filterIdMap[item.desc]=item._id;
         })
+        JSON.parse(localStorage.listOfQuestion).map((item)=>{
+          where[item.desc]=item.desc;
+          filterIdMap[item.desc]=item._id;
+        })
+        
       }  
     },[])
     const [filterDetails,setFilterDetails] =useState({
@@ -272,30 +278,41 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
     let data = null
     const handleSubmitSearchNew = async(e)=>{
       var filters_list = []
-      var oType;
+      var operator;
       if(filterDetailsNew.length>0){
         filterDetailsNew.map((item, index)=>{
           switch(item.condition){
             case condition.CONTAINS:
               if(item.where === where.RESPONSE){
-                oType=6;
+                operator=6;
               }
               else{
-                oType=11;
+                operator=11;
               }
               break;
             case condition.MATCHES:
               if(item.where === where.RESPONSE){
-                oType=6;
+                operator=6;
               }
               else{
-                oType=11;
+                operator=11;
               }
               break;
+            case condition.NOT_CODED:
+              operator=9;
+              break;
+            case condition_codes.CODED_ANY:
+              operator=10;
+              break;
+            case condition_codes.CODED_ALL:
+              operator=7;
+              break;
           }
-          if(item.value!==''){
-            (oType===11) ? filters_list.push({"operator":oType, "pattern":item.value, "filter":filterIdMap[item.where]}) : 
-            filters_list.push({"operator":oType, "pattern":item.value})
+          if(item.value!=='' | item.value!==[] | operator==9){
+            (operator===11) ? filters_list.push({"operator":operator, "pattern":item.value, "filter":filterIdMap[item.where]}) : 
+            (operator === 10) ? filters_list.push({"operator":operator, "codewordGroup":item.value}):
+            (operator === 7) ? item.value.map((v) => filters_list.push({"operator":operator, "codeword":v})) :
+            filters_list.push({"operator":operator, "pattern":item.value})
           }
         })
       }
@@ -500,7 +517,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                         <Select
                           labelId="demo-simple-select-filled-label"
                           id="demo-simple-select-filled"
-                          // multiple
+                          multiple
                           value={filterDetails?.keywords}
                           onChange={handleFilterDetails}
                           input={<Input />}
@@ -603,59 +620,40 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                           </FormControl>
                           {
                             (item.where === where.CODES) ? 
-                            <FormControl>
-                            <NativeSelect
-                              onChange={handleDialogChange}
-                              name={"value_"+index}
-                              defaultValue={item.value}
-                              value={item.value}
-                              className={classes.selectEmpty}
-                              inputProps={{ 'aria-label': 'condition' }}
-                            >
-                              { 
-                                // Object.values(leftMenuCodes).map((item)=>{
-                                //   // return(<option value={cEntry}>{cEntry}</option>)
-                                //   if(item?.active){
-                                //     return (
-                                //       <option value={item?.name}>{item.name}</option>
-                                //       // <MenuItem key={item?.id} value={item?.name}>
-                                //       //   <Checkbox checked={filterDetails?.keywords.indexOf(item?.name) > -1} />
-                                //       //   <ListItemText primary={item?.name} />
-                                //       // </MenuItem>
-                                //     )
-                                //   }
-                                // })
-                                <FormControl>
-                                    <InputLabel id="mutiple-code-checkbox">Codes</InputLabel>
-                                    <Select
-                                        labelId="mutiple-code-checkbox"
-                                        id="mutiple-code-checkbox"
-                                        multiple
-                                        value={Array.isArray(item.value) ? item.value: []}
-                                        onChange={handleDialogChange}
-                                        name={"value_"+index}
-                                        input={<Input/>}
-                                        renderValue={(item) => Array.isArray(item.value) ? item.value.join(', ') : ""}
-                                        MenuProps={MenuProps}
-                                    >
-                                        {leftMenuCodes.map((leftMenuCode) => {
-                                          if(leftMenuCode.active){
-                                            <MenuItem key={leftMenuCode.id} value={leftMenuCode.name}>
-                                              <ListItemIcon>
-                                                <Checkbox checked={Array.isArray(item.value) ? item.value.indexOf(leftMenuCode.name) > -1 : false}/>
-                                              </ListItemIcon>
-                                              <ListItemText primary={leftMenuCode.name}/>
-                                            </MenuItem>
-                                          }
-                                        })}
-                                    </Select>
-                                </FormControl>
-                                
-                              }
-                              </NativeSelect>
+                            <FormControl className={classes.formControl}>
+                              <InputLabel id="codes-dialog">Keywords</InputLabel>
+                              <Select
+                                labelId="codes-dialog"
+                                id="codes-dialog"
+                                multiple
+                                value={Array.isArray(item.value) ? item.value : []}
+                                onChange={handleDialogChange}
+                                input={<Input />}
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                                name={"value_"+index}
+                              >
+                                {leftMenuCodes.map((leftMenuCode) => {
+                                  if(leftMenuCode?.active){
+                                    return (
+                                      <MenuItem key={leftMenuCode?.id} value={leftMenuCode?.name}>
+                                        <Checkbox checked={Array.isArray(item.value) ? item.value.indexOf(leftMenuCode?.name) > -1 : false} />
+                                        <ListItemText primary={leftMenuCode?.name} />
+                                      </MenuItem>
+                                    )
+                                  }
+                                })}
+                              </Select>
                             </FormControl>
-                            : <Input name={"value_"+index} fullWidth placeholder="Value" defaultValue={item.value} value={item.value} inputProps={{ 'aria-label': 'value' }}
-                            onChange={handleDialogChange} />
+                            : <Input name={"value_"+index} 
+                            fullWidth 
+                            placeholder="Value" 
+                            defaultValue={item.value} 
+                            value={item.value} 
+                            inputProps={{ 'aria-label': 'value' }}
+                            onChange={handleDialogChange} 
+                            disabled={item.condition===condition.NOT_CODED}
+                            />
                           }
                           
                         <ListItemSecondaryAction>
