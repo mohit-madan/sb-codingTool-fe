@@ -103,11 +103,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
           where[item.desc]=item.desc;
           filterIdMap[item.desc]=item._id;
         })
-        JSON.parse(localStorage.listOfQuestion).map((item)=>{
-          where[item.desc]=item.desc;
-          filterIdMap[item.desc]=item._id;
-        })
-        
       }  
     },[])
     const [filterDetails,setFilterDetails] =useState({
@@ -209,7 +204,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
       const loadFilterDetails = localStorage.getItem('filterDetails')
       if(loadFilterDetails){
         setFilterDetailsNew(JSON.parse(loadFilterDetails));
-        handleSubmitSearchNew(); 
+        // handleSubmitSearchNew(); 
       }
     },[])
     useEffect(()=>{
@@ -308,7 +303,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
               operator=7;
               break;
           }
-          if(item.value!=='' | item.value!==[] | operator==9){
+          if(item.value!=='' | operator===9){
             (operator===11) ? filters_list.push({"operator":operator, "pattern":item.value, "filter":filterIdMap[item.where]}) : 
             (operator === 10) ? filters_list.push({"operator":operator, "codewordGroup":item.value}):
             (operator === 7) ? item.value.map((v) => filters_list.push({"operator":operator, "codeword":v})) :

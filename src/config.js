@@ -25,6 +25,14 @@ const config= {
     apiUrl: 'http://localhost:5000',
     redirecturl:"http://localhost:3000"
 }
+// const config= {
+//   apiUrl: 'http://3.7.6.81/api',
+//   redirecturl:"http://3.7.6.81/"
+// }
+// export const socket = io('http://3.7.6.81', {
+// transports: ['websocket'], 
+// upgrade: false
+// })
 
 
 export default config;
