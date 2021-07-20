@@ -2,11 +2,11 @@ import React from "react"
 import { connect } from "react-redux"
 import { createStructuredSelector } from "reselect"
 import { setProgressNumber } from "../../../../Redux/Progress-number/progress.actions"
-import { selectColumn, selectRow } from "../../../../Redux/SelectedRowandColumn/tableSelections.selectors"
+import { selectColumn, selectFilterColumn, selectRow } from "../../../../Redux/SelectedRowandColumn/tableSelections.selectors"
 import { selectSurveyDetails } from "../../../../Redux/SurveyDetails/survey-details.selectors"
 import "./Summary.css"
 
-const Summary=({surveyDetails,row,column,setProgressNumber})=>{
+const Summary=({surveyDetails,row,column, filterColumn,setProgressNumber})=>{
     console.log(column)
     return(
         <div className="summary">
@@ -38,6 +38,19 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
                             }
                     })}
                 </div>
+                <div className="summary_selection">
+                <div className="summary_selection_heading">
+                        <p>FILTER COLUMN</p>
+                        <p className="edit" onClick={()=>setProgressNumber(2)}>Edit</p>
+                    </div>
+                    {filterColumn && Object.keys(filterColumn).map((item,index) => {
+                            if(filterColumn[item]){
+                                return(
+                                    <h5 key={index}>{`${Object.keys(filterColumn)[index]}`}</h5>
+                                )
+                            }
+                    })}
+                </div>
             </div>
         </div>
     )
@@ -46,7 +59,8 @@ const Summary=({surveyDetails,row,column,setProgressNumber})=>{
 const mapStateToProps=createStructuredSelector({
     surveyDetails:selectSurveyDetails,
     row:selectRow,
-    column:selectColumn
+    column:selectColumn,
+    filterColumn:selectFilterColumn,
 })
 const mapDispatchToProps = dispatch => ({
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),

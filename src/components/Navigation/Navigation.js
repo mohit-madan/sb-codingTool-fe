@@ -20,6 +20,7 @@ const Navigation=()=>{
         localStorage.removeItem("listOfFilterQuestion")
         localStorage.removeItem("codebook")
         localStorage.removeItem("projectId")
+        localStorage.removeItem("filterDetails")
         history.push("/userProjectsDashboard")
         socket.emit("_disconnect")
         socket.disconnect()

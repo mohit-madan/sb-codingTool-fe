@@ -22,6 +22,7 @@ export const userActions = {
     uploadFile,
     projectDetails,
     responsePagination,
+    downloadResponses,
     filteredPagination,
     jwtTokenCheck,
     questionCodebookId,
@@ -88,8 +89,36 @@ function jwtTokenCheck(){
     })
 
 }
+async function downloadResponses({questions}) {
+    const _token=JSON.parse(localStorage.token).accessToken
+    const details={
+        "projectId":localStorage.projectId,
+        "questionIds":questions
+    }
+    const requestOptions = {
+        headers: {'Authorization': `Bearer ${_token}`}
+    };
+    // await axios.post(`${config.apiUrl}/downloadResponses`, (details), requestOptions, { responseType: 'arraybuffer' })
+    await axios.get(`${config.apiUrl}/downloadResponses`, {params: {
+        "projectId":localStorage.projectId,
+        "questionIds":questions
+      } ,
+      responseType: 'arraybuffer'})
+    
+    .then(response=>{
+        const url = window.URL.createObjectURL(new Blob([response.data],{ type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'responses.xlsx'); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+    })
+    .catch(err => 
+        {console.log(err)}
+        )
+}
 
-async function filteredPagination({pageNumber,limit,filters,questionId}) {
+async function filteredPagination({filters,questionId}) {
     let temp3=null
     const details={
         "projectId":localStorage.projectId,

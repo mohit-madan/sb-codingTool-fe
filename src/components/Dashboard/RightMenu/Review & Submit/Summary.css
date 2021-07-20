@@ -137,13 +137,16 @@ text-indent:
 .survey_summary h5{
     margin-top: 18px;
 }
-.summary_selections,.summary_selection{
+.summary_selections{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
 }
 .summary_selection{
     width: 40%;
     margin-top: 10px;
+    margin-right: 5%;
+    flex-direction: column;
 }
 .summary_selection h5{
     border: 1px solid lightgrey;

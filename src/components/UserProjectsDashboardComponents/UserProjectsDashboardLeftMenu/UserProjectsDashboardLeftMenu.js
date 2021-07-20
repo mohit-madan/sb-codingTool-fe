@@ -9,6 +9,7 @@ function UserProjectsDashboardLeftMenu() {
         localStorage.removeItem("listOfQuestion")
         localStorage.removeItem("codebook")
         localStorage.removeItem("projectId")
+        localStorage.removeItem("filterDetails")
     }
     return (
         <div className="UserProjectsDashboardLeftMenu">
