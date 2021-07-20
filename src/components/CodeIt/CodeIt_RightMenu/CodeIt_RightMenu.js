@@ -5,7 +5,7 @@ import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { connect } from "react-redux";
-import { selectCodes, selectFilteredData, selectnumberOfInputsGreaterThan2, selectProgressLength, selectQuestionNumber } from "../../../Redux/CodeitData/codeit-data.selectors.js";
+import { selectCodes, selectFilteredData, selectnumberOfInputsGreaterThan2, selectQuestionNumber } from "../../../Redux/CodeitData/codeit-data.selectors.js";
 import { createStructuredSelector } from "reselect";
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
@@ -30,7 +30,7 @@ const BorderLinearProgress = withStyles((theme) => ({
     },
   }))(LinearProgress);
 
-const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,progressNumber,codes,selectnumberOfInputsGreaterThan2,selectShowCodedAs})=>{
+const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,selectShowCodedAs})=>{
 
   const [loadigData,setLoadingData]=useState(true)
   
@@ -72,7 +72,6 @@ useEffect(() => {
 },[questionNumber])
 
 useEffect(() => {
-  
   socket.once('question-response-coded', operation=> {
     const temp=operation?.resOfCoded
     setPercentageBar(temp/filteredData?.length)

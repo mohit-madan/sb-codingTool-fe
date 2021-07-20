@@ -17,7 +17,6 @@ const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
     const [tableData,setTableData]=useState([])
     useEffect(async () => {
         let temp = await userActions.projectList()
-        console.log(temp)
         setTableData(temp)
     },[])
 
@@ -110,26 +109,14 @@ const UserProjectsDashboardRightMenu=({setQuestionNumber})=> {
 
     const goToCodingTool=async(evt,selectedRow)=>{
         setQuestionNumber(0)
-
-        console.log(selectedRow)
         localStorage.setItem('projectId',selectedRow?._id)
-            if(localStorage.projectId!==`undefined` && localStorage.projectId?.length>0){
-                await userActions.projectDetails()
-                if(localStorage.listOfQuestion!==undefined){
-                    history.push(`/tool`)
-                }
-           }
-    }
-
-    useEffect(() => {
-        const intervalId = setInterval(() => { 
-            if(localStorage.questionCodebookId!==undefined && localStorage.listOfQuestion!==undefined && localStorage.codebook!==undefined && localStorage.fileKey!==undefined){
+        if(localStorage.projectId!==undefined && localStorage.projectId?.length>0){
+            await userActions.projectDetails()
+            if(localStorage.listOfQuestion!==undefined){
                 history.push(`/tool`)
             }
-          })
-          return () => clearInterval(intervalId);
-        //   questionCodebookId
-    })
+        }
+    }
 
     return (
         <div className="UserProjectsDashboardRightMenu">

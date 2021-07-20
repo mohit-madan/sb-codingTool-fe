@@ -1,10 +1,12 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useRef} from 'react'
 import "./FiltersBar.css"
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { InputBase } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogActions, Button, List, ListItem, 
+  IconButton, ListItemSecondaryAction, NativeSelect, Popper, Grow, Paper, ClickAwayListener,
+MenuList, TextField, DialogContent, ListItemIcon } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
@@ -20,6 +22,7 @@ import { socket } from '../../config';
 import { createStructuredSelector } from 'reselect';
 import { selectPageNumber } from '../../Redux/Filters/Filters.selectors';
 import { selectLeftMenuCodes, selectQuestionNumber, selectSortBy } from '../../Redux/CodeitData/codeit-data.selectors';
+import { MoreHoriz } from '@material-ui/icons';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -39,9 +42,19 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "max-content",
     marginLeft:50,
   },
+  formControlDialog: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  listDialog : {
+    width: '100%',
+    backgroundColor: theme.palette.background.paper,
+  },
   selectEmpty: {
-    marginTop: theme.spacing(2),
-  },grow: {
+    // marginTop: theme.spacing(0),
+    marginLeft: theme.spacing(1),
+  },
+  grow: {
     flexGrow: 1,
   },
   menuButton: {
@@ -55,9 +68,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const condition = {
+  CONTAINS: "Contains",
+  NOT_CONTAINS: "Not Contains",
+  MATCHES: "Matches",
+  NOT_MATCHES: "Not Matches",
+  CODED_WITH: "Coded With"
+}
+const condition_codes = {
+  CODED_ANY: "Coded Any",
+  CODED_ALL: "Coded All",
+}
+var where = {
+  // LENGTH: 'Length',
+  RESPONSE: 'Response',
+  CODES: 'Codes'
+}
+const order = {
+  ASCENDING: 'Ascending',
+  DESCENDING: 'Descending'
+}
+const transformation = {
+  AND: 'And',
+  OR: 'Or'
+}
+var filterIdMap = {};
 function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
+    useEffect(()=>{
+      if(localStorage.filterDetails){
+        JSON.parse(localStorage.listOfFilterQuestion).map((item)=>{
+          where[item.desc]=item.desc;
+          filterIdMap[item.desc]=item._id;
+        })
+      }  
+    },[])
     const [filterDetails,setFilterDetails] =useState({
         match:`Contains In`,
         keywords:[],
@@ -67,13 +113,108 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         searchArray:[],
         filtersArray:[]
     })
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [filterDetailsNew, setFilterDetailsNew] = useState([{
+      condition:condition.CONTAINS,
+      value:'',
+      where:where.RESPONSE
+    }])
+
+    const [sort, setSort] = useState([{
+      order:order.ASCENDING,
+      where:where.RESPONSE
+    }])
+    const handleToggle = (event) => {
+      setOpenButton((prevOpenButton) => !prevOpenButton);
+      setAnchorEl(event.target)
+    };
+    const [open, setOpen] = useState(false);
+    const [openButton, setOpenButton] = useState(false);
+    // const [openSort, setOpenSort] = useState(false);
+
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+    const handleClose = () => {
+      setOpen(false);
+      handleSubmitSearchNew();
+    }
+    // const handleClickOpenSort = () => {
+    //   setOpenSort(true);
+    // };
+    // const handleCloseSort = () => {
+    //   setOpenSort(false);
+    // }
+    const handleClickOpenButton = () => {
+      setOpenButton(true);
+    };
+    const handleCloseButton = () => {
+      setOpenButton(false);
+    }
+    const handleAddFilter = () => {
+      let currFilters = [...filterDetailsNew];
+      currFilters.push({
+        condition:condition.CONTAINS,
+        value:'',
+        where:where.RESPONSE
+      })
+      setFilterDetailsNew(currFilters);
+      setOpenButton(false);
+    }
+
+    const handleRemove = (event) => {
+      var index = event.target.getAttribute("index");
+      let currFilters = [...filterDetailsNew];
+      currFilters.splice(index,1)
+      setFilterDetailsNew(currFilters);
+      setOpenButton(false);
+    }
+    
+    function handleListKeyDown(event) {
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        setOpenButton(false);
+      }
+    }
+
+
+    const handleDialogChange = (event)=>{
+      event.preventDefault();
+      const name = event.target.name.split("_")[0];
+      const index = event.target.name.split("_")[1];
+      
+      setFilterDetailsNew(
+        [
+        ...filterDetailsNew.slice(0,index),
+        {
+            ...filterDetailsNew[index],
+            [name]: event.target.value,
+        },
+        ...filterDetailsNew.slice(index+1)
+      ]
+      )
+    }
+
+    const handleDownload = () => {
+      var questions_list = JSON.parse(localStorage.listOfQuestion).map((item)=> item._id)
+      userActions.downloadResponses({questions: questions_list})
+    }
+    useEffect(() => {
+      const loadFilterDetails = localStorage.getItem('filterDetails')
+      if(loadFilterDetails){
+        setFilterDetailsNew(JSON.parse(loadFilterDetails));
+        handleSubmitSearchNew(); 
+      }
+    },[])
+    useEffect(()=>{
+      localStorage.setItem('filterDetails', JSON.stringify(filterDetailsNew))
+    }, [filterDetailsNew])
     
     useEffect(() => {
       handleSubmitSearch()
     }, [filterDetails?.sort])
 
     useEffect(() => {
-      console.log(selectSortBy)
       const label=selectSortBy?.label
       const sort=selectSortBy?.sort
       let temp=""
@@ -129,7 +270,46 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
   }
 
     let data = null
-
+    const handleSubmitSearchNew = async(e)=>{
+      var filters_list = []
+      var oType;
+      if(filterDetailsNew.length>0){
+        filterDetailsNew.map((item, index)=>{
+          switch(item.condition){
+            case condition.CONTAINS:
+              if(item.where === where.RESPONSE){
+                oType=6;
+              }
+              else{
+                oType=11;
+              }
+              break;
+            case condition.MATCHES:
+              if(item.where === where.RESPONSE){
+                oType=6;
+              }
+              else{
+                oType=11;
+              }
+              break;
+          }
+          if(item.value!==''){
+            (oType===11) ? filters_list.push({"operator":oType, "pattern":item.value, "filter":filterIdMap[item.where]}) : 
+            filters_list.push({"operator":oType, "pattern":item.value})
+          }
+        })
+      }
+      let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
+      data = await userActions.filteredPagination({filters:filters_list,questionId:questionId})
+        data=JSON.parse(data)
+        // console.log(data)
+        if(isIterable(data)){
+          setFilteredData([...data])
+         }
+         if(data==null){
+          setFilteredData([])
+         }
+    }
     const handleSubmitSearch =async (e)=>{
         if(filterDetails?.searchValue !==""){
           let temp1=filterDetails?.searchArray
@@ -144,18 +324,15 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         e?.preventDefault()
         let temp3=getFiltersArray(filterDetails)
         setAppliedFilters(temp3)
-
         
       if(filterDetails?.keywords?.length>0){
         filterDetails?.keywords?.map((item,index)=>{
           temp3.push({"operator":7,"codeword":item})
         })
       }
-        console.log(temp3)
         let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
-        data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp3,questionId:questionId})
+        data = await userActions.filteredPagination({filters:temp3,questionId:questionId})
         data=JSON.parse(data)
-        // console.log(data)
         if(isIterable(data)){
           setFilteredData([...data])
          }
@@ -167,7 +344,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
     }
     const removeSearchItem=async (e,item)=>{
       e.preventDefault()
-      // console.log(item)
       let temp1=[]
       filterDetails?.searchArray?.map((x,index)=>{
         if(x!==item){
@@ -201,7 +377,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         })
       }
       let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
-      data = await userActions.filteredPagination({pageNumber:1,limit:20,filters:temp2,questionId:questionId})
+      data = await userActions.filteredPagination({filters:temp2,questionId:questionId})
         data=JSON.parse(data)
         // console.log(data)
         if(isIterable(data)){
@@ -233,7 +409,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
     }
     const handleQuestionNumber =(e)=>{
       socket.disconnect()
-      console.log(e.target.value)
       setQuestionNumber(e.target.value)
       setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
       setFiltersInRedux({...filterDetails,[e.target.name]:e.target.value})
@@ -325,7 +500,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                         <Select
                           labelId="demo-simple-select-filled-label"
                           id="demo-simple-select-filled"
-                          multiple
+                          // multiple
                           value={filterDetails?.keywords}
                           onChange={handleFilterDetails}
                           input={<Input />}
@@ -379,6 +554,157 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
                     }
                 </div>
             </div>
+            <Button variant="contained" color="primary" onClick={handleClickOpen}>
+              Apply Filters
+            </Button>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="customized-dialog-title">
+              <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+                Filters
+              </DialogTitle>
+              <List className={classes.listDialog}>
+                {
+                  filterDetailsNew.map((item, index)=>{
+                    return(
+                      <ListItem name={index}>
+                          <FormControl>
+                            <NativeSelect
+                              onChange={handleDialogChange}
+                              name={"where_" + index}
+                              defaultValue={item.where}
+                              value={item.where}
+                              className={classes.selectEmpty}
+                              inputProps={{ 'aria-label': 'where' }}
+                            >
+                              {
+                                Object.values(where).map((wEntry, index)=>{
+                                  return(<option value={wEntry}>{wEntry}</option>)
+                                })
+                              }
+                            </NativeSelect>
+                          </FormControl>
+                          <FormControl>
+                            <NativeSelect
+                              onChange={handleDialogChange}
+                              name={"condition_"+index}
+                              defaultValue={item.condition}
+                              value={item.condition}
+                              className={classes.selectEmpty}
+                              inputProps={{ 'aria-label': 'condition' }}
+                            >
+                              { (item.where === where.CODES) ? 
+                                Object.values(condition_codes).map((cEntry, index)=>{
+                                  return(<option value={cEntry}>{cEntry}</option>)
+                                })
+                                : Object.values(condition).map((cEntry, index)=>{
+                                  return(<option value={cEntry}>{cEntry}</option>)
+                                })
+                              }
+                            </NativeSelect>
+                          </FormControl>
+                          {
+                            (item.where === where.CODES) ? 
+                            <FormControl>
+                            <NativeSelect
+                              onChange={handleDialogChange}
+                              name={"value_"+index}
+                              defaultValue={item.value}
+                              value={item.value}
+                              className={classes.selectEmpty}
+                              inputProps={{ 'aria-label': 'condition' }}
+                            >
+                              { 
+                                // Object.values(leftMenuCodes).map((item)=>{
+                                //   // return(<option value={cEntry}>{cEntry}</option>)
+                                //   if(item?.active){
+                                //     return (
+                                //       <option value={item?.name}>{item.name}</option>
+                                //       // <MenuItem key={item?.id} value={item?.name}>
+                                //       //   <Checkbox checked={filterDetails?.keywords.indexOf(item?.name) > -1} />
+                                //       //   <ListItemText primary={item?.name} />
+                                //       // </MenuItem>
+                                //     )
+                                //   }
+                                // })
+                                <FormControl>
+                                    <InputLabel id="mutiple-code-checkbox">Codes</InputLabel>
+                                    <Select
+                                        labelId="mutiple-code-checkbox"
+                                        id="mutiple-code-checkbox"
+                                        multiple
+                                        value={Array.isArray(item.value) ? item.value: []}
+                                        onChange={handleDialogChange}
+                                        name={"value_"+index}
+                                        input={<Input/>}
+                                        renderValue={(item) => Array.isArray(item.value) ? item.value.join(', ') : ""}
+                                        MenuProps={MenuProps}
+                                    >
+                                        {leftMenuCodes.map((leftMenuCode) => {
+                                          if(leftMenuCode.active){
+                                            <MenuItem key={leftMenuCode.id} value={leftMenuCode.name}>
+                                              <ListItemIcon>
+                                                <Checkbox checked={Array.isArray(item.value) ? item.value.indexOf(leftMenuCode.name) > -1 : false}/>
+                                              </ListItemIcon>
+                                              <ListItemText primary={leftMenuCode.name}/>
+                                            </MenuItem>
+                                          }
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                
+                              }
+                              </NativeSelect>
+                            </FormControl>
+                            : <Input name={"value_"+index} fullWidth placeholder="Value" defaultValue={item.value} value={item.value} inputProps={{ 'aria-label': 'value' }}
+                            onChange={handleDialogChange} />
+                          }
+                          
+                        <ListItemSecondaryAction>
+                          <IconButton edge="end" aria-label="comments"
+                            aria-controls={openButton ? 'menu-list-grow' : undefined}
+                            aria-haspopup="true"
+                            onClick={handleToggle}>
+                            <MoreHoriz />
+                          </IconButton>
+                          <Popper open={openButton} anchorEl={anchorEl} role={undefined} transition disablePortal>
+                            {({ TransitionProps, placement }) => (
+                              <Grow
+                                {...TransitionProps}
+                                style={{ transformOrigin: placement === 'bottom' ? 'right' : 'right' }}
+                              >
+                                <Paper>
+                                  <ClickAwayListener onClickAway={handleCloseButton}>
+                                    <MenuList autoFocusItem={openButton} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                      <MenuItem index={index} onClick={handleRemove}>Remove</MenuItem>
+                                      <MenuItem onClick={handleAddFilter}>Add New</MenuItem>
+                                      {/* <MenuItem onClick={handleDu}>Duplicate</MenuItem> */}
+                                    </MenuList>
+                                  </ClickAwayListener>
+                                </Paper>
+                              </Grow>
+                            )}
+                          </Popper>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    )
+                  })
+                }
+              </List>
+              <DialogContent />
+              <DialogActions>
+                <Button name="add" edge="start" onClick={handleAddFilter} color="secondary">
+                  Add New filter
+                </Button>
+                <Button name="apply" autoFocus onClick={handleClose} color="primary">
+                  Apply & Save
+                </Button>
+                {/* <Button name="cancel" autoFocus onClick={handleClose} color="primary">
+                  Cancel 
+                </Button> */}
+              </DialogActions>
+            </Dialog>
+            <Button variant="contained" color="primary" onClick={handleDownload}>
+              Download Codebook
+            </Button>
         </div>
     )
 }

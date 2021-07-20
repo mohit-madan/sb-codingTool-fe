@@ -21,7 +21,8 @@ const useStyles = makeStyles({
   root: {
     height: 240,
     flexGrow: 1,
-    maxWidth: 400,
+    maxWidth: '100%',
+    lineHeight:'10%',
   },
 });
 
@@ -47,22 +48,17 @@ function Coding(props) {
 
     let {tree,codewords} = await userActions.questionCodebookId(room)
     socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
-
-    console.log("Tree---->",tree)
     setNodes(tree)
     
-    console.log("Codewords---->",codewords)
 
     let data=[]
     if(userUtilities.isIterable(codewords)){
       codewords?.map((item,index)=>{
-        let percentage= item?.resToAssigned?.length
+        let percentage= item.resToAssigned.length
         data.push({id: `${item?._id}`, name: item?.tag, active: item?.active,percentage: percentage})
       })
-      console.log("codewords--->",data)
       props.setLeftMenuCodes(data)
     }
-
   }, [props.questionNumber])
   
 
@@ -275,7 +271,6 @@ function Coding(props) {
         "categoryId2":category,
         "categoryName":undefined,
       }
-      console.log(body)
       socket.emit("moveCodeword",body)
 
     }
