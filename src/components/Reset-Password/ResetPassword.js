@@ -60,7 +60,6 @@ function ResetPassword() {
 			<h2>Survey Buddy</h2>
 			<h3>Hey, good to see you again</h3>
 			<h4>Create Your New Password to get going</h4>
-			{_token && <p>{_token.token}</p>}
 			<div className="form_box">
 			<form name="form" className="login-form" onSubmit={handleSubmit}>
 				<TextField

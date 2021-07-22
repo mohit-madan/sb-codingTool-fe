@@ -4,6 +4,7 @@ import "./UserProjectsDashboardLeftMenu.scss"
 import AddIcon from '@material-ui/icons/Add';
 import { Link } from 'react-router-dom';
 function UserProjectsDashboardLeftMenu() {
+
     const goToUploader =()=>{
         localStorage.removeItem("questionCodebookId")
         localStorage.removeItem("listOfQuestion")

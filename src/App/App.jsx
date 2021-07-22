@@ -16,20 +16,17 @@ import {initialState} from '../Reducers/authentication.reducer'
 import ProjectsDashboard from '../pages/ProjectsDashboard/ProjectsDashboard';
 import UserProjectsDashboard from '../pages/UserProjectsDashboard/UserProjectsDashboard';
 import Profile from '../pages/Profile/Profile';
-import { socket } from '../config';
 
 function App() {
     
     useEffect(() => {
         if(initialState?.loggedIn ==true){
-            console.log(`logged in`)
             userActions.jwtTokenCheck()
         }
     },[])
     useEffect(() => {
         const intervalId = setInterval(() => { 
             if(initialState?.loggedIn ==true){
-                console.log(`logged in`)
                 userActions.jwtTokenCheck()
             }
           }, 1000*60)
@@ -68,8 +65,9 @@ function App() {
                             <PrivateRoute exact  path="/user/profile"  component={Profile}/>
                             <PrivateRoute  path="/userProjectsDashboard" component={UserProjectsDashboard} />
                             <PrivateRoute  path="/tool" component={CodeIt} />
-                            <PrivateRoute  path="/" component={UploaderPage} />
+                            <PrivateRoute  path="/uploader" component={UploaderPage} />
                             <Route  path={`/resetPassword/:token`} component={ResetPassword} />
+                            <PrivateRoute  path="/" component={UserProjectsDashboard} />
                             <Redirect from="*" to="/" />
                         </Switch>
                     </Router>
