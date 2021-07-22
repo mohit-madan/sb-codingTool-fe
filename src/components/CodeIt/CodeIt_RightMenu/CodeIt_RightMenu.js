@@ -5,7 +5,7 @@ import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { connect } from "react-redux";
-import { selectCodes, selectFilteredData, selectnumberOfInputsGreaterThan2, selectQuestionNumber } from "../../../Redux/CodeitData/codeit-data.selectors.js";
+import { selectCodes, selectCodingSummary, selectFilteredData, selectnumberOfInputsGreaterThan2, selectQuestionNumber } from "../../../Redux/CodeitData/codeit-data.selectors.js";
 import { createStructuredSelector } from "reselect";
 import { selectShowCodedAs } from "../../../Redux/Show_Coded_As/Show_Coded_As.selectors.js";
 import { selectContainsKeyword } from "../../../Redux/ContainsKeyword/ContainsKeyword.selectors.js";
@@ -30,22 +30,18 @@ const BorderLinearProgress = withStyles((theme) => ({
     },
   }))(LinearProgress);
 
-const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword,selectContainsKeyword,selectShowCodedAs})=>{
+const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword, codingSummary, selectContainsKeyword,selectShowCodedAs})=>{
 
   const [loadigData,setLoadingData]=useState(true)
   
   const [initialKeywords,setInitialKeywords]=useState({})
-  const [percentageBar,setPercentageBar]=useState(0)
-
   const getData =async()=>{
     let keywords={}
     let data 
     let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
-    data = await userActions.responsePagination({pageNumber:1,limit:3000,push:false,questionId:questionId})
+    data = await userActions.responsePagination({limit:3000,push:false,questionId:questionId})
     data = JSON.parse(data)
-    // console.log(`filtered data from right menu .js after parsing`)
     if(data !==null && data !=={}){
-      // console.log(`hello from rightmenu .js`,data)
 
       data?.map((item)=>{
         let temp=[]
@@ -71,13 +67,6 @@ useEffect(() => {
   getData()
 },[questionNumber])
 
-useEffect(() => {
-  socket.once('question-response-coded', operation=> {
-    const temp=operation?.resOfCoded
-    setPercentageBar(temp/filteredData?.length)
-  });
-  
-})
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -88,17 +77,17 @@ useEffect(() => {
       setShowCodedAs(null)
       console.log(`eve`)
     }
-    const [reachedEnd,setReachedEnd]=useState(false)
-
-
     return(
         <div className="codeit_rightmenu_" >
             <div className='flex width_100'>
-              <div className='flex width_100 spaceBetween'> 
+              <div className='flex width_100'> 
                   <div className="flex">
-                    Progress : <BorderLinearProgress variant="determinate" value={percentageBar} />
+                    Progress : <BorderLinearProgress variant="determinate" value={null}></BorderLinearProgress>
+                      {/* // (localStorage.filteredExcelData!==null) ? JSON.parse(localStorage.filteredExcelData)?.operatorRes*1.0/JSON.parse(localStorage.filteredExcelData)?.totalRes : null} /> */}
                   </div>
-                  {/* <h5>{filteredData?.length} Responses Loaded Out Of {`3000`} </h5> */}
+                  <div style={{marginLeft:"8px"}}>
+                    Showing: {codingSummary.operatorRes} / {codingSummary.totalRes}
+                  </div>
               </div>
               {selectShowCodedAs && 
                 <div className='filteredOn flex'>
@@ -117,10 +106,6 @@ useEffect(() => {
                 </div>
               }
              </div>
-
-            {/* <div className="codeit_rightmenu" >
-               <CodeItTable reachedEnd={reachedEnd}/>
-            </div> */}
             {filteredData && <ReactVirtualizedTable initialKeywords={initialKeywords} />}
         </div>
         //
@@ -133,6 +118,7 @@ const mapStateToProps=createStructuredSelector({
     selectContainsKeyword:selectContainsKeyword,
     filteredData:selectFilteredData,
     questionNumber:selectQuestionNumber,
+    codingSummary:selectCodingSummary,
 })
 const mapDispatchToProps = dispatch => ({
   setShowCodedAs: collectionsMap => dispatch(setShowCodedAs(collectionsMap)),

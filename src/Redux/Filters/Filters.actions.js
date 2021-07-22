@@ -12,7 +12,3 @@ export const setAppliedFilters = user => ({
   type: FiltersActionTypes.SET_APPLIED_FILTERS,
   payload: user
 });
-export const setPageNumber = user => ({
-  type: FiltersActionTypes.SET_PAGE_NUMBER,
-  payload: user
-});

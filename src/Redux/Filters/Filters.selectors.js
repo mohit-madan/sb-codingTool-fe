@@ -14,7 +14,3 @@ export const selectAppliedFilters = createSelector(
   [selectFiltersReducer],
   user => user.appliedFilters
 );
-export const selectPageNumber = createSelector(
-  [selectFiltersReducer],
-  user => user.pageNumber
-);

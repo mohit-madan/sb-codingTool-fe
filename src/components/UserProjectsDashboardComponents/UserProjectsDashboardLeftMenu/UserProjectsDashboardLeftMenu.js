@@ -7,9 +7,11 @@ function UserProjectsDashboardLeftMenu() {
     const goToUploader =()=>{
         localStorage.removeItem("questionCodebookId")
         localStorage.removeItem("listOfQuestion")
+        localStorage.removeItem("listOfFilterQuestion")
         localStorage.removeItem("codebook")
         localStorage.removeItem("projectId")
         localStorage.removeItem("filterDetails")
+        localStorage.removeItem("filteredExcelData")
     }
     return (
         <div className="UserProjectsDashboardLeftMenu">

@@ -43,6 +43,10 @@ export const setSortBy = (user) => ({
   type: codeItDataActionTypes.SET_SORT_BY,
   payload: user
 });
+export const setCodingSummary = (user) => ({
+  type: codeItDataActionTypes.SET_CODING_SUMMARY,
+  payload: user
+});
 
 
 

@@ -21,6 +21,8 @@ const Navigation=()=>{
         localStorage.removeItem("codebook")
         localStorage.removeItem("projectId")
         localStorage.removeItem("filterDetails")
+        localStorage.removeItem("filteredExcelData")
+        
         history.push("/userProjectsDashboard")
         socket.emit("_disconnect")
         socket.disconnect()

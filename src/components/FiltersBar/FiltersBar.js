@@ -14,14 +14,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
-import { setAppliedFilters, setFilters, setPageNumber, setSubmitFilters } from '../../Redux/Filters/Filters.actions';
+import { setAppliedFilters, setFilters, setSubmitFilters } from '../../Redux/Filters/Filters.actions';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
-import { setFilteredData, setQuestionNumber } from '../../Redux/CodeitData/codeit-data.actions';
+import { setFilteredData, setQuestionNumber, setCodingSummary } from '../../Redux/CodeitData/codeit-data.actions';
 import { socket } from '../../config';
 import { createStructuredSelector } from 'reselect';
-import { selectPageNumber } from '../../Redux/Filters/Filters.selectors';
-import { selectLeftMenuCodes, selectQuestionNumber, selectSortBy } from '../../Redux/CodeitData/codeit-data.selectors';
+import { selectLeftMenuCodes, selectQuestionNumber, selectSortBy, selectCodingSummary } from '../../Redux/CodeitData/codeit-data.selectors';
 import { MoreHoriz } from '@material-ui/icons';
 
 const ITEM_HEIGHT = 48;
@@ -73,7 +72,7 @@ const condition = {
   NOT_CONTAINS: "Not Contains Value",
   MATCHES: "Matches value",
   NOT_MATCHES: "Not Matches Value",
-  CODED_WITH: "Coded With",
+  // CODED_WITH: "Coded With",
   NOT_CODED: "Not Coded"
 }
 const condition_codes = {
@@ -94,7 +93,7 @@ const transformation = {
   OR: 'Or'
 }
 var filterIdMap = {};
-function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setPageNumber,pageNumber,setFilteredData,setSubmitFiltersInRedux,setFiltersInRedux}) {
+function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber,setAppliedFilters,setFilteredData, codingSummary, setCodingSummary,setSubmitFiltersInRedux,setFiltersInRedux}) {
     const classes = useStyles();
     const theme = useTheme();
     useEffect(()=>{
@@ -204,7 +203,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
       const loadFilterDetails = localStorage.getItem('filterDetails')
       if(loadFilterDetails){
         setFilterDetailsNew(JSON.parse(loadFilterDetails));
-        // handleSubmitSearchNew(); 
+        handleSubmitSearchNew(); 
       }
     },[])
     useEffect(()=>{
@@ -271,6 +270,8 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
   }
 
     let data = null
+    let totalRes = null
+    let codedRes = null
     const handleSubmitSearchNew = async(e)=>{
       var filters_list = []
       var operator;
@@ -279,7 +280,7 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
           switch(item.condition){
             case condition.CONTAINS:
               if(item.where === where.RESPONSE){
-                operator=6;
+                operator=5;
               }
               else{
                 operator=11;
@@ -314,9 +315,9 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
       let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
       data = await userActions.filteredPagination({filters:filters_list,questionId:questionId})
         data=JSON.parse(data)
-        // console.log(data)
-        if(isIterable(data)){
-          setFilteredData([...data])
+        if(isIterable(data?.result)){
+          setFilteredData([...data?.result])
+          setCodingSummary({"operatorRes":data?.operatorRes , "totalRes": data?.totalRes})
          }
          if(data==null){
           setFilteredData([])
@@ -345,14 +346,14 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
         let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
         data = await userActions.filteredPagination({filters:temp3,questionId:questionId})
         data=JSON.parse(data)
-        if(isIterable(data)){
-          setFilteredData([...data])
+        if(isIterable(data?.result)){
+          setFilteredData([...data?.result])
+          setCodingSummary({"operatorRes":data?.operatorRes , "totalRes": data?.totalRes})
          }
          if(data==null){
           setFilteredData([])
          }
-         setPageNumber(2)
-          console.log(filterDetails?.filtersArray)
+          // console.log(filterDetails?.filtersArray)
     }
     const removeSearchItem=async (e,item)=>{
       e.preventDefault()
@@ -390,17 +391,16 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
       }
       let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
       data = await userActions.filteredPagination({filters:temp2,questionId:questionId})
-        data=JSON.parse(data)
-        // console.log(data)
-        if(isIterable(data)){
-          setFilteredData([...data])
-         }
+      data=JSON.parse(data)
+      if(isIterable(data?.result)){
+        setFilteredData([...data?.result])
+        setCodingSummary({"operatorRes":data?.operatorRes , "totalRes": data?.totalRes})
+       }
          if(data==null){
           setFilteredData([])
          }
-         setPageNumber(2)
     }
-    console.log(filterDetails?.keywords)
+    // console.log(filterDetails?.keywords)
     const handleFilterDetails =(e)=>{
         e.preventDefault()
         setFilterDetails({...filterDetails,[e.target.name]:e.target.value})
@@ -706,12 +706,11 @@ const mapDispatchToProps = dispatch => ({
     setFiltersInRedux: collectionsMap => dispatch(setFilters(collectionsMap)),
     setSubmitFiltersInRedux: collectionsMap => dispatch(setSubmitFilters(collectionsMap)),
     setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
-    setPageNumber: collectionsMap => dispatch(setPageNumber(collectionsMap)),
     setAppliedFilters: collectionsMap => dispatch(setAppliedFilters(collectionsMap)),
     setQuestionNumber: collectionsMap => dispatch(setQuestionNumber(collectionsMap)),
+    setCodingSummary: collectionsMap => dispatch(setCodingSummary(collectionsMap)),
 });
 const mapStateToProps=createStructuredSelector({
-  pageNumber:selectPageNumber,
   leftMenuCodes:selectLeftMenuCodes,
   selectSortBy:selectSortBy,
   questionNumber:selectQuestionNumber,

@@ -13,10 +13,9 @@ import {history} from "../../_helpers"
 import { userActions } from '../../_actions';
 import { setExcelData } from '../../Redux/ExcelData/excel-data.actions';
 import { setLoading } from '../../Redux/Loading/Loading.actions';
-import { requestApiData } from '../../Redux/ApiCalls/ApiCalls.actions';
 import { setAlertMessage, setShowUploaderAlerts } from '../../Redux/UploaderAlerts/UploaderAlerts.actions';
 
-const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requestApiData,setLoading,setExcelData,setProgressNumber,
+const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,setLoading,setExcelData,setProgressNumber,
     progressNumber,row,column, filterColumn,surveyDetails,excelData})=> {
 
     Object.size = function(obj) {
@@ -108,7 +107,6 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,requ
             "type":surveyDetails?.type ? surveyDetails?.type : "test",
             "tags":(surveyDetails?.tags) ? handleTags(surveyDetails?.tags) : ["test"],
         }
-        console.log({details})
         const _token=JSON.parse(localStorage.token).accessToken
         const requestOptions = {
             headers: {'Authorization': `Bearer ${_token}`}
@@ -153,10 +151,8 @@ const mapDispatchToProps = dispatch => ({
     setProgressNumber: progressNumber =>dispatch(setProgressNumber(progressNumber)),
     setExcelData: collectionsMap => dispatch(setExcelData(collectionsMap)),
     setLoading: collectionsMap => dispatch(setLoading(collectionsMap)),
-    requestApiData: collectionsMap => dispatch(requestApiData(collectionsMap)),
     setShowUploaderAlerts: collectionsMap => dispatch(setShowUploaderAlerts(collectionsMap)),
     setAlertMessage: collectionsMap => dispatch(setAlertMessage(collectionsMap)),
-    // bindActionCreators({ requestApiData }, dispatch)
 });
 const mapStateToProps=createStructuredSelector({
     surveyDetails:selectSurveyDetails,

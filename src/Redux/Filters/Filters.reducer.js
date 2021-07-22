@@ -3,8 +3,7 @@ import { FiltersActionTypes } from './Filters.types';
 const INITIAL_STATE = {
   filters: null,
   submitFilters:false,
-  appliedFilters:null,
-  pageNumber:2
+  appliedFilters:null
 };
 
 const FiltersReducer = (state = INITIAL_STATE, action) => {
@@ -23,11 +22,6 @@ const FiltersReducer = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       appliedFilters:  action.payload
-    };
-    case FiltersActionTypes.SET_PAGE_NUMBER:
-    return {
-      ...state,
-      pageNumber:  action.payload
     };
     default:
       return state;

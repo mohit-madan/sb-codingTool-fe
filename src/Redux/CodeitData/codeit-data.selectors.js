@@ -39,4 +39,9 @@ export const selectSortBy = createSelector(
   [codeItDataReducer],
   user => user.sortBy
 );
+export const selectCodingSummary = createSelector(
+  [codeItDataReducer],
+  user => user.codingSummary
+);
+
 // questionNumber

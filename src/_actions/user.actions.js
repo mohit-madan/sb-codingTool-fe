@@ -133,14 +133,14 @@ async function filteredPagination({filters,questionId}) {
     .then(data=>{
         if(data?.data?.length!==0){
             localStorage.setItem('filteredExcelData',JSON.stringify(data?.data))
-            console.log(`Filtered Pagination DAta from user actions`,data?.data)
-            temp3=data?.data?.result
+            // console.log(`Filtered Pagination DAta from user actions`,data?.data)
+            temp3=data?.data
         }
     },err=>console.log(err))
     return JSON.stringify(temp3)
 }
 
-async function responsePagination({pageNumber,limit,push,questionId}){
+async function responsePagination({limit,push,questionId}){
     let temp3=null
     console.log(`user actions response Pagination reached`,questionId,localStorage.projectId)
     const details={
@@ -152,13 +152,7 @@ async function responsePagination({pageNumber,limit,push,questionId}){
         headers: {'Authorization': `Bearer ${_token}`}
     };
     return await axios.post(`${config.apiUrl}/response`,(details), requestOptions).then(data=>{
-        console.log(`user actions response Pagination reached`,data)
-
         if(data?.data?.length!==0){
-            // let temp1=[...JSON.parse(localStorage.excelData),...data?.data]
-            // push && localStorage.setItem('excelData',JSON.stringify(data?.data))
-            // push && history.push('/tool')
-            console.log(`Pagination DAta from user actions`,data?.data)
             temp3=data?.data
             return JSON.stringify(temp3)
         }

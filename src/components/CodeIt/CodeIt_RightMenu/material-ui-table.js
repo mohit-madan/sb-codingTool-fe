@@ -19,9 +19,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { selectAppliedFilters, selectFilters, selectPageNumber } from '../../../Redux/Filters/Filters.selectors';
+import { selectAppliedFilters, selectFilters } from '../../../Redux/Filters/Filters.selectors';
 import { ContextMenu, MenuItem as ContextMenuItem, ContextMenuTrigger } from 'react-contextmenu'
-import { setPageNumber } from '../../../Redux/Filters/Filters.actions';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -309,7 +308,7 @@ const headCells = [
     },
   }));
   
-function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,pageNumber,selectAppliedFilters,setPageNumber,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
+function ReactVirtualizedTable({setKeywordsInRedux,setSortBy,initialKeywords,leftMenuCodes,questionNumber,selectAppliedFilters,codes,filteredData,onRowClick,selectFiltersFromRedux,setFilteredData}) {
 
     const headerHeight=48
     const rowHeight =48
@@ -884,14 +883,12 @@ const mapStateToProps=createStructuredSelector({
     codes:selectCodes,
     filteredData:selectFilteredData,
     selectFiltersFromRedux:selectFilters,
-    pageNumber:selectPageNumber,
     selectAppliedFilters:selectAppliedFilters,
     questionNumber:selectQuestionNumber,
     leftMenuCodes:selectLeftMenuCodes,
 })
 const mapDispatchToProps = dispatch => ({
   setFilteredData: collectionsMap => dispatch(setFilteredData(collectionsMap)),
-  setPageNumber: collectionsMap => dispatch(setPageNumber(collectionsMap)),
   setSortBy: collectionsMap => dispatch(setSortBy(collectionsMap)),
   setKeywordsInRedux: collectionsMap => dispatch(setKeywords(collectionsMap)),
   // setKeywords
