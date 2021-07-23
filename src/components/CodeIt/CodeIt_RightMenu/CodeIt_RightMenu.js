@@ -1,7 +1,6 @@
 import  Tab from "../../Dashboard/RightMenu/Table.js"
 import React,{useEffect,useState,Component} from "react"
 import "./CodeIt_RightMenu.scss"
-import CodeItTable from "./CodeIt_Table.js"
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { connect } from "react-redux";
@@ -33,16 +32,17 @@ const BorderLinearProgress = withStyles((theme) => ({
 const CodeIt_RightMenu =({questionNumber,setFilteredData,filteredData,setShowCodedAs,setContainsKeyword, codingSummary, selectContainsKeyword,selectShowCodedAs})=>{
 
   const [loadigData,setLoadingData]=useState(true)
-  
+  const [percentageBar,setPercentageBar]=useState(0)
+
   const [initialKeywords,setInitialKeywords]=useState({})
   const getData =async()=>{
     let keywords={}
     let data 
     let questionId =JSON.parse(localStorage.listOfQuestion)[questionNumber]._id
-    data = await userActions.responsePagination({limit:3000,push:false,questionId:questionId})
-    data = JSON.parse(data)
+    data = await userActions.filteredPagination({filters:[], questionId:questionId})
+    // data = await userActions.responsePagination({limit:3000,push:false,questionId:questionId})
+    data = JSON.parse(data)?.result
     if(data !==null && data !=={}){
-
       data?.map((item)=>{
         let temp=[]
         let resNum=item?.resNum 
@@ -67,6 +67,12 @@ useEffect(() => {
   getData()
 },[questionNumber])
 
+useEffect(() => {
+  socket.once('question-response-coded', operation=> {
+    const temp=operation?.resOfCoded
+    setPercentageBar(temp*1.0/codingSummary.totalRes)
+  });
+})
 
     const handleClickRemoveContainsKeyword=(e)=>{
       e.preventDefault()
@@ -81,8 +87,7 @@ useEffect(() => {
             <div className='flex width_100'>
               <div className='flex width_100'> 
                   <div className="flex">
-                    Progress : <BorderLinearProgress variant="determinate" value={null}></BorderLinearProgress>
-                      {/* // (localStorage.filteredExcelData!==null) ? JSON.parse(localStorage.filteredExcelData)?.operatorRes*1.0/JSON.parse(localStorage.filteredExcelData)?.totalRes : null} /> */}
+                    Progress : <BorderLinearProgress variant="determinate" value={percentageBar}></BorderLinearProgress>
                   </div>
                   <div style={{marginLeft:"8px"}}>
                     Showing: {codingSummary.operatorRes} / {codingSummary.totalRes}

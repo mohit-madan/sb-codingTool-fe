@@ -89,7 +89,6 @@ class ExcelReader extends Component {
       this.setState({ data: data, header_list: get_headers(ws) }, () => {
         updateExcelData(JSON.stringify(this.state.data, null, 2));
         updateHeaders(this.state.header_list);
-        localStorage.setItem("excelData",JSON.stringify(this.state.data, null, 2));
         
         setProgressNumber(2);
         setShowUploaderAlerts(false);

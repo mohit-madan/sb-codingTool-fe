@@ -98,10 +98,12 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
     const theme = useTheme();
     useEffect(()=>{
       if(localStorage.filterDetails){
-        JSON.parse(localStorage.listOfFilterQuestion).map((item)=>{
-          where[item.desc]=item.desc;
-          filterIdMap[item.desc]=item._id;
-        })
+        if(localStorage.getItem("listOfFilterQuestion")){
+          JSON.parse(localStorage.listOfFilterQuestion).map((item)=>{
+            where[item.desc]=item.desc;
+            filterIdMap[item.desc]=item._id;
+          })
+        }
       }  
     },[])
     const [filterDetails,setFilterDetails] =useState({
