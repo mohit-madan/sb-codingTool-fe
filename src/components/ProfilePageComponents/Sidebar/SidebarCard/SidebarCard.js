@@ -3,7 +3,6 @@ import "./SidebarCard.css"
 import {initialState} from "../../../../Reducers/authentication.reducer"
 
 const SidebarCard =()=>{
-    // console.log(initialState)
     const user=initialState?.loggedIn ? initialState?.user : null
     const title=!user?.Mt ? `${user?.user?.email}` : `${user?.Mt?.Ed}`
     return(

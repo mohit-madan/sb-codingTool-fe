@@ -191,7 +191,6 @@ const LeftMenu=({progressNumber,rowNumber,column, filterColumn,selectExcelDataCo
                     label="Select All"
                   />
                 {selectExcelDataColumns?.map((item,index)=>{
-                  // console.log("state[Object.keys(state)[index]]",state[Object.keys(state)[index]])
                   return(
                   <FormControlLabel
                     key={index}
@@ -217,7 +216,6 @@ const LeftMenu=({progressNumber,rowNumber,column, filterColumn,selectExcelDataCo
                     label="Select All"
                   />
                 {selectExcelDataColumns?.map((item,index)=>{
-                  // console.log("state[Object.keys(state)[index]]",state[Object.keys(state)[index]])
                   return(
                   <FormControlLabel
                     key={index}

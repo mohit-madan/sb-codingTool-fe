@@ -42,20 +42,7 @@ function RegisterPage() {
 			const registerUser={
 				username:user.username,
     			password:user.password
-			}
-			// console.log("reg user",registerUser)
-			//  axios.post("http://localhost:5000/register", registerUser)
-			// .then(response => console.log("axios",response))
-			// .catch(error => console.log("axios",error))
-
-			// const requestOptions = {
-			// 	method: 'POST',
-			// 	headers: { 'Content-Type': 'application/json' },
-			// 	body: JSON.stringify(registerUser)
-			// };
-			//  fetch("http://localhost:5000/register", requestOptions).then(resp=>console.log("normal", resp))
-			// .then( resp => {resp?.ok && dispatch(alertActions.success(`${resp?.ok ? 'Registration successful' : "faioled"}  `))})
-			
+			}			
 			dispatch(userActions.register(registerUser));
 
 			setUser({

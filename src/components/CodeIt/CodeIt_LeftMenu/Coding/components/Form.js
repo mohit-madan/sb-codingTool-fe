@@ -7,28 +7,13 @@ import { selectCodes, selectLeftMenuCodes } from "../../../../../Redux/CodeitDat
 function Form(props) {
 
   const [name, setName] = useState('');
-
-  useEffect(() => {
-    // socket.once('left-menu-form-box', ({values}) => {
-    //   console.log(values)
-    //   setName(values);
-    // })
-    // socket.once('left-menu-add-code', ({values}) => {
-    //   // console.log(values)
-    //   // props.addTask(values);
-    //   // setName("");
-    // })
-  })
-
   function handleSubmit(e) {
     e.preventDefault();
     if (!name.trim()) {
       return;
     }
     let temp=false
-    console.log(props.leftMenuCodes)
     props.leftMenuCodes?.map((item)=>{
-      console.log("comparision",item?.name==name,name,item)
       if(item?.name==name){
         temp=true
         return
@@ -38,7 +23,6 @@ function Form(props) {
       alert("Codeword with the same name exists")
       return
     }
-    console.log(name)
       props.addTask(name);
       setName("");
     socket.emit('left-menu-add-code',name)

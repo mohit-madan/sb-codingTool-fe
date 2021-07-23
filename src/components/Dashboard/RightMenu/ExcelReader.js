@@ -61,10 +61,6 @@ class ExcelReader extends Component {
     const files = e.target.files;
     if (files && files[0]){ 
      _data = await userActions.uploadFile()
-     console.log(`data`,_data)
-      if(_data==2){
-        console.log(`move next`)
-      }
       this.props.setExcelFileName(files[0].name)
       this.setState({ file: files[0],fileName:files[0]?.name,uploaded:true,loading:true },this.handleFile);
     }

@@ -45,11 +45,8 @@ function login(username, password) {
     .then(handleResponse)
     .then(data => {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
-        
-        console.log("_token -->",data)
         localStorage.setItem('token', JSON.stringify(data));
         _token=data.accessToken
-        console.log("_token -->",_token)
     });
     const _RequestOptions = {
         method: 'GET',
@@ -60,7 +57,6 @@ function login(username, password) {
         .then(handleResponse)
         .then(user=>{
             localStorage.setItem('user', JSON.stringify(user));
-            console.log("user -->",user)
             return user;
         });
     
@@ -146,7 +142,6 @@ export function handleResponse(response) {
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }
-        console.log(data);
         return data;
     });
 }

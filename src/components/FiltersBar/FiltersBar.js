@@ -353,7 +353,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
          if(data==null){
           setFilteredData([])
          }
-          // console.log(filterDetails?.filtersArray)
     }
     const removeSearchItem=async (e,item)=>{
       e.preventDefault()
@@ -400,7 +399,6 @@ function FiltersBar({questionNumber,selectSortBy,leftMenuCodes,setQuestionNumber
           setFilteredData([])
          }
     }
-    // console.log(filterDetails?.keywords)
     const handleFilterDetails =(e)=>{
         e.preventDefault()
         setFilterDetails({...filterDetails,[e.target.name]:e.target.value})

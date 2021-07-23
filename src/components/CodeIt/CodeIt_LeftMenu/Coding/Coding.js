@@ -44,7 +44,6 @@ function Coding(props) {
     socket.connect()
 
     let room =JSON.parse(localStorage.listOfQuestion)[props.questionNumber]._id
-    console.log("room---->",room,props.questionNumber)
 
     let {tree,codewords} = await userActions.questionCodebookId(room)
     socket.emit('joinRoom',{room: room, username: JSON.parse(localStorage.user).user.email,projectId:localStorage.projectId,questionCodebookId:localStorage.questionCodebookId }); //here {room: questionId, username: loginUser }
@@ -66,10 +65,7 @@ function Coding(props) {
     // socket.on()
 
     socket.on('edit-codeword-to-list', editCodeword=>{
-        console.log(`editCodeword --->`,editCodeword)
         const {codeword,codewordId}=editCodeword
-        console.log(`editCodeword --->`,editCodeword)
-        console.log(`editCodeword --->`)
         const editedTaskList = props.leftMenuCodes.map(task => {
             if (codewordId === task.id) {
               return {...task, name: codeword}
@@ -85,7 +81,6 @@ function Coding(props) {
     socket.on('delete-codeword-to-list', deleteCodeword=>{
       
         const {codewordId} = deleteCodeword
-        console.log(deleteCodeword)
         const remainingTasks = props.leftMenuCodes.filter(task => codewordId !== task.id);
         if(remainingTasks?.length !==0){
           props.setLeftMenuCodes(remainingTasks);
@@ -95,13 +90,11 @@ function Coding(props) {
     socket.on('add-new-codeword-to-list', (value)=>{
 
        let temp=value.leftMenuCodes
-        console.log('add-new-codeword-to-list', value,temp)
         const {codeword,codewordId} = value
         // const newTask = { id: "todo-" + nanoid()+` ${count-1}`, name: codeword, completed: true };
         const newTask = { id: `${codewordId}`, name: codeword, active: true ,percentage: 0};
         // if(editedTaskList?.length !==0){
           temp.push(newTask)
-          console.log('add-new-codeword-to-list-final',temp)
           props.setLeftMenuCodes(temp)
         // }
     });
@@ -110,14 +103,12 @@ function Coding(props) {
       
       const id=value.codewordId
       const status=value.active
-      console.log('toggle-codeword-to-list-status',status)
       const updatedTasks = value.leftMenuCodes?.map(task => {
           if (id === task.id) {
             return {...task, active: status}
           }
           return task;
         })
-        console.log("updatedTasks==>",updatedTasks)
         if(updatedTasks?.length !==0){
           props.setLeftMenuCodes(updatedTasks)
         }
@@ -137,15 +128,9 @@ function Coding(props) {
           item={...item,percentage:percentage}
         }
       })
-
-      console.log(temp)
-
-      // props.setLeftMenuCodes(temp)
-
     });
 
     socket.on("root",operation=>{
-      console.log("root",operation)
       if(typeof(operation)!="undefined" && operation!==nodes){
         setNodes(operation)
       }
@@ -156,7 +141,6 @@ function Coding(props) {
 
   function toggleTaskCompleted(id,status) {
     let toggleCodeword={codewordId:id,status:status,keywords:props.selectKeywordsFromRedux,leftMenuCodes:props.leftMenuCodes}
-    console.log("status",status)
     socket.emit('toggleCodeword',toggleCodeword)
   }
 
@@ -215,7 +199,6 @@ function Coding(props) {
         "categoryId":categoryId,
         "codewordId":codewordId
       }
-      console.log(body)
       socket.emit("assingedCodeword",body)
 
     }else if(temp1==1){
@@ -225,7 +208,6 @@ function Coding(props) {
         "categoryId2":undefined,
         "categoryName":categoryName,
       }
-      console.log(body)
       socket.emit("moveCodeword",body)
     }
 
@@ -260,7 +242,6 @@ function Coding(props) {
         "codewordId":id,
         "categoryId":category
       }
-      console.log(body)
       socket.emit("assingedCodeword",body)
 
     }else if(temp1==1){
@@ -311,40 +292,6 @@ function Coding(props) {
   }, [props.leftMenuCodes.length, prevTaskLength]);
 
 
-  function clickHandler(event, id){
-
-    // let temp0=nodes
-    // console.log("crtlclcik changed nodes id",id)
-    // console.log("crtlclcik changed nodes nodes",nodes)
-
-    // if (event.ctrlKey){
-    //      console.log("Ctrl+click has just happened!");
-
-    //      temp0?.map((item,index)=>{
-
-    //         if(typeof(item?.codewords)=="object" && item?.codewords?.length>0){
-    //           item?.codewords?.map((_codeword,codeword_index)=>{
-    //             console.log("crtlclcik changed ids",_codeword._id)
-    //            if(_codeword?._id==id){
-    //             console.log("crtlclcik changed nodes","match",{_codeword})
-    //             _codeword["ctrlClickActive"]= _codeword["ctrlClickActive"] ?!_codeword["ctrlClickActive"] : true
-    //             console.log({_codeword})
-    //            }
-    //           })
-    //         }
-
-    //         if(item?._id==id){
-    //           console.log("crtlclcik changed nodes","match")
-    //           item["ctrlClickActive"]= item["ctrlClickActive"] ?!item["ctrlClickActive"] : true
-    //         }
-
-    //      })
-    //      console.log("crtlclcik changed nodes",{temp0})
-    //     setNodes([...temp0])
-    // }
- }
-
-
   const classes = useStyles();
   
   
@@ -352,8 +299,6 @@ function Coding(props) {
     <div className="coding">
       <Form addTask={addTask} />
       <hr style={{width:"auto"}}/>
-
-      {/* <button onClick={handleEmit}>node-structure</button> */}
 
       <TreeView
         className={classes.root}
@@ -378,7 +323,6 @@ function Coding(props) {
                   addToCategory={addToCategory}
                   nodes={nodes}
                   createNewCategory={createNewCategory}
-                  ctrlClick={clickHandler}
                   ctrlClickActive={data?.ctrlClickActive ? data?.ctrlClickActive : false}
               />
               ) ;
@@ -412,7 +356,6 @@ function Coding(props) {
                             addToCategory={addToCategory}
                             nodes={nodes}
                             createNewCategory={createNewCategory}
-                            ctrlClick={clickHandler}
                             ctrlClickActive={node?.ctrlClickActive ? node?.ctrlClickActive : false}
                         />
                       )})

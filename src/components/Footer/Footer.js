@@ -63,11 +63,9 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,setL
 
 
     const handleColumns=(temp1)=>{
-        console.log(selectExcelDataColumns)
         const getIndex=(name)=>{
             let i=100
             selectExcelDataColumns?.map((item,index)=>{
-                console.log(item?.title,name)
                 if(item?.title==name){
                     i=index
                 }
@@ -79,7 +77,6 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,setL
             if(temp1[item]==true){
                 col= [...col,{"column":getIndex(item),"question":item}]
             }})
-            console.log(`modified columns`,col)
             return col
     }
 
@@ -116,9 +113,7 @@ const Footer=({selectExcelDataColumns,setAlertMessage,setShowUploaderAlerts,setL
             
             localStorage.setItem('projectId',data?.data?.projectId)
             await delay(2000);
-            console.log(`waited 200 m seconds`)
             if(localStorage.projectId!==undefined && localStorage.projectId?.length>0){
-                console.log(`getting project Details`)
                 await userActions.projectDetails()
                 history.push("/tool")
                 setLoading(false)

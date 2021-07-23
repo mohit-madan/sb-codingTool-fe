@@ -46,11 +46,6 @@ function AddCategoryDialog(props) {
       onClose();
     };
   
-    const handleListItemClick = (value) => {
-      onClose(value);
-      console.log(value)
-    };
-  
     const submitNewCategory=()=>{
         createNewCategory(name,id,undefined)
         onClose()

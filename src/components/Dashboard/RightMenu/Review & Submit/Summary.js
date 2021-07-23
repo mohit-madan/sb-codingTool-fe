@@ -6,8 +6,7 @@ import { selectColumn, selectFilterColumn, selectRow } from "../../../../Redux/S
 import { selectSurveyDetails } from "../../../../Redux/SurveyDetails/survey-details.selectors"
 import "./Summary.css"
 
-const Summary=({surveyDetails,row,column, filterColumn,setProgressNumber})=>{
-    console.log(column)
+const Summary=({surveyDetails,column, filterColumn,setProgressNumber})=>{
     return(
         <div className="summary">
             <h1>Upload Summary</h1>

@@ -37,7 +37,6 @@ function SimpleDialog(props) {
 
   const handleListItemClick = (value) => {
     onClose(value);
-    console.log(value)
   };
 
   return (
@@ -83,7 +82,6 @@ export function SimpleDialogDemo() {
   };
 
   const handleClose = (value) => {
-    console.log("function")
     setOpen(false);
     setSelectedValue(value);
   };
@@ -157,10 +155,8 @@ export default function CodeRow(props) {
   };
 
   const handleCloseChooseCategory = (value) => {
-    console.log(value)
     setOpenChooseCategory(false);
     setSelectedValue(value);
-    console.log(props.name,value)
     props.addToCategory(props.id,value)
   };
 
@@ -255,15 +251,15 @@ export default function CodeRow(props) {
           <p  onClick={() => props.toggleTaskCompleted(props.id,props.completed)}>{ props.completed ? "Disable" : "Enable"}</p>
         </MenuItem>
 
-        <MenuItem data={{category: props.category}} onClick={handleClick}>
+        <MenuItem data={{category: props.category}}>
           Details
         </MenuItem>
         <MenuItem divider />
-        <MenuItem data={{name: props.name}}  onClick={handleClick}>
+        <MenuItem data={{name: props.name}}>
           <p onClick={handleClickOpenChooseCategory}>Add to Existing Category</p>
           <ChooseCategory nodes={props.nodes} addToCategory={props.addToCategory} selectedValue={selectedValue} open={openChooseCategory} onClose={handleCloseChooseCategory} />
         </MenuItem>
-        <MenuItem data={{name: props.name}} onClick={handleClick}>
+        <MenuItem data={{name: props.name}}>
           <p onClick={handleClickOpen}>Add to New Category</p>
           <div>
             <AddCategoryDialog createNewCategory={props.createNewCategory} id={props.id} selectedValue={selectedValue} open={open} onClose={handleClose} />
@@ -273,12 +269,6 @@ export default function CodeRow(props) {
       </ContextMenu>
     </div>
   );
-
-
-
-  function handleClick(e, data) {
-    // console.log(data);
-  }
 
   useEffect(() => {
     if (!wasEditing && isEditing) {

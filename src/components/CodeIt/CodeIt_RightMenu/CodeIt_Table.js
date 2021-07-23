@@ -130,21 +130,21 @@ const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,select
             cellStyle: {
                 width:"2%",
             },
-            render: rowData => <ContextMenuSkin select={rowData?.resNum} data={rowData} handleClick={handleClick} />
+            render: rowData => <ContextMenuSkin select={rowData?.resNum} data={rowData} />
         },
         {
             title:`desc`,
             field:`desc`,cellStyle: {
                 width:"60%",
             },
-            render: rowData => <ContextMenuSkin slice={true} select={rowData?.desc} data={rowData} handleClick={handleClick} />
+            render: rowData => <ContextMenuSkin slice={true} select={rowData?.desc} data={rowData} />
         },{
             title:`length`,
             field:`length`,
             cellStyle: {
                 width:"2%",
             },
-            render: rowData => <ContextMenuSkin select={rowData?.length} data={rowData} handleClick={handleClick} />
+            render: rowData => <ContextMenuSkin select={rowData?.length} data={rowData} />
         },{
             title:"Codes",
             field:"Codes",cellStyle: {
@@ -173,103 +173,27 @@ const CodeItTable =({filteredData,setFilteredData,setSubmitFiltersInRedux,select
     const [keywords,setkeywords]=useState(mapper)
     const [codes,setCodes]=useState(mapper)
     var prev=0,next=0
-    console.log(selectFiltersFromRedux.searchValue);
     useEffect(()=>{
         socket.once('input-box',({num ,value}) => {
-            // if(codes[num]!=value){
-            // console.log(prev<next)
             if(prev<next){
                 setCodes({...codes,[num] : value})
                 prev=prev+1
-                console.log({num ,value})
             }
-            // }else{
-            //     prev=prev-0.5
-            // }
         })
         socket.once('keywords', ({num ,value}) => {
             if(keywords[num]!==value){
                 setkeywords({...keywords,[num] : value})
-                keywords[num]===value && console.log("same")
             }
         })
     })
 
   const handleCodes=rowData=>(event)=>{
     let value =event.target.value;
-    // let num=rowData.tableData.id
     let num=rowData?.resNum
-    // rowData?.resNum
     next=next+2
     socket.emit('input-box',{num,value})
   }
   
-const handleClick=(event, data) => {
-    console.log(`clicked`, { event, data })
-  }
-
-        // const [filteredData,setFilteredData]=useState([])
-
-        // useEffect (()=>{
-        //     if(selectShowCodedAs?.id[0]?.toString() !==`undefined`)
-        //     {
-        //     let transformedData=tempData
-        //     console.log(filteredData)
-        //     let ind =[]
-        //     Object.keys(codes).map((item,index)=>{
-        //         if(typeof(codes[index])==="string"){
-        //             if(codes[index]?.split(';').indexOf(selectShowCodedAs?.id[0]?.toString())!==-1){
-        //                 ind.push(index)
-        //         }
-        //         }
-        //     })
-
-        //     let finalData=[]
-        //     let finalCodes=[]
-        //     Object.keys(transformedData).map((item,index)=>{
-        //         if(ind.includes(index)){
-        //             finalData = [...finalData ,(transformedData[index]) ]
-        //             let _te =codes[index]
-        //             finalCodes={...finalCodes,[index-1]:_te }
-        //     }})
-
-        //     ind.map((index)=>{
-        //         let _te =codes[index]
-        //         finalCodes={...finalCodes,[index-1]:_te }
-        //     })
-
-        //     setFilteredData(finalData)
-        //     setCodes(finalCodes)
-        //     // console.log(filteredData)
-        //     console.log(codes)}
-        // },[selectShowCodedAs])
-        // useEffect(()=>{
-        //     // console.log(selectContainsKeyword)
-        //     if(selectContainsKeyword)
-        //     {
-        //     let data= tempData
-        //     let _index =[]
-        //     let finalData=[]
-        //     data.map((item,index)=>{
-        //         if(item[Object.keys(data[0])[0]]?.split(' ').includes(selectContainsKeyword?.code[0])){
-        //             // console.log(item)
-        //             finalData = [...finalData ,(item) ]
-        //             _index.push(index)
-        //     }})
-        //     let editCodes ={}
-        //     _index.map((item,index)=>{
-        //         editCodes={...editCodes,[index]:codes[item]}
-        //     })
-        //     // console.log(finalData,editCodes)
-        //     setFilteredData(finalData)
-        //     setCodes(editCodes)
-        //     }else{
-        //         setFilteredData(tempData)
-        //     }
-
-        // },[selectContainsKeyword])
-
-        const [reachedEnd,setReachedEnd]=useState(false)
 
         const ChooseData =()=>{
             if(filteredData?.length==0){
@@ -290,9 +214,8 @@ const handleClick=(event, data) => {
         const handleRowSelections =(rows)=>{
             _index.map((item,index)=>{
                 if($(`tr:nth-child(${(item+1)})`).hasClass(`selectedRow`)){
-                    console.log($(`tr:nth-child(${(item+1)})`).hasClass(`selectedRow`))
                     $(`tr:nth-child(${(item+1)})`).removeClass(`selectedRow`,function() {
-                        console.log(`insode`)
+                        console.log(`inside`)
                       });
                 }
             })
@@ -307,7 +230,6 @@ const handleClick=(event, data) => {
                 .css("color","white")
             })
             if(_index?.length ===0){
-                console.log(_index,_index?.length)
                 $("#root > div > div > div > div > div.dash.codeit_dash > div.codeit_rightmenu_ > div.codeit_rightmenu > div > div > div.MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-20.MuiToolbar-gutters > div.MTableToolbar-title-24 > h6")
                 .css("color","")
             }
@@ -377,7 +299,6 @@ const handleClick=(event, data) => {
                                 console.log(rowData)
                             }
                         }}
-                        // onSelectionChange={e=>{console.log(e);}}
                         onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
                         options={{
                           selection: true,

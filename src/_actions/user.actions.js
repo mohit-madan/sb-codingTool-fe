@@ -61,9 +61,7 @@ async function projectList(){
     };
     return await axios.post(`${config.apiUrl}/leftMenu`,details,_RequestOptions)
     .then(data =>{
-        console.log(`question codebook `,data)
         localStorage.setItem(`questionCodebookId`,data?.data?.questionCodebookId )
-
         return ({tree:data?.data?.tree,codewords:data?.data?.codewords})
     })
 }
@@ -81,8 +79,6 @@ function jwtTokenCheck(){
     fetch(`${config.apiUrl}/`, _RequestOptions)
     .then(data =>{
          if(data?.ok == false){
-            console.log(data)
-
             history.push('/login')
             return dispatch => dispatch(alertActions.error('Session Timed out'));
          }
@@ -133,7 +129,6 @@ async function filteredPagination({filters,questionId}) {
     .then(data=>{
         if(data?.data?.length!==0){
             localStorage.setItem('filteredExcelData',JSON.stringify(data?.data))
-            // console.log(`Filtered Pagination DAta from user actions`,data?.data)
             temp3=data?.data
         }
     },err=>console.log(err))
@@ -142,7 +137,6 @@ async function filteredPagination({filters,questionId}) {
 
 async function responsePagination({limit,push,questionId}){
     let temp3=null
-    console.log(`user actions response Pagination reached`,questionId,localStorage.projectId)
     const details={
         "projectId":localStorage.projectId,
         "questions":[{"questionId":questionId}],
@@ -219,14 +213,12 @@ async function uploadFile(){
       },
     }).then(resp=>resp.data)
     .then(resp1=>{
-        console.log('Upload FIle Response',resp1)
         if(resp1?.err){
             localStorage.clear();
             history.push('login')
         }else{
             if(resp1?.key){
                 localStorage.setItem("fileKey",resp1?.key)
-                console.log(`${resp1?.message}`)
                 return 2
             }
         }
@@ -241,14 +233,12 @@ function resetPass(user) {
         // dispatch(request(user));
         userService.resetPass(user)
             .then(
-                user => { 
-                    console.log("user-Actions-user",user)
+                user => {
                     dispatch(success());
                     history.push('/login');
                     dispatch(alertActions.success('Password Reset Sucessfully'));
                 },
                 error => {
-                    console.log("user-Actions-error",error)
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
@@ -265,14 +255,11 @@ function forgotPassOTP(user) {
         // dispatch(request(user));
         userService.forgotPass(user)
             .then(
-                user => { 
-                    console.log("user-Actions-user",user)
+                user => {
                     dispatch(success());
                     dispatch(alertActions.success('OTP sent to the Mobile'));
                 },
                 error => {
-
-                    console.log("user-Actions-error",error)
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
@@ -289,15 +276,12 @@ function forgotPass(user) {
         // dispatch(request(user));
         userService.forgotPass(user)
             .then(
-                user => { 
-                    console.log("user-Actions-user",user)
+                user => {
                     dispatch(success());
                     history.push('/login');
                     dispatch(alertActions.success('Reset Password link sent successful'));
                 },
                 error => {
-
-                    console.log("user-Actions-error",error)
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
@@ -329,13 +313,10 @@ function login(username, password, from) {
          fetch(`${config.apiUrl}/login`, requestOptions)
         .then(handleResponse)
         .then(data => {
-            // console.log(data)
             clearTimeout(timeout);
             if(!didTimeOut) {
-            // console.log("_token -->",data.accessToken)
             localStorage.setItem('token', JSON.stringify(data));
             _token=data.accessToken
-            // console.log("_token -->",_token)
             if(data?.message){
                 dispatch(failure(data?.message.toString()));
                 dispatch(alertActions.error(data?.message.toString()));
@@ -354,9 +335,7 @@ function login(username, password, from) {
                  fetch(`${config.apiUrl}/`, _RequestOptions)
                 .then(handleResponse)
                 .then(user=>{
-                    // console.log("user -->",user,user.err);
                     if(user?.err){
-                        // console.log(user.err?.message)
                         dispatch(failure(user.err?.message.toString()));
                         dispatch(alertActions.error(user.err?.message.toString()));
                         return
@@ -364,11 +343,9 @@ function login(username, password, from) {
                     localStorage.setItem('user', JSON.stringify(user));
                     
                     dispatch(success(user));
-                    // history.push(`/user/profile`);
                     window.location.href = `${config.redirecturl}/userProjectsDashboard`;
                     return user;
                 },error => {
-                    // console.log("error-->actions",error)
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
@@ -402,7 +379,6 @@ function register(user) {
         dispatch(request(user));
         userService.register(user)
             .then(data=> {
-              console.log(data)
               if(data?.message === RESPONSE_MESSAGE.userRegistered){
                 dispatch(success());
                 history.push('/login');
@@ -454,7 +430,6 @@ function handleResponse(response) {
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }
-        console.log(data);
         return data;
     });
 }

@@ -20,7 +20,6 @@ function ResetPassword() {
 	});
 	const dispatch = useDispatch();
 	const _token = useParams();
-	console.log(_token)
     useEffect(() => {
         history.listen((location, action) => {
             dispatch(alertActions.clear());

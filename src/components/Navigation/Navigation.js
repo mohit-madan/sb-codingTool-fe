@@ -9,7 +9,7 @@ import { history } from "../../_helpers";
 const Navigation=()=>{
 
     const logout=()=>{
-        axios.get(`${config.apiUrl}/logout`).then(resp=>console.log(resp));
+        axios.get(`${config.apiUrl}/logout`);
         localStorage.clear()
         window.location.replace(`${config.redirecturl}`);
     }

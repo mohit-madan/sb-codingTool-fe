@@ -75,7 +75,6 @@ useEffect(() => {
     const handleClickRemoveShowCodedAs =(e)=>{
       e.preventDefault()
       setShowCodedAs(null)
-      console.log(`eve`)
     }
     return(
         <div className="codeit_rightmenu_" >

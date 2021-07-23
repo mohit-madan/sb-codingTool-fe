@@ -577,10 +577,6 @@ const SurveyDetails=({updateSurveyDetails,surveyDetailsFromStore})=>{
         tags:surveyDetailsFromStore ? surveyDetailsFromStore?.tags : []
     })
 
-useEffect(async () => {
-  console.log(surveyDetails)
-}, [surveyDetails])
-
     useEffect(async () => {
           setLoading(true)
           let data = await userActions.userSearch("xoc")
@@ -592,11 +588,9 @@ useEffect(async () => {
     const {value,name}=event.target;
     setSurveyDetails({...surveyDetails,[name]:value})
     updateSurveyDetails({...surveyDetails,[name]:value})
-    console.log(surveyDetails)
     
   };
   const handleChangeTags=val=>{
-    console.log("val-->",{val})
     setSurveyDetails({...surveyDetails,tags:val });
     updateSurveyDetails({...surveyDetails,tags:val })
     
@@ -607,21 +601,10 @@ useEffect(async () => {
     if(value?.length >=1){
       setLoading(true)
       let data = await userActions.userSearch(value)
-      console.log("datraal;fska;sdasd",data)
       setOptions(data)
       setLoading(false)
     }
   }, [searchValue])
-
-  const searchUsers=async (e)=>{
-    console.log(e)
-    let value= e.state.search
-    if(value?.length >3){
-      let data = await userActions.userSearch(value)
-      console.log("datraal;fska;sdasd",data)
-      setOptions(data)
-    }
-  }
 
     return(
         <div className="survey_details">
@@ -631,11 +614,9 @@ useEffect(async () => {
             </div>
             <div className='survey_details_title'>
                 <label style={{width:"60%"}} className="container">
-                    {/* <input type="checkbox" defaultChecked="checked" /> */}
                     <span className="checkmark" />
                     SURVEY
                 </label>
-                {/* <a>See Example Row</a> */}
             </div>
             <div className='survey_details_main'>
                 <div className="survey_details_main_left">
